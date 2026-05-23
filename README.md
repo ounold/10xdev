@@ -1,8 +1,8 @@
-# 10x Astro Starter
+# post-meeting-notes
 
 ![](./public/template.png)
 
-A modern, opinionated starter template for building fast, accessible web applications.
+A focused web app for post-meeting notes, shared follow-up items, and per-student supervision history.
 
 ## Tech Stack
 
@@ -23,8 +23,8 @@ A modern, opinionated starter template for building fast, accessible web applica
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/przeprogramowani/10x-astro-starter.git
-cd 10x-astro-starter
+git clone https://github.com/ounold/10xdev.git
+cd 10xdev
 ```
 
 2. Install dependencies:

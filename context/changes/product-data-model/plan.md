@@ -194,6 +194,14 @@ Make the new schema usable by subsequent slices without turning F-01 into full a
 - [README.md](C:\Users\olguno5421\Documents\GitHub\10xdev\README.md)
 - [supabase/config.toml](C:\Users\olguno5421\Documents\GitHub\10xdev\supabase\config.toml)
 
+## Post-Review Hardening
+
+- Post-review follow-up landed in commit `fec486d` (`fix(product-data-model): harden rls and seed behavior`).
+- That follow-up closed three concrete findings:
+  - blocked self-service role escalation in `profiles`
+  - tightened mutable-field behavior for shared `notes` and `note_items`
+  - made `supabase/seed.sql` more idempotent for reruns and the single-user local case
+
 ## Progress
 
 > Convention: `- [ ]` pending, `- [x]` done. Append ` — <commit sha>` when a step lands. Do not rename step titles.

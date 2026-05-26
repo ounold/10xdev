@@ -31,20 +31,14 @@ export default function ResetPasswordForm({ serverError }: Props) {
     }
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     if (!validate()) {
       e.preventDefault();
     }
   }
 
   return (
-    <form
-      method="POST"
-      action="/api/auth/reset-password"
-      className="space-y-4"
-      onSubmit={handleSubmit}
-      noValidate
-    >
+    <form method="POST" action="/api/auth/reset-password" className="space-y-4" onSubmit={handleSubmit} noValidate>
       <FormField
         id="email"
         type="email"

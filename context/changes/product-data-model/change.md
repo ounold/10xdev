@@ -1,7 +1,7 @@
 ---
 change_id: product-data-model
 title: Product data model, migrations, and row-level security
-status: implementing
+status: implemented
 created: 2026-05-26
 updated: 2026-05-26
 archived_at: null

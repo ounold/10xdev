@@ -226,10 +226,10 @@ Make the new schema usable by subsequent slices without turning F-01 into full a
 
 #### Automated
 
-- [x] 3.1 Provide a deterministic local setup path to apply migrations and load minimal development seed data
-- [x] 3.2 Add an importable typed app-level module for the new domain contracts
+- [x] 3.1 Provide a deterministic local setup path to apply migrations and load minimal development seed data — a51ca12
+- [x] 3.2 Add an importable typed app-level module for the new domain contracts — a51ca12
 
 #### Manual
 
-- [x] 3.3 Confirm the next slice can start from typed domain objects instead of reverse-engineering raw SQL
-- [x] 3.4 Confirm the local dev seed is intentionally minimal and does not sprawl into demo-fixture maintenance
+- [x] 3.3 Confirm the next slice can start from typed domain objects instead of reverse-engineering raw SQL — a51ca12
+- [x] 3.4 Confirm the local dev seed is intentionally minimal and does not sprawl into demo-fixture maintenance — a51ca12

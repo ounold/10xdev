@@ -33,8 +33,8 @@ Top blocker:
 - data model and access rules for professor/student/note/note-item ownership
 
 Current roadmap items:
-- `F-01` foundation, ready
-- `F-02` foundation, proposed
+- `F-01` foundation, closed on GitHub after implementation
+- `F-02` foundation, ready
 - `S-01` slice, proposed
 - `S-02` slice, ready
 - `S-03` slice, blocked
@@ -79,28 +79,35 @@ Current GitHub milestones:
 
 Current open issue counts:
 
-- `M1 Foundation`: `2`
+- `M1 Foundation`: `1`
 - `M2 Professor Core Flow`: `2`
 - `M3 Student Access`: `1`
 - `M4 Shared Collaboration`: `2`
 
 ## Current Issue Backlog
 
-Open issues currently present in GitHub:
+Current GitHub issue state:
 
 - `#1` `[F-01] Product data model, migrations, and row-level security`
-  Labels: `type:foundation`, `status:ready`, `stream:core-professor-flow`, `blocker`
+  State: `closed`
+  Labels at close: `type:foundation`, `status:ready`, `stream:core-professor-flow`, `blocker`
 - `#2` `[F-02] Professor role bootstrap and first-owner setup`
-  Labels: `type:foundation`, `status:proposed`, `stream:core-professor-flow`
+  State: `open`
+  Labels: `type:foundation`, `status:ready`, `stream:core-professor-flow`
 - `#3` `[S-01] Professor can create and browse a student roster`
+  State: `open`
   Labels: `type:slice`, `status:proposed`, `stream:core-professor-flow`
 - `#4` `[S-02] Professor can create a post-meeting note and revisit one student's history`
+  State: `open`
   Labels: `type:slice`, `status:ready`, `stream:core-professor-flow`, `north-star`
 - `#5` `[S-03] Student can sign in and read only their own supervision history`
+  State: `open`
   Labels: `type:slice`, `status:blocked`, `stream:student-visibility`
 - `#6` `[S-04] Professor and student can update a shared note without losing continuity`
+  State: `open`
   Labels: `type:slice`, `status:blocked`, `stream:shared-follow-up`
 - `#7` `[S-05] Professor and student can mark task-like note items complete`
+  State: `open`
   Labels: `type:slice`, `status:blocked`, `stream:shared-follow-up`
 
 ## Roadmap to GitHub Mapping

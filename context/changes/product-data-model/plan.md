@@ -202,25 +202,25 @@ Make the new schema usable by subsequent slices without turning F-01 into full a
 
 #### Automated
 
-- [x] 1.1 Create a Supabase migration under `supabase/migrations/` that defines the supervision-domain schema
-- [x] 1.2 Ensure the migration creates schema objects for profiles, students, notes, and note items
+- [x] 1.1 Create a Supabase migration under `supabase/migrations/` that defines the supervision-domain schema — 981c3d5
+- [x] 1.2 Ensure the migration creates schema objects for profiles, students, notes, and note items — 981c3d5
 
 #### Manual
 
-- [x] 1.3 Verify the schema shape cleanly supports F-02, S-01, and S-02 without structural rewrites
-- [x] 1.4 Confirm the schema documentation in README no longer contradicts the repository state
+- [x] 1.3 Verify the schema shape cleanly supports F-02, S-01, and S-02 without structural rewrites — 981c3d5
+- [x] 1.4 Confirm the schema documentation in README no longer contradicts the repository state — 981c3d5
 
 ### Phase 2: Add row-level security and access helpers
 
 #### Automated
 
-- [ ] 2.1 Enable RLS on all new domain tables
-- [ ] 2.2 Add policies for professor access and student-self access across the supervision graph
+- [x] 2.1 Enable RLS on all new domain tables
+- [x] 2.2 Add policies for professor access and student-self access across the supervision graph
 
 #### Manual
 
-- [ ] 2.3 Review the SQL and confirm it clearly explains why professors see owned records and students see only their own thread
-- [ ] 2.4 Confirm the policy model does not depend on the first-professor bootstrap flow already being implemented
+- [x] 2.3 Review the SQL and confirm it clearly explains why professors see owned records and students see only their own thread
+- [x] 2.4 Confirm the policy model does not depend on the first-professor bootstrap flow already being implemented
 
 ### Phase 3: Add development seed/helpers and typed app contracts
 

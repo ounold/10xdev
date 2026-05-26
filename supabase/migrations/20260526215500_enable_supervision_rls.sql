@@ -80,7 +80,14 @@ on public.profiles
 for update
 to authenticated
 using (id = auth.uid())
-with check (id = auth.uid());
+with check (
+  id = auth.uid()
+  and role = (
+    select current_profile.role
+    from public.profiles as current_profile
+    where current_profile.id = auth.uid()
+  )
+);
 
 create policy "students_select_accessible"
 on public.students
@@ -148,6 +155,21 @@ to authenticated
 using (public.can_access_note(id))
 with check (
   public.can_access_note(id)
+  and student_id = (
+    select existing_note.student_id
+    from public.notes as existing_note
+    where existing_note.id = id
+  )
+  and meeting_date = (
+    select existing_note.meeting_date
+    from public.notes as existing_note
+    where existing_note.id = id
+  )
+  and created_by = (
+    select existing_note.created_by
+    from public.notes as existing_note
+    where existing_note.id = id
+  )
   and updated_by = auth.uid()
 );
 
@@ -190,6 +212,16 @@ to authenticated
 using (public.can_access_note_item(id))
 with check (
   public.can_access_note(note_id)
+  and note_id = (
+    select existing_item.note_id
+    from public.note_items as existing_item
+    where existing_item.id = id
+  )
+  and position = (
+    select existing_item.position
+    from public.note_items as existing_item
+    where existing_item.id = id
+  )
   and (
     completed_by is null
     or completed_by = auth.uid()

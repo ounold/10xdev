@@ -38,53 +38,60 @@ begin
     where id = student_user_id;
   end if;
 
-  insert into public.students (professor_profile_id, student_profile_id, full_name, email)
-  values (
-    professor_user_id,
-    student_user_id,
-    case
-      when student_user_id is null then 'Seed Student (unlinked)'
-      else 'Seed Student'
-    end,
-    case
-      when student_user_id is null then 'seed-student-unlinked@example.com'
-      else 'seed-student@example.com'
-    end
-  )
-  on conflict (student_profile_id) do update
-  set
-    professor_profile_id = excluded.professor_profile_id,
-    full_name = excluded.full_name,
-    email = excluded.email,
-    updated_at = timezone('utc', now())
-  returning id into professor_student_id;
-
-  if professor_student_id is null then
+  if student_user_id is not null then
+    insert into public.students (professor_profile_id, student_profile_id, full_name, email)
+    values (
+      professor_user_id,
+      student_user_id,
+      'Seed Student',
+      'seed-student@example.com'
+    )
+    on conflict (student_profile_id) do update
+    set
+      professor_profile_id = excluded.professor_profile_id,
+      full_name = excluded.full_name,
+      email = excluded.email,
+      updated_at = timezone('utc', now())
+    returning id into professor_student_id;
+  else
     select id
     into professor_student_id
     from public.students
     where professor_profile_id = professor_user_id
+      and student_profile_id is null
+      and email = 'seed-student-unlinked@example.com'
     order by created_at, id
     limit 1;
+
+    if professor_student_id is null then
+      insert into public.students (professor_profile_id, student_profile_id, full_name, email)
+      values (
+        professor_user_id,
+        null,
+        'Seed Student (unlinked)',
+        'seed-student-unlinked@example.com'
+      )
+      returning id into professor_student_id;
+    end if;
   end if;
 
-  insert into public.notes (student_id, meeting_date, created_by, updated_by)
-  values (
-    professor_student_id,
-    current_date,
-    professor_user_id,
-    professor_user_id
-  )
-  on conflict do nothing
-  returning id into seeded_note_id;
+  select id
+  into seeded_note_id
+  from public.notes
+  where student_id = professor_student_id
+    and meeting_date = current_date
+  order by created_at desc, id desc
+  limit 1;
 
   if seeded_note_id is null then
-    select id
-    into seeded_note_id
-    from public.notes
-    where student_id = professor_student_id
-    order by meeting_date desc, created_at desc
-    limit 1;
+    insert into public.notes (student_id, meeting_date, created_by, updated_by)
+    values (
+      professor_student_id,
+      current_date,
+      professor_user_id,
+      professor_user_id
+    )
+    returning id into seeded_note_id;
   end if;
 
   insert into public.note_items (note_id, position, item_type, content, completed_at, completed_by)

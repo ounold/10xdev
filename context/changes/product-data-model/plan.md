@@ -214,22 +214,22 @@ Make the new schema usable by subsequent slices without turning F-01 into full a
 
 #### Automated
 
-- [x] 2.1 Enable RLS on all new domain tables
-- [x] 2.2 Add policies for professor access and student-self access across the supervision graph
+- [x] 2.1 Enable RLS on all new domain tables — 6b0ad41
+- [x] 2.2 Add policies for professor access and student-self access across the supervision graph — 6b0ad41
 
 #### Manual
 
-- [x] 2.3 Review the SQL and confirm it clearly explains why professors see owned records and students see only their own thread
-- [x] 2.4 Confirm the policy model does not depend on the first-professor bootstrap flow already being implemented
+- [x] 2.3 Review the SQL and confirm it clearly explains why professors see owned records and students see only their own thread — 6b0ad41
+- [x] 2.4 Confirm the policy model does not depend on the first-professor bootstrap flow already being implemented — 6b0ad41
 
 ### Phase 3: Add development seed/helpers and typed app contracts
 
 #### Automated
 
-- [ ] 3.1 Provide a deterministic local setup path to apply migrations and load minimal development seed data
-- [ ] 3.2 Add an importable typed app-level module for the new domain contracts
+- [x] 3.1 Provide a deterministic local setup path to apply migrations and load minimal development seed data
+- [x] 3.2 Add an importable typed app-level module for the new domain contracts
 
 #### Manual
 
-- [ ] 3.3 Confirm the next slice can start from typed domain objects instead of reverse-engineering raw SQL
-- [ ] 3.4 Confirm the local dev seed is intentionally minimal and does not sprawl into demo-fixture maintenance
+- [x] 3.3 Confirm the next slice can start from typed domain objects instead of reverse-engineering raw SQL
+- [x] 3.4 Confirm the local dev seed is intentionally minimal and does not sprawl into demo-fixture maintenance

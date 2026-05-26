@@ -113,6 +113,14 @@ The local Studio UI is available at `http://localhost:54323`.
 
 This repository now includes supervision-domain migrations under `supabase/migrations/`. After the local stack starts, apply the repository schema with the usual Supabase migration workflow so local development includes the app's `profiles`, `students`, `notes`, and `note_items` tables in addition to `auth.users`.
 
+Recommended local reset/apply flow after schema changes:
+
+```bash
+npx supabase db reset
+```
+
+That applies the checked-in migrations and the minimal development seed from `supabase/seed.sql`.
+
 ### Using a cloud Supabase project instead
 
 If you prefer to use a hosted Supabase project, add these variables to your `.env` and `.dev.vars` files:
@@ -159,6 +167,10 @@ The MVP now includes a first-pass supervision data model in Supabase:
 
 Row-level security for these tables is planned as a follow-up foundation step; this repository change introduces the schema first so later slices can build on a stable model.
 
+## App-Level Database Contract
+
+The app-facing TypeScript contract for the supervision domain lives in [src/lib/database.ts](C:\Users\olguno5421\Documents\GitHub\10xdev\src\lib\database.ts). Follow-up slices should import these types through the `@/*` alias instead of recreating the row shapes ad hoc.
+
 ## Deployment
 
 This project deploys to [Cloudflare Workers](https://workers.cloudflare.com/).
@@ -167,6 +179,14 @@ This project deploys to [Cloudflare Workers](https://workers.cloudflare.com/).
 
 ```bash
 npm run build
+```
+
+If Wrangler or `astro build` fails on Windows with `EPERM` while writing under `%APPDATA%`, run the build with workspace-local XDG directories instead:
+
+```powershell
+$env:XDG_CONFIG_HOME="$PWD\\.tmp-xdg"
+$env:XDG_CACHE_HOME="$PWD\\.tmp-xdg-cache"
+& 'C:\Program Files\nodejs\node.exe' '.\node_modules\astro\bin\astro.mjs' build
 ```
 
 2. Deploy with Wrangler:

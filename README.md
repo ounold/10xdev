@@ -111,7 +111,7 @@ npx supabase stop
 
 The local Studio UI is available at `http://localhost:54323`.
 
-No database tables or migrations are required — this project uses Supabase Auth's built-in `auth.users` table only.
+This repository now includes supervision-domain migrations under `supabase/migrations/`. After the local stack starts, apply the repository schema with the usual Supabase migration workflow so local development includes the app's `profiles`, `students`, `notes`, and `note_items` tables in addition to `auth.users`.
 
 ### Using a cloud Supabase project instead
 
@@ -147,6 +147,17 @@ Users can then sign in immediately after sign-up without clicking a confirmation
 | `/dashboard`          | Example protected page (redirects to `/auth/signin` if unauthenticated) |
 
 Route protection is handled in `src/middleware.ts`. Add paths to the `PROTECTED_ROUTES` array there to require authentication.
+
+## Supervision Domain Schema
+
+The MVP now includes a first-pass supervision data model in Supabase:
+
+- `profiles` — app-level identity and role over `auth.users`
+- `students` — professor-owned student records, optionally linked to a student profile
+- `notes` — dated post-meeting notes for a single student
+- `note_items` — ordered bullet items for a note, with explicit item type
+
+Row-level security for these tables is planned as a follow-up foundation step; this repository change introduces the schema first so later slices can build on a stable model.
 
 ## Deployment
 

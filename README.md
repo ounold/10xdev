@@ -152,6 +152,19 @@ If your change adds or modifies database schema, RLS, or SQL helpers, deploy the
 
 Only after the remote database is updated should you proceed with the Cloudflare release flow.
 
+### Professor bootstrap configuration
+
+If you run the `professor-bootstrap` change against a hosted Supabase project, also configure:
+
+```
+SUPABASE_SERVICE_ROLE_KEY=<service-role-key>
+BOOTSTRAP_PROFESSOR_EMAIL=<professor-email>
+```
+
+`SUPABASE_SERVICE_ROLE_KEY` is required because the first-professor claim is performed by a dedicated server-side bootstrap endpoint with an admin client. This is intentional: current RLS blocks self-service role escalation for normal authenticated clients.
+
+`BOOTSTRAP_PROFESSOR_EMAIL` is the single allowlisted account that may claim the first professor role when no professor exists yet.
+
 ### Email confirmation in local development
 
 By default Supabase requires email confirmation before a user can sign in. To skip this during local development:
@@ -172,6 +185,18 @@ Users can then sign in immediately after sign-up without clicking a confirmation
 | `/dashboard`          | Example protected page (redirects to `/auth/signin` if unauthenticated) |
 
 Route protection is handled in `src/middleware.ts`. Add paths to the `PROTECTED_ROUTES` array there to require authentication.
+
+### Local professor bootstrap verification
+
+To verify the MVP professor bootstrap locally with a hosted Supabase project:
+
+1. Set `BOOTSTRAP_PROFESSOR_EMAIL` to the account that should become the first professor.
+2. Sign in with that allowlisted account and open `/dashboard`.
+3. Confirm the app lands on the professor shell and shows `Current app role: professor`.
+4. Sign out, then sign in with a different non-allowlisted account.
+5. Confirm that second account lands on `/pending-access` rather than seeing professor content.
+
+This two-account flow is the expected manual verification path for `professor-bootstrap`.
 
 ## Supervision Domain Schema
 
@@ -218,7 +243,7 @@ Recommended release order for production:
 2. Verify the hosted Supabase project is at the expected schema level.
 3. Deploy the Worker with `npx wrangler deploy`.
 
-Set `SUPABASE_URL` and `SUPABASE_KEY` as secrets in your Cloudflare dashboard or via `npx wrangler secret put`.
+Set `SUPABASE_URL` and `SUPABASE_KEY` as secrets in your Cloudflare dashboard or via `npx wrangler secret put`. If you deploy professor bootstrap, also set `SUPABASE_SERVICE_ROLE_KEY` and `BOOTSTRAP_PROFESSOR_EMAIL` in the target environment.
 
 ## CI
 

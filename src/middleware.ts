@@ -1,23 +1,66 @@
 import { defineMiddleware } from "astro:middleware";
+import { loadCurrentProfileState } from "@/lib/profile";
 import { createClient } from "@/lib/supabase";
 
 const PROTECTED_ROUTES = ["/dashboard"];
+const PENDING_ACCESS_ROUTE = "/pending-access";
+const BOOTSTRAP_ROUTE = "/api/bootstrap/professor";
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const supabase = createClient(context.request.headers, context.cookies);
+
+  context.locals.user = null;
+  context.locals.profile = null;
+  context.locals.role = null;
+  context.locals.isBootstrapProfessorEmail = false;
+  context.locals.hasProfessor = false;
+  context.locals.isLinkedStudent = false;
 
   if (supabase) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
     context.locals.user = user ?? null;
-  } else {
-    context.locals.user = null;
+
+    if (user) {
+      const profileState = await loadCurrentProfileState(user);
+      context.locals.profile = profileState.profile;
+      context.locals.role = profileState.role;
+      context.locals.isBootstrapProfessorEmail = profileState.isBootstrapProfessorEmail;
+      context.locals.hasProfessor = profileState.hasProfessor;
+      context.locals.isLinkedStudent = profileState.isLinkedStudent;
+    }
   }
 
   if (PROTECTED_ROUTES.some((route) => context.url.pathname.startsWith(route))) {
     if (!context.locals.user) {
       return context.redirect("/auth/signin");
+    }
+
+    if (
+      !context.locals.hasProfessor &&
+      context.locals.isBootstrapProfessorEmail &&
+      context.url.pathname !== BOOTSTRAP_ROUTE
+    ) {
+      return context.redirect(BOOTSTRAP_ROUTE);
+    }
+
+    if (context.locals.role !== "professor") {
+      return context.redirect(PENDING_ACCESS_ROUTE);
+    }
+  }
+
+  if (context.url.pathname === PENDING_ACCESS_ROUTE) {
+    if (!context.locals.user) {
+      return context.redirect("/auth/signin");
+    }
+
+    if (!context.locals.hasProfessor && context.locals.isBootstrapProfessorEmail) {
+      return context.redirect(BOOTSTRAP_ROUTE);
+    }
+
+    if (context.locals.role === "professor") {
+      return context.redirect("/dashboard");
     }
   }
 

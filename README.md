@@ -47,6 +47,8 @@ cp .env.example .dev.vars
 npm run dev
 ```
 
+If `npm run dev` fails inside Codex on Windows with `Access is denied` or `Cannot read directory "../../.."`, rerun the same command from a normal PowerShell session outside Codex. In this repository, that error pattern points to Codex sandbox filesystem limits rather than broken app dependencies.
+
 ## Available Scripts
 
 - `npm run dev` - Start development server (Cloudflare workerd runtime)

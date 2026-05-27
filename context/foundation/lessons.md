@@ -15,3 +15,10 @@
 - **Problem**: Cloudflare code can be deployed successfully while the hosted Supabase project still lacks the required tables, policies, or functions, which creates a hidden production mismatch between live code and live database.
 - **Rule**: Before treating a release as deployed, push remote Supabase migrations first, then verify the target project state, and only after that proceed with the Cloudflare deployment or release confirmation. Do not assume Worker deploys apply database schema automatically.
 - **Applies to**: plan, plan-review, implement, impl-review
+
+## Run Astro dev outside Codex when sandbox blocks filesystem reads
+
+- **Context**: Local Windows development for this repository when `astro dev` or `npm run dev` is started from the Codex environment.
+- **Problem**: The Codex runtime can block directory reads above the workspace boundary, which makes Astro/Vite report misleading missing-module errors even though `node_modules` is intact.
+- **Rule**: If local dev fails in Codex with `Access is denied` or `Cannot read directory "../../.."`, re-run `npm run dev` from a normal PowerShell session outside Codex before diagnosing the app itself. Treat Codex-local dev server failures here as environment-suspect first, not repo-suspect.
+- **Applies to**: implement, impl-review

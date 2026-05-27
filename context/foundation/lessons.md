@@ -8,3 +8,10 @@
 - **Problem**: The repo artifact snapshot, GitHub backlog, and Linear mirror drift apart after implementation if they are not updated in a fixed order, which makes the next planning step ambiguous.
 - **Rule**: After closing implementation of a change, first update `context/foundation/tasks-github.md`, then update the corresponding GitHub Issues, and only after that mirror the same status changes into Linear. Treat this as part of change close-out, not optional documentation cleanup.
 - **Applies to**: plan, plan-review, implement, impl-review
+
+## Migrate remote Supabase before Cloudflare release
+
+- **Context**: Any change that introduces or modifies hosted Supabase schema, RLS, or seed assumptions and is intended to run on the deployed Cloudflare Worker.
+- **Problem**: Cloudflare code can be deployed successfully while the hosted Supabase project still lacks the required tables, policies, or functions, which creates a hidden production mismatch between live code and live database.
+- **Rule**: Before treating a release as deployed, push remote Supabase migrations first, then verify the target project state, and only after that proceed with the Cloudflare deployment or release confirmation. Do not assume Worker deploys apply database schema automatically.
+- **Applies to**: plan, plan-review, implement, impl-review

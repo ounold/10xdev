@@ -135,6 +135,21 @@ SUPABASE_URL=https://<project-ref>.supabase.co
 SUPABASE_KEY=<anon-key>
 ```
 
+If your change adds or modifies database schema, RLS, or SQL helpers, deploy the hosted Supabase changes explicitly before treating the Cloudflare release as complete:
+
+```powershell
+# one-time auth if needed
+& '.\node_modules\supabase\bin\supabase.exe' login
+
+# one-time link to the hosted project
+& '.\node_modules\supabase\bin\supabase.exe' link --project-ref <project-ref>
+
+# apply checked-in migrations to the linked remote project
+& '.\node_modules\supabase\bin\supabase.exe' db push --linked
+```
+
+Only after the remote database is updated should you proceed with the Cloudflare release flow.
+
 ### Email confirmation in local development
 
 By default Supabase requires email confirmation before a user can sign in. To skip this during local development:
@@ -194,6 +209,12 @@ $env:XDG_CACHE_HOME="$PWD\\.tmp-xdg-cache"
 ```bash
 npx wrangler deploy
 ```
+
+Recommended release order for production:
+
+1. Push remote Supabase migrations with `supabase db push --linked` if the change touches schema or RLS.
+2. Verify the hosted Supabase project is at the expected schema level.
+3. Deploy the Worker with `npx wrangler deploy`.
 
 Set `SUPABASE_URL` and `SUPABASE_KEY` as secrets in your Cloudflare dashboard or via `npx wrangler secret put`.
 

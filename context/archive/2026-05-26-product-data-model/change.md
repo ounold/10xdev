@@ -1,10 +1,10 @@
 ---
 change_id: product-data-model
 title: Product data model, migrations, and row-level security
-status: implemented
+status: archived
 created: 2026-05-26
-updated: 2026-05-26
-archived_at: null
+updated: 2026-05-27
+archived_at: 2026-05-27T09:51:00Z
 ---
 
 ## Notes

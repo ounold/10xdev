@@ -28,7 +28,7 @@ The main blocker is the data model and access rules for professor, student, note
 
 | ID | Type | Outcome | Status |
 |---|---|---|---|
-| F-01 | foundation | Product data model, migrations, and row-level security for students, notes, and note items | ready |
+| F-01 | foundation | Product data model, migrations, and row-level security for students, notes, and note items | done |
 | F-02 | foundation | Professor role bootstrap and seeded first-owner path | proposed |
 | S-01 | slice | Professor can create and browse a student roster | proposed |
 | S-02 | slice | Professor can create a post-meeting note and revisit one student's history | ready |
@@ -50,7 +50,7 @@ The main blocker is the data model and access rules for professor, student, note
 ### F-01: Product data model, migrations, and row-level security
 
 - Change ID: `product-data-model`
-- Status: `ready`
+- Status: `done`
 - Type: `foundation`
 - Unlocks: `S-01`, `S-02`, `S-03`, `S-04`, `S-05`
 - PRD refs: `FR-001`, `FR-002`, `FR-004`, `FR-005`, `FR-006`, `FR-007`, `FR-008`
@@ -210,7 +210,7 @@ Definition of done:
 
 | Roadmap ID | Change ID | Status | Why next |
 |---|---|---|---|
-| F-01 | `product-data-model` | ready | This is the highest-leverage enabling layer and the main blocker for every real domain slice. |
+| F-01 | `product-data-model` | done | This is the highest-leverage enabling layer and the main blocker for every real domain slice. |
 | F-02 | `professor-bootstrap` | proposed | This converts generic auth into the professor/student ownership model required by the PRD. |
 | S-01 | `professor-student-roster` | proposed | This creates the first real professor-facing navigation surface for the product. |
 | S-02 | `professor-note-history` | ready | This is the smallest complete validation milestone for the product promise. |
@@ -220,4 +220,4 @@ Definition of done:
 
 ## Done
 
-- None yet.
+- **F-01: Product data model, migrations, and row-level security for students, notes, and note items** — Archived 2026-05-27 -> `context/archive/2026-05-26-product-data-model/`. Lesson: —.

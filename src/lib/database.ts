@@ -48,3 +48,21 @@ export interface NoteWithItems extends NoteRow {
 export interface StudentWithHistory extends StudentRow {
   notes: NoteWithItems[];
 }
+
+export interface StudentThreadSummary extends StudentRow {
+  note_count: number;
+  last_meeting_date: string | null;
+}
+
+export interface CreateNoteItemInput {
+  item_type: NoteItemType;
+  content: string;
+}
+
+export interface CreateNoteInput {
+  student_id: string;
+  meeting_date: string;
+  created_by: string;
+  updated_by: string;
+  items: CreateNoteItemInput[];
+}

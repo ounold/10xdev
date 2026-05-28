@@ -1,0 +1,100 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { getStudentHistory } from "@/lib/supervision";
+import { createClient } from "@/lib/supabase";
+
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+const studentId = Astro.params.studentId;
+const student = supabase && studentId ? await getStudentHistory(supabase, studentId) : null;
+const noteCount = student?.notes.length ?? 0;
+---
+
+<Layout title={student ? `${student.full_name} · Thread` : "Student thread"}>
+  <div class="bg-cosmic min-h-screen p-4 text-white">
+    <div class="mx-auto flex max-w-5xl flex-col gap-6 py-10">
+      <a href="/dashboard" class="text-sm text-cyan-100/80 transition hover:text-cyan-50">
+        ← Back to student threads
+      </a>
+
+      {
+        student ? (
+          <>
+            <section class="rounded-[2rem] border border-white/10 bg-white/8 p-8 backdrop-blur-xl">
+              <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                <div>
+                  <p class="text-xs tracking-[0.3em] text-cyan-200/70 uppercase">Student thread</p>
+                  <h1 class="mt-3 text-4xl font-semibold text-white">{student.full_name}</h1>
+                  <p class="mt-3 text-sm text-slate-200/75">{student.email ?? "No linked email yet"}</p>
+                </div>
+                <div class="rounded-2xl border border-white/10 bg-slate-950/20 px-4 py-3 text-sm text-slate-100/80">
+                  <p>
+                    {noteCount} note{noteCount === 1 ? "" : "s"} in history
+                  </p>
+                  <p class="mt-1 text-slate-300/70">
+                    Phase 1 exposes the route and thread context. Inline note creation arrives in the next phase.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            <section class="rounded-[2rem] border border-white/10 bg-slate-950/25 p-6 backdrop-blur-xl">
+              <div class="mb-5 flex items-center justify-between gap-4">
+                <div>
+                  <h2 class="text-xl font-semibold text-white">Chronological history</h2>
+                  <p class="mt-2 text-sm text-slate-300/70">
+                    This route already loads the student's thread through the new supervision helper so the next phase
+                    can focus on richer rendering and note creation.
+                  </p>
+                </div>
+              </div>
+
+              {noteCount === 0 ? (
+                <div class="rounded-2xl border border-dashed border-white/15 bg-white/5 p-6 text-sm text-slate-300/75">
+                  No notes exist for this student yet.
+                </div>
+              ) : (
+                <ol class="grid gap-4">
+                  {student.notes.map((note) => (
+                    <li class="rounded-2xl border border-white/8 bg-white/[0.04] p-5">
+                      <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                        <div>
+                          <p class="text-sm font-medium text-white">Meeting date {note.meeting_date}</p>
+                          <p class="mt-1 text-xs text-slate-300/70">
+                            Updated {new Date(note.updated_at).toLocaleString("en-GB")}
+                          </p>
+                        </div>
+                        <span class="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs text-cyan-100/80">
+                          {note.items.length} item{note.items.length === 1 ? "" : "s"}
+                        </span>
+                      </div>
+
+                      <ul class="mt-4 grid gap-2 text-sm text-slate-100/85">
+                        {note.items.map((item) => (
+                          <li class="flex gap-3 rounded-xl border border-white/5 bg-slate-950/20 px-3 py-2">
+                            <span class="mt-0.5 inline-flex h-5 min-w-12 items-center justify-center rounded-full border border-white/10 bg-white/5 px-2 text-[10px] tracking-[0.2em] text-slate-300/75 uppercase">
+                              {item.item_type}
+                            </span>
+                            <span>{item.content}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </li>
+                  ))}
+                </ol>
+              )}
+            </section>
+          </>
+        ) : (
+          <section class="rounded-[2rem] border border-white/10 bg-slate-950/25 p-8 backdrop-blur-xl">
+            <p class="text-xs tracking-[0.3em] text-amber-200/70 uppercase">Student thread</p>
+            <h1 class="mt-3 text-3xl font-semibold text-white">Thread unavailable</h1>
+            <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-200/75">
+              This student could not be loaded from the current professor-visible graph. The route is in place, but the
+              requested student id is missing or not accessible in this environment.
+            </p>
+          </section>
+        )
+      }
+    </div>
+  </div>
+</Layout>

@@ -22,3 +22,17 @@
 - **Problem**: The Codex runtime can block directory reads above the workspace boundary, which makes Astro/Vite report misleading missing-module errors even though `node_modules` is intact.
 - **Rule**: If local dev fails in Codex with `Access is denied` or `Cannot read directory "../../.."`, re-run `npm run dev` from a normal PowerShell session outside Codex before diagnosing the app itself. Treat Codex-local dev server failures here as environment-suspect first, not repo-suspect.
 - **Applies to**: implement, impl-review
+
+## Use the Codex app binary when the `codex` wrapper is blocked on Windows
+
+- **Context**: Local Windows setup where MCP administration commands such as `codex mcp add ...` are needed from a shell.
+- **Problem**: The generic `codex` command can fail with `Access is denied` even though the installed Codex app binary itself is present and usable, which makes MCP setup look broken when the real issue is the wrapper path.
+- **Rule**: If `codex ...` fails with a Windows access error, retry the same command through the installed app binary under `C:\Users\olguno5421\AppData\Local\OpenAI\Codex\bin\...\codex.exe`. Prefer the direct binary path for local MCP administration on this machine before assuming the MCP server or command syntax is wrong.
+- **Applies to**: research, implement
+
+## Prefer Node fetch for remote Supabase checks on this Windows setup
+
+- **Context**: Read-only inspection of the remote Supabase project configured by this repository, especially when checking whether hosted data exists before manual verification.
+- **Problem**: PowerShell `Invoke-RestMethod` can fail against the Supabase REST API on this machine with transport-level receive errors even when the project URL and service-role key are valid, which makes remote-data checks look flaky or broken.
+- **Rule**: For safe remote Supabase checks here, load `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` from the repo `.env` file and prefer a small read-only Node `fetch()` script against `/rest/v1` over `Invoke-RestMethod`. Treat the Node path as the default inspection method before suspecting the remote project itself.
+- **Applies to**: research, implement, impl-review

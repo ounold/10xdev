@@ -51,4 +51,4 @@
   - Tradeoff: Adds one tiny bookkeeping commit.
   - Confidence: HIGH - `git status` still shows `context/changes/professor-note-history/plan.md` as modified after the phase commit.
   - Blind spot: None significant.
-- **Decision**: PENDING
+- **Decision**: FIXED now via follow-up commit 3af9687

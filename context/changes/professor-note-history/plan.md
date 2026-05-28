@@ -97,6 +97,9 @@ Create the minimal app-layer foundation needed to open a real student thread wit
 
 ### Phase 2: Student history rendering and inline note creation
 
+Phase boundary note:
+- Phase 1 intentionally pulled forward read-side history rendering on the student thread plus the `createStudentNote()` helper in `src/lib/supervision.ts` as groundwork for this phase. Phase 2 still owns the inline form, controlled write path, and end-to-end note-creation verification.
+
 #### Goal
 
 Deliver the smallest complete professor workflow: open one student, view chronological history, and add a new dated note with short bullet items inline.
@@ -195,25 +198,25 @@ Make the slice implementation stable enough for follow-on work and verify it aga
 ### Phase 1: Professor thread entry and supervision data helpers
 
 #### Automated Verification:
-- [x] 1.1 A focused supervision data-access module exists in `src/lib/` for this slice
-- [x] 1.2 A dedicated professor student-thread route exists and the dashboard links into it
-- [x] 1.3 The placeholder dashboard is replaced or extended with a real thin entry shell
+- [x] 1.1 A focused supervision data-access module exists in `src/lib/` for this slice — d82015c
+- [x] 1.2 A dedicated professor student-thread route exists and the dashboard links into it — d82015c
+- [x] 1.3 The placeholder dashboard is replaced or extended with a real thin entry shell — d82015c
 
 #### Manual Verification:
-- [x] 1.4 A professor can reach one accessible student thread from the protected app shell
-- [x] 1.5 The entry surface stays intentionally thinner than the planned roster slice
+- [x] 1.4 A professor can reach one accessible student thread from the protected app shell — d82015c
+- [x] 1.5 The entry surface stays intentionally thinner than the planned roster slice — d82015c
 
 ### Phase 2: Student history rendering and inline note creation
 
 #### Automated Verification:
-- [ ] 2.1 The app can load one student's chronological history with ordered note items
-- [ ] 2.2 The create-note path writes one note and its ordered items through the app layer
-- [ ] 2.3 The note form supports explicit `info` / `task` rows with stable ordering
+- [x] 2.1 The app can load one student's chronological history with ordered note items
+- [x] 2.2 The create-note path writes one note and its ordered items through the app layer
+- [x] 2.3 The note form supports explicit `info` / `task` rows with stable ordering
 
 #### Manual Verification:
-- [ ] 2.4 Seeded note history renders correctly for a professor-owned student
-- [ ] 2.5 A newly created note appears on the same thread after submit
-- [ ] 2.6 The flow preserves a clear single-thread mental model for the professor
+- [x] 2.4 Seeded note history renders correctly for a professor-owned student
+- [x] 2.5 A newly created note appears on the same thread after submit
+- [x] 2.6 The flow preserves a clear single-thread mental model for the professor
 
 ### Phase 3: Slice hardening, documentation, and verification
 

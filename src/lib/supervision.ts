@@ -10,6 +10,27 @@ import type {
   StudentWithHistory,
 } from "@/lib/database";
 
+function toError(error: unknown, fallbackMessage: string) {
+  if (error instanceof Error) {
+    return error;
+  }
+
+  if (error && typeof error === "object") {
+    const message =
+      "message" in error && typeof error.message === "string" && error.message.length > 0
+        ? error.message
+        : fallbackMessage;
+    const details =
+      "details" in error && typeof error.details === "string" && error.details.length > 0 ? error.details : null;
+    const hint = "hint" in error && typeof error.hint === "string" && error.hint.length > 0 ? error.hint : null;
+    const code = "code" in error && typeof error.code === "string" && error.code.length > 0 ? error.code : null;
+
+    return new Error([message, details, hint, code ? `code: ${code}` : null].filter(Boolean).join(" | "));
+  }
+
+  return new Error(fallbackMessage);
+}
+
 function groupItemsByNoteId(items: NoteItemRow[]) {
   return items.reduce<Map<string, NoteItemRow[]>>((accumulator, item) => {
     const existingItems = accumulator.get(item.note_id);
@@ -31,7 +52,7 @@ export async function listProfessorStudents(supabase: SupabaseClient): Promise<S
     .overrideTypes<StudentRow[], { merge: false }>();
 
   if (studentsError) {
-    throw studentsError;
+    throw toError(studentsError, "Unable to load professor-visible students.");
   }
 
   const students = studentsData;
@@ -48,7 +69,7 @@ export async function listProfessorStudents(supabase: SupabaseClient): Promise<S
     .overrideTypes<Pick<NoteRow, "student_id" | "meeting_date">[], { merge: false }>();
 
   if (notesError) {
-    throw notesError;
+    throw toError(notesError, "Unable to load note summaries for professor-visible students.");
   }
 
   const notes = notesData;
@@ -82,7 +103,7 @@ export async function getStudentHistory(
   const studentError = studentResult.error;
 
   if (studentError) {
-    throw studentError;
+    throw toError(studentError, "Unable to load the selected student.");
   }
 
   const student = studentData;
@@ -99,7 +120,7 @@ export async function getStudentHistory(
     .overrideTypes<NoteRow[], { merge: false }>();
 
   if (notesError) {
-    throw notesError;
+    throw toError(notesError, "Unable to load note history for this student.");
   }
 
   const notes = notesData;
@@ -128,7 +149,7 @@ async function loadNoteItems(supabase: SupabaseClient, noteIds: string[]): Promi
   const noteItemsError = noteItemsResult.error;
 
   if (noteItemsError) {
-    throw noteItemsError;
+    throw toError(noteItemsError, "Unable to load note items for this student.");
   }
 
   return noteItemsData ?? [];
@@ -145,7 +166,7 @@ export async function createStudentNote(supabase: SupabaseClient, input: CreateN
   const noteError = noteResult.error;
 
   if (noteError) {
-    throw noteError;
+    throw toError(noteError, "Unable to create the note row.");
   }
 
   if (!noteData) {
@@ -170,17 +191,16 @@ export async function createStudentNote(supabase: SupabaseClient, input: CreateN
   const noteItemsResult = await supabase
     .from("note_items")
     .insert(noteItemsInput)
-    .select("id, note_id, position, item_type, content, completed_at, completed_by, created_at, updated_at")
-    .order("position", { ascending: true });
+    .select("id, note_id, position, item_type, content, completed_at, completed_by, created_at, updated_at");
   const noteItemsData = noteItemsResult.data;
   const noteItemsError = noteItemsResult.error;
 
   if (noteItemsError) {
-    throw noteItemsError;
+    throw toError(noteItemsError, "Unable to create note items for this note.");
   }
 
   return {
     ...note,
-    items: noteItemsData ?? [],
+    items: (noteItemsData ?? []).sort((left, right) => left.position - right.position),
   } satisfies NoteWithItems;
 }

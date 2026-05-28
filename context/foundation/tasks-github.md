@@ -36,7 +36,7 @@ Current roadmap items:
 - `F-01` foundation, closed on GitHub after implementation
 - `F-02` foundation, implemented locally; GitHub issue status still needs reconciliation
 - `S-01` slice, proposed
-- `S-02` slice, implemented locally; remote issue state still needs reconciliation
+- `S-02` slice, implemented and reconciled across GitHub + Linear
 - `S-03` slice, blocked
 - `S-04` slice, blocked
 - `S-05` slice, blocked
@@ -80,7 +80,7 @@ Current GitHub milestones:
 Current open issue counts:
 
 - `M1 Foundation`: `1` documented open issue pending reconciliation
-- `M2 Professor Core Flow`: `2` documented open issues before S-02 reconciliation
+- `M2 Professor Core Flow`: `1` remaining open issue (`S-01`)
 - `M3 Student Access`: `1`
 - `M4 Shared Collaboration`: `2`
 
@@ -98,7 +98,7 @@ Current GitHub issue state:
   State: `open`
   Labels: `type:slice`, `status:proposed`, `stream:core-professor-flow`
 - `#4` `[S-02] Professor can create a post-meeting note and revisit one student's history`
-  State: `implemented locally; remote close-out still pending on GitHub and Linear`
+  State: `closed on GitHub; done in Linear`
   Labels: `type:slice`, `status:ready`, `stream:core-professor-flow`, `north-star`
 - `#5` `[S-03] Student can sign in and read only their own supervision history`
   State: `open`
@@ -157,7 +157,7 @@ These are still open at the roadmap level and may affect backlog refinement:
 
 `F-02` (`professor-bootstrap`) has a local implementation record in [context/changes/professor-bootstrap/change.md](C:\Users\olguno5421\Documents\GitHub\10xdev\context\changes\professor-bootstrap\change.md) with `status: implemented`. This document now reflects that local state. If GitHub remains the execution backlog, issue `#2` should be closed or updated to match.
 
-`S-02` (`professor-note-history`) now has a local implementation record in [context/changes/professor-note-history/change.md](C:\Users\olguno5421\Documents\GitHub\10xdev\context\changes\professor-note-history\change.md) with Phase 1 and Phase 2 complete and Phase 3 close-out in progress. Once the change is fully closed, issue `#4` and the corresponding Linear item should be updated to match.
+`S-02` (`professor-note-history`) now has a local implementation record in [context/changes/professor-note-history/change.md](C:\Users\olguno5421\Documents\GitHub\10xdev\context\changes\professor-note-history\change.md) and its remote backlog mirrors should stay aligned with that implemented state.
 
 ## Parked Work
 

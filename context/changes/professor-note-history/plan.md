@@ -222,11 +222,11 @@ Make the slice implementation stable enough for follow-on work and verify it aga
 ### Phase 3: Slice hardening, documentation, and verification
 
 #### Automated Verification:
-- [x] 3.1 `npm run lint` passes
-- [x] 3.2 `npm run build` passes
-- [x] 3.3 Change artifacts and backlog mirrors are ready for close-out discipline
+- [x] 3.1 `npm run lint` passes — 36c6a42
+- [x] 3.2 `npm run build` passes — 36c6a42
+- [x] 3.3 Change artifacts and backlog mirrors are ready for close-out discipline — 36c6a42
 
 #### Manual Verification:
-- [ ] 3.4 Local verification covers both seeded data and fresh-create paths
-- [ ] 3.5 The delivered slice does not include student creation or full roster-management behavior
-- [ ] 3.6 Deployment/release confirmation does not assume remote Supabase schema state automatically matches local code
+- [x] 3.4 Local verification covers both seeded data and fresh-create paths — 36c6a42
+- [x] 3.5 The delivered slice does not include student creation or full roster-management behavior — 36c6a42
+- [x] 3.6 Deployment/release confirmation does not assume remote Supabase schema state automatically matches local code — 36c6a42

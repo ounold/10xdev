@@ -1,7 +1,7 @@
 ---
 change_id: professor-note-history
 title: Professor note history
-status: implementing
+status: implemented
 created: 2026-05-28
 updated: 2026-05-28
 archived_at: null

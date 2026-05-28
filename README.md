@@ -198,6 +198,18 @@ To verify the MVP professor bootstrap locally with a hosted Supabase project:
 
 This two-account flow is the expected manual verification path for `professor-bootstrap`.
 
+### Professor note-history verification
+
+To verify the current `professor-note-history` slice against a hosted Supabase project:
+
+1. Sign in as the bootstrap professor and open `/dashboard`.
+2. Confirm at least one student thread is visible. If the hosted project has no students yet, create one manually in Supabase Studio under `public.students` with `professor_profile_id` set to the professor profile id.
+3. Open a student thread and confirm existing notes render in chronological order when present.
+4. Create a fresh dated note with multiple `info` / `task` rows and confirm it appears on the same thread after submit.
+
+Current hosted-project note:
+- the shipped write path verifies professor access with the session client, then persists note writes with the server-side admin client because the hosted Supabase project currently rejects session-client note inserts under RLS. Treat that as a temporary hardening adaptation until the hosted RLS/session-write path is reconciled.
+
 ## Supervision Domain Schema
 
 The MVP now includes a first-pass supervision data model in Supabase:

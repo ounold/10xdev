@@ -34,9 +34,9 @@ Top blocker:
 
 Current roadmap items:
 - `F-01` foundation, closed on GitHub after implementation
-- `F-02` foundation, ready
+- `F-02` foundation, implemented locally; GitHub issue status still needs reconciliation
 - `S-01` slice, proposed
-- `S-02` slice, ready
+- `S-02` slice, implemented locally; remote issue state still needs reconciliation
 - `S-03` slice, blocked
 - `S-04` slice, blocked
 - `S-05` slice, blocked
@@ -79,8 +79,8 @@ Current GitHub milestones:
 
 Current open issue counts:
 
-- `M1 Foundation`: `1`
-- `M2 Professor Core Flow`: `2`
+- `M1 Foundation`: `1` documented open issue pending reconciliation
+- `M2 Professor Core Flow`: `2` documented open issues before S-02 reconciliation
 - `M3 Student Access`: `1`
 - `M4 Shared Collaboration`: `2`
 
@@ -92,13 +92,13 @@ Current GitHub issue state:
   State: `closed`
   Labels at close: `type:foundation`, `status:ready`, `stream:core-professor-flow`, `blocker`
 - `#2` `[F-02] Professor role bootstrap and first-owner setup`
-  State: `open`
+  State: `implemented locally; issue closure/update still pending on GitHub`
   Labels: `type:foundation`, `status:ready`, `stream:core-professor-flow`
 - `#3` `[S-01] Professor can create and browse a student roster`
   State: `open`
   Labels: `type:slice`, `status:proposed`, `stream:core-professor-flow`
 - `#4` `[S-02] Professor can create a post-meeting note and revisit one student's history`
-  State: `open`
+  State: `implemented locally; remote close-out still pending on GitHub and Linear`
   Labels: `type:slice`, `status:ready`, `stream:core-professor-flow`, `north-star`
 - `#5` `[S-03] Student can sign in and read only their own supervision history`
   State: `open`
@@ -152,6 +152,12 @@ These are still open at the roadmap level and may affect backlog refinement:
 - what continuity should mean for note edits in implementation detail
 - what the student onboarding path should be
 - whether task-like bullets and informational bullets need explicit distinction in the data model
+
+## Reconciliation Note
+
+`F-02` (`professor-bootstrap`) has a local implementation record in [context/changes/professor-bootstrap/change.md](C:\Users\olguno5421\Documents\GitHub\10xdev\context\changes\professor-bootstrap\change.md) with `status: implemented`. This document now reflects that local state. If GitHub remains the execution backlog, issue `#2` should be closed or updated to match.
+
+`S-02` (`professor-note-history`) now has a local implementation record in [context/changes/professor-note-history/change.md](C:\Users\olguno5421\Documents\GitHub\10xdev\context\changes\professor-note-history\change.md) with Phase 1 and Phase 2 complete and Phase 3 close-out in progress. Once the change is fully closed, issue `#4` and the corresponding Linear item should be updated to match.
 
 ## Parked Work
 

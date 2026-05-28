@@ -222,9 +222,9 @@ Make the slice implementation stable enough for follow-on work and verify it aga
 ### Phase 3: Slice hardening, documentation, and verification
 
 #### Automated Verification:
-- [ ] 3.1 `npm run lint` passes
-- [ ] 3.2 `npm run build` passes
-- [ ] 3.3 Change artifacts and backlog mirrors are ready for close-out discipline
+- [x] 3.1 `npm run lint` passes
+- [x] 3.2 `npm run build` passes
+- [x] 3.3 Change artifacts and backlog mirrors are ready for close-out discipline
 
 #### Manual Verification:
 - [ ] 3.4 Local verification covers both seeded data and fresh-create paths

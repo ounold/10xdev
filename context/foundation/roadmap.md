@@ -29,9 +29,9 @@ The main blocker is the data model and access rules for professor, student, note
 | ID | Type | Outcome | Status |
 |---|---|---|---|
 | F-01 | foundation | Product data model, migrations, and row-level security for students, notes, and note items | done |
-| F-02 | foundation | Professor role bootstrap and seeded first-owner path | proposed |
+| F-02 | foundation | Professor role bootstrap and seeded first-owner path | done |
 | S-01 | slice | Professor can create and browse a student roster | proposed |
-| S-02 | slice | Professor can create a post-meeting note and revisit one student's history | ready |
+| S-02 | slice | Professor can create a post-meeting note and revisit one student's history | done |
 | S-03 | slice | Student can sign in and read only their own supervision history | blocked |
 | S-04 | slice | Professor and student can update a shared note without losing continuity | blocked |
 | S-05 | slice | Professor and student can mark task-like note items complete | blocked |
@@ -65,7 +65,7 @@ Why it exists:
 ### F-02: Professor role bootstrap and first-owner setup
 
 - Change ID: `professor-bootstrap`
-- Status: `proposed`
+- Status: `done`
 - Type: `foundation`
 - Unlocks: `S-01`, `S-02`, `S-03`
 - PRD refs: `US-01`, `US-05`, `FR-003`, `FR-004`
@@ -99,7 +99,7 @@ Definition of done:
 ### S-02: Professor can create a post-meeting note and revisit one student's history
 
 - Change ID: `professor-note-history`
-- Status: `ready`
+- Status: `done`
 - Depends on: `F-01`, `F-02`
 - PRD refs: `US-01`, `US-05`, `FR-001`, `FR-002`, `FR-004`, `FR-008`
 
@@ -211,13 +211,15 @@ Definition of done:
 | Roadmap ID | Change ID | Status | Why next |
 |---|---|---|---|
 | F-01 | `product-data-model` | done | This is the highest-leverage enabling layer and the main blocker for every real domain slice. |
-| F-02 | `professor-bootstrap` | proposed | This converts generic auth into the professor/student ownership model required by the PRD. |
+| F-02 | `professor-bootstrap` | done | This converted generic auth into the professor/student ownership model required by the PRD. |
 | S-01 | `professor-student-roster` | proposed | This creates the first real professor-facing navigation surface for the product. |
-| S-02 | `professor-note-history` | ready | This is the smallest complete validation milestone for the product promise. |
+| S-02 | `professor-note-history` | done | This is the smallest complete validation milestone for the product promise. |
 | S-03 | `student-read-history` | blocked | This should follow once identity mapping and access rules are encoded safely. |
 | S-04 | `shared-note-updates` | blocked | This depends on a clear continuity model instead of naïve overwrite editing. |
 | S-05 | `note-item-completion` | blocked | This should ship only after note-item identity and shared editing semantics exist. |
 
 ## Done
 
-- **F-01: Product data model, migrations, and row-level security for students, notes, and note items** — Archived 2026-05-27 -> `context/archive/2026-05-26-product-data-model/`. Lesson: —.
+- **F-01: Product data model, migrations, and row-level security for students, notes, and note items** - Archived 2026-05-27 -> `context/archive/2026-05-26-product-data-model/`.
+- **F-02: Professor role bootstrap and first-owner setup** - Implemented 2026-05-27 -> `context/changes/professor-bootstrap/`. Note: local backlog records are reconciled; archive and remote issue closure can follow separately.
+- **S-02: Professor can create a post-meeting note and revisit one student's history** - Implemented 2026-05-28 -> `context/changes/professor-note-history/`. Note: hosted verification currently uses an admin-client write adaptation until the remote Supabase RLS/session-write path is reconciled.

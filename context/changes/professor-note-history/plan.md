@@ -99,6 +99,7 @@ Create the minimal app-layer foundation needed to open a real student thread wit
 
 Phase boundary note:
 - Phase 1 intentionally pulled forward read-side history rendering on the student thread plus the `createStudentNote()` helper in `src/lib/supervision.ts` as groundwork for this phase. Phase 2 still owns the inline form, controlled write path, and end-to-end note-creation verification.
+- The shipped Phase 2 write path verifies professor access with the session client, then persists notes through the admin client because the hosted Supabase project currently rejects session-client note inserts under RLS. Treat this as a documented adaptation, not the final trust model; reconcile the hosted RLS/session-write path in follow-up hardening.
 
 #### Goal
 
@@ -209,14 +210,14 @@ Make the slice implementation stable enough for follow-on work and verify it aga
 ### Phase 2: Student history rendering and inline note creation
 
 #### Automated Verification:
-- [x] 2.1 The app can load one student's chronological history with ordered note items
-- [x] 2.2 The create-note path writes one note and its ordered items through the app layer
-- [x] 2.3 The note form supports explicit `info` / `task` rows with stable ordering
+- [x] 2.1 The app can load one student's chronological history with ordered note items — 27f72c6
+- [x] 2.2 The create-note path writes one note and its ordered items through the app layer — 27f72c6
+- [x] 2.3 The note form supports explicit `info` / `task` rows with stable ordering — 27f72c6
 
 #### Manual Verification:
-- [x] 2.4 Seeded note history renders correctly for a professor-owned student
-- [x] 2.5 A newly created note appears on the same thread after submit
-- [x] 2.6 The flow preserves a clear single-thread mental model for the professor
+- [x] 2.4 Seeded note history renders correctly for a professor-owned student — 27f72c6
+- [x] 2.5 A newly created note appears on the same thread after submit — 27f72c6
+- [x] 2.6 The flow preserves a clear single-thread mental model for the professor — 27f72c6
 
 ### Phase 3: Slice hardening, documentation, and verification
 

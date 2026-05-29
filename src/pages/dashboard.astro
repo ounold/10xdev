@@ -3,9 +3,10 @@ import Layout from "@/layouts/Layout.astro";
 import { listProfessorStudents } from "@/lib/supervision";
 import { createClient } from "@/lib/supabase";
 
-const { user, role } = Astro.locals;
+const { user, role, isLinkedStudent } = Astro.locals;
 const supabase = createClient(Astro.request.headers, Astro.cookies);
-const students = supabase ? await listProfessorStudents(supabase) : [];
+const isStudentDashboard = role === "student" && isLinkedStudent;
+const students = supabase && role === "professor" ? await listProfessorStudents(supabase) : [];
 const searchParams = Astro.url.searchParams;
 const creationError = searchParams.get("creationError");
 const creationReady = searchParams.get("creationReady");
@@ -17,191 +18,256 @@ const draftEmail = searchParams.get("draftEmail") ?? "";
 <Layout title="Dashboard">
   <div class="bg-cosmic min-h-screen p-4 text-white">
     <div class="mx-auto flex max-w-5xl flex-col gap-6 py-10">
-      <section class="rounded-[2rem] border border-white/10 bg-white/8 p-8 backdrop-blur-xl">
-        <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div class="max-w-2xl">
-            <p class="mb-3 text-xs tracking-[0.3em] text-cyan-200/70 uppercase">Professor workspace</p>
-            <h1
-              class="bg-gradient-to-r from-cyan-100 via-sky-100 to-emerald-100 bg-clip-text text-4xl font-semibold text-transparent"
-            >
-              Student threads
-            </h1>
-            <p class="mt-3 text-sm leading-6 text-slate-200/80">
-              Open one supervision thread at a time. This entry surface stays intentionally thin so we can focus on note
-              continuity before the broader roster experience lands.
-            </p>
-          </div>
-          <div class="rounded-2xl border border-white/10 bg-slate-950/20 px-4 py-3 text-sm text-slate-100/80">
-            <p>
-              Signed in as <span class="font-semibold text-white">{user?.email}</span>
-            </p>
-            <p class="mt-1 text-slate-300/70">
-              Current app role: <span class="font-medium text-white">{role ?? "unknown"}</span>
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section class="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(20rem,1fr)]">
-        <div class="rounded-[2rem] border border-white/10 bg-slate-950/25 p-6 backdrop-blur-xl">
-          <div class="mb-5 grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(20rem,0.9fr)]">
-            <div class="rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.08] p-4 text-sm text-emerald-50/90">
-              <p class="font-medium text-white">Student roster home</p>
-              <p class="mt-2 leading-6 text-emerald-50/80">
-                Add a student here, then keep working from the same roster into that student&apos;s thread. This stays
-                intentionally lean: create and browse now, broader management later.
-              </p>
-            </div>
-
-            <form
-              method="POST"
-              action="/api/dashboard/students"
-              class="rounded-2xl border border-white/10 bg-white/[0.04] p-4"
-            >
-              <div class="flex items-start justify-between gap-4">
-                <div>
-                  <p class="text-sm font-medium text-white">Add a student</p>
-                  <p class="mt-1 text-xs leading-5 text-slate-300/75">
-                    Create a professor-owned roster record with the minimum MVP details.
+      {
+        isStudentDashboard ? (
+          <>
+            <section class="rounded-[2rem] border border-white/10 bg-white/8 p-8 backdrop-blur-xl">
+              <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+                <div class="max-w-2xl">
+                  <p class="mb-3 text-xs tracking-[0.3em] text-emerald-200/70 uppercase">Student workspace</p>
+                  <h1 class="bg-gradient-to-r from-emerald-100 via-sky-100 to-cyan-100 bg-clip-text text-4xl font-semibold text-transparent">
+                    Your supervision history
+                  </h1>
+                  <p class="mt-3 text-sm leading-6 text-slate-200/80">
+                    This student dashboard is read-only. Phase 1 opens the correct protected route and the linked
+                    student record, while the dedicated history presentation lands in the next phase.
                   </p>
                 </div>
-                <span
-                  class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] tracking-[0.2em] text-slate-200/75 uppercase"
-                >
-                  MVP
-                </span>
+                <div class="rounded-2xl border border-white/10 bg-slate-950/20 px-4 py-3 text-sm text-slate-100/80">
+                  <p>
+                    Signed in as <span class="font-semibold text-white">{user?.email}</span>
+                  </p>
+                  <p class="mt-1 text-slate-300/70">
+                    Current app role: <span class="font-medium text-white">{role}</span>
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            <section class="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(20rem,1fr)]">
+              <div class="rounded-[2rem] border border-white/10 bg-slate-950/25 p-6 backdrop-blur-xl">
+                <div class="rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.08] p-4 text-sm text-emerald-50/90">
+                  <p class="font-medium text-white">Linked student access confirmed</p>
+                  <p class="mt-2 leading-6 text-emerald-50/80">
+                    The app recognizes this account as a linked student. The dedicated read-only history presentation
+                    will replace this transition view in Phase 2.
+                  </p>
+                </div>
+
+                <div class="mt-5 rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+                  <p class="text-sm font-medium text-white">Phase 1 student route check</p>
+                  <p class="mt-2 text-sm leading-6 text-slate-300/75">
+                    Linked students can now reach the protected dashboard route without seeing the professor roster
+                    controls.
+                  </p>
+                  <p class="mt-3 text-xs leading-5 text-slate-400/80">
+                    This branch intentionally avoids professor roster controls and note-writing actions.
+                  </p>
+                </div>
               </div>
 
-              <div class="mt-4 grid gap-3">
-                <label class="space-y-2">
-                  <span class="text-xs font-medium tracking-[0.2em] text-slate-300/80 uppercase">Full name</span>
-                  <input
-                    type="text"
-                    name="fullName"
-                    value={draftFullName}
-                    placeholder="First Student"
-                    class="w-full rounded-xl border border-white/10 bg-slate-950/50 px-3 py-2 text-sm text-white transition outline-none focus:border-cyan-300/40"
-                    required
-                  />
-                </label>
-
-                <label class="space-y-2">
-                  <span class="text-xs font-medium tracking-[0.2em] text-slate-300/80 uppercase">Email (optional)</span>
-                  <input
-                    type="email"
-                    name="email"
-                    value={draftEmail}
-                    placeholder="student@example.com"
-                    class="w-full rounded-xl border border-white/10 bg-slate-950/50 px-3 py-2 text-sm text-white transition outline-none focus:border-cyan-300/40"
-                  />
-                </label>
-              </div>
-
-              <div class="mt-4 flex items-center justify-between gap-3 border-t border-white/10 pt-4">
-                <p class="text-xs leading-5 text-slate-300/70">
-                  Name is required. Email can stay blank until account linking exists.
+              <aside class="rounded-[2rem] border border-white/10 bg-linear-to-b from-white/10 to-white/[0.03] p-6 backdrop-blur-xl">
+                <p class="text-xs tracking-[0.25em] text-emerald-200/70 uppercase">Phase 1</p>
+                <h2 class="mt-3 text-xl font-semibold text-white">Student route foundation</h2>
+                <p class="mt-3 text-sm leading-6 text-slate-200/75">
+                  Linked students can now reach the protected app surface safely. The next phase will replace this
+                  transition state with the real read-only chronology view.
                 </p>
-                <button
-                  type="submit"
-                  class="rounded-xl border border-cyan-300/20 bg-cyan-300/15 px-4 py-2 text-sm font-medium text-cyan-50 transition hover:bg-cyan-300/25"
-                >
-                  Create student
-                </button>
+                <form method="POST" action="/api/auth/signout" class="mt-6">
+                  <button
+                    type="submit"
+                    class="rounded-xl border border-white/15 bg-white/8 px-4 py-2 text-sm text-white transition hover:bg-white/15"
+                  >
+                    Sign out
+                  </button>
+                </form>
+              </aside>
+            </section>
+          </>
+        ) : (
+          <>
+            <section class="rounded-[2rem] border border-white/10 bg-white/8 p-8 backdrop-blur-xl">
+              <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+                <div class="max-w-2xl">
+                  <p class="mb-3 text-xs tracking-[0.3em] text-cyan-200/70 uppercase">Professor workspace</p>
+                  <h1 class="bg-gradient-to-r from-cyan-100 via-sky-100 to-emerald-100 bg-clip-text text-4xl font-semibold text-transparent">
+                    Student threads
+                  </h1>
+                  <p class="mt-3 text-sm leading-6 text-slate-200/80">
+                    Open one supervision thread at a time. This entry surface stays intentionally thin so we can focus
+                    on note continuity before the broader roster experience lands.
+                  </p>
+                </div>
+                <div class="rounded-2xl border border-white/10 bg-slate-950/20 px-4 py-3 text-sm text-slate-100/80">
+                  <p>
+                    Signed in as <span class="font-semibold text-white">{user?.email}</span>
+                  </p>
+                  <p class="mt-1 text-slate-300/70">
+                    Current app role: <span class="font-medium text-white">{role}</span>
+                  </p>
+                </div>
               </div>
-            </form>
-          </div>
+            </section>
 
-          {
-            creationReady ? (
-              <div class="mb-5 rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.08] p-4 text-sm text-cyan-50/90">
-                {createdStudent
-                  ? `${createdStudent} is now part of the roster.`
-                  : "The student was added to the roster."}
-              </div>
-            ) : null
-          }
+            <section class="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(20rem,1fr)]">
+              <div class="rounded-[2rem] border border-white/10 bg-slate-950/25 p-6 backdrop-blur-xl">
+                <div class="mb-5 grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(20rem,0.9fr)]">
+                  <div class="rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.08] p-4 text-sm text-emerald-50/90">
+                    <p class="font-medium text-white">Student roster home</p>
+                    <p class="mt-2 leading-6 text-emerald-50/80">
+                      Add a student here, then keep working from the same roster into that student&apos;s thread. This
+                      stays intentionally lean: create and browse now, broader management later.
+                    </p>
+                  </div>
 
-          {
-            creationError ? (
-              <div class="mb-5 rounded-2xl border border-rose-300/20 bg-rose-300/[0.08] p-4 text-sm text-rose-50/90">
-                {creationError}
-              </div>
-            ) : null
-          }
-
-          <div class="mb-5 flex items-center justify-between gap-4">
-            <div>
-              <p class="text-sm font-medium text-white">Available student threads</p>
-              <p class="mt-1 text-sm text-slate-300/70">
-                Pick a student to enter their note history. New students appear here immediately after creation.
-              </p>
-            </div>
-            <span class="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs text-cyan-100/80">
-              {students.length} thread{students.length === 1 ? "" : "s"}
-            </span>
-          </div>
-
-          {
-            students.length === 0 ? (
-              <div class="rounded-2xl border border-dashed border-white/15 bg-white/5 p-6 text-sm text-slate-300/75">
-                No supervised students are available yet. Add the first student from the form above, then return here to
-                open their thread.
-              </div>
-            ) : (
-              <ul class="grid gap-3">
-                {students.map((student) => (
-                  <li>
-                    <a
-                      href={`/dashboard/students/${student.id}`}
-                      class="group flex items-center justify-between gap-4 rounded-2xl border border-white/8 bg-white/[0.04] px-4 py-4 transition hover:border-cyan-300/30 hover:bg-cyan-300/[0.08]"
-                    >
+                  <form
+                    method="POST"
+                    action="/api/dashboard/students"
+                    class="rounded-2xl border border-white/10 bg-white/[0.04] p-4"
+                  >
+                    <div class="flex items-start justify-between gap-4">
                       <div>
-                        <p class="font-medium text-white transition group-hover:text-cyan-100">{student.full_name}</p>
-                        <p class="mt-1 text-sm text-slate-300/70">{student.email ?? "No linked email yet"}</p>
-                      </div>
-                      <div class="text-right text-xs text-slate-300/75">
-                        <p>
-                          {student.note_count} note{student.note_count === 1 ? "" : "s"}
-                        </p>
-                        <p class="mt-1">
-                          {student.last_meeting_date ? `Last meeting ${student.last_meeting_date}` : "No meetings yet"}
+                        <p class="text-sm font-medium text-white">Add a student</p>
+                        <p class="mt-1 text-xs leading-5 text-slate-300/75">
+                          Create a professor-owned roster record with the minimum MVP details.
                         </p>
                       </div>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            )
-          }
-        </div>
+                      <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] tracking-[0.2em] text-slate-200/75 uppercase">
+                        MVP
+                      </span>
+                    </div>
 
-        <aside
-          class="rounded-[2rem] border border-white/10 bg-linear-to-b from-white/10 to-white/[0.03] p-6 backdrop-blur-xl"
-        >
-          <p class="text-xs tracking-[0.25em] text-emerald-200/70 uppercase">Phase 2</p>
-          <h2 class="mt-3 text-xl font-semibold text-white">Inline roster flow</h2>
-          <p class="mt-3 text-sm leading-6 text-slate-200/75">
-            This roster stays on one screen: add a student, see the record appear, and move into the existing thread
-            view when you are ready to capture supervision history. Editing, linking, filtering, and broader management
-            behavior still stay out of scope for this slice.
-          </p>
-          <div class="mt-6 rounded-2xl border border-white/10 bg-slate-950/25 p-4 text-sm text-slate-200/80">
-            <p class="font-medium text-white">Phase 2 contract</p>
-            <p class="mt-2 leading-6">
-              Student creation uses the authenticated professor session and returns you to the same dashboard. The list
-              below remains the canonical launch point into `/dashboard/students/[studentId]`.
-            </p>
-          </div>
-          <form method="POST" action="/api/auth/signout" class="mt-6">
-            <button
-              type="submit"
-              class="rounded-xl border border-white/15 bg-white/8 px-4 py-2 text-sm text-white transition hover:bg-white/15"
-            >
-              Sign out
-            </button>
-          </form>
-        </aside>
-      </section>
+                    <div class="mt-4 grid gap-3">
+                      <label class="space-y-2">
+                        <span class="text-xs font-medium tracking-[0.2em] text-slate-300/80 uppercase">Full name</span>
+                        <input
+                          type="text"
+                          name="fullName"
+                          value={draftFullName}
+                          placeholder="First Student"
+                          class="w-full rounded-xl border border-white/10 bg-slate-950/50 px-3 py-2 text-sm text-white transition outline-none focus:border-cyan-300/40"
+                          required
+                        />
+                      </label>
+
+                      <label class="space-y-2">
+                        <span class="text-xs font-medium tracking-[0.2em] text-slate-300/80 uppercase">
+                          Email (optional)
+                        </span>
+                        <input
+                          type="email"
+                          name="email"
+                          value={draftEmail}
+                          placeholder="student@example.com"
+                          class="w-full rounded-xl border border-white/10 bg-slate-950/50 px-3 py-2 text-sm text-white transition outline-none focus:border-cyan-300/40"
+                        />
+                      </label>
+                    </div>
+
+                    <div class="mt-4 flex items-center justify-between gap-3 border-t border-white/10 pt-4">
+                      <p class="text-xs leading-5 text-slate-300/70">
+                        Name is required. Email can stay blank until account linking exists.
+                      </p>
+                      <button
+                        type="submit"
+                        class="rounded-xl border border-cyan-300/20 bg-cyan-300/15 px-4 py-2 text-sm font-medium text-cyan-50 transition hover:bg-cyan-300/25"
+                      >
+                        Create student
+                      </button>
+                    </div>
+                  </form>
+                </div>
+
+                {creationReady ? (
+                  <div class="mb-5 rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.08] p-4 text-sm text-cyan-50/90">
+                    {createdStudent
+                      ? `${createdStudent} is now part of the roster.`
+                      : "The student was added to the roster."}
+                  </div>
+                ) : null}
+
+                {creationError ? (
+                  <div class="mb-5 rounded-2xl border border-rose-300/20 bg-rose-300/[0.08] p-4 text-sm text-rose-50/90">
+                    {creationError}
+                  </div>
+                ) : null}
+
+                <div class="mb-5 flex items-center justify-between gap-4">
+                  <div>
+                    <p class="text-sm font-medium text-white">Available student threads</p>
+                    <p class="mt-1 text-sm text-slate-300/70">
+                      Pick a student to enter their note history. New students appear here immediately after creation.
+                    </p>
+                  </div>
+                  <span class="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs text-cyan-100/80">
+                    {students.length} thread{students.length === 1 ? "" : "s"}
+                  </span>
+                </div>
+
+                {students.length === 0 ? (
+                  <div class="rounded-2xl border border-dashed border-white/15 bg-white/5 p-6 text-sm text-slate-300/75">
+                    No supervised students are available yet. Add the first student from the form above, then return
+                    here to open their thread.
+                  </div>
+                ) : (
+                  <ul class="grid gap-3">
+                    {students.map((student) => (
+                      <li>
+                        <a
+                          href={`/dashboard/students/${student.id}`}
+                          class="group flex items-center justify-between gap-4 rounded-2xl border border-white/8 bg-white/[0.04] px-4 py-4 transition hover:border-cyan-300/30 hover:bg-cyan-300/[0.08]"
+                        >
+                          <div>
+                            <p class="font-medium text-white transition group-hover:text-cyan-100">
+                              {student.full_name}
+                            </p>
+                            <p class="mt-1 text-sm text-slate-300/70">{student.email ?? "No linked email yet"}</p>
+                          </div>
+                          <div class="text-right text-xs text-slate-300/75">
+                            <p>
+                              {student.note_count} note{student.note_count === 1 ? "" : "s"}
+                            </p>
+                            <p class="mt-1">
+                              {student.last_meeting_date
+                                ? `Last meeting ${student.last_meeting_date}`
+                                : "No meetings yet"}
+                            </p>
+                          </div>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              <aside class="rounded-[2rem] border border-white/10 bg-linear-to-b from-white/10 to-white/[0.03] p-6 backdrop-blur-xl">
+                <p class="text-xs tracking-[0.25em] text-emerald-200/70 uppercase">Phase 2</p>
+                <h2 class="mt-3 text-xl font-semibold text-white">Inline roster flow</h2>
+                <p class="mt-3 text-sm leading-6 text-slate-200/75">
+                  This roster stays on one screen: add a student, see the record appear, and move into the existing
+                  thread view when you are ready to capture supervision history. Editing, linking, filtering, and
+                  broader management behavior still stay out of scope for this slice.
+                </p>
+                <div class="mt-6 rounded-2xl border border-white/10 bg-slate-950/25 p-4 text-sm text-slate-200/80">
+                  <p class="font-medium text-white">Phase 2 contract</p>
+                  <p class="mt-2 leading-6">
+                    Student creation uses the authenticated professor session and returns you to the same dashboard. The
+                    list below remains the canonical launch point into `/dashboard/students/[studentId]`.
+                  </p>
+                </div>
+                <form method="POST" action="/api/auth/signout" class="mt-6">
+                  <button
+                    type="submit"
+                    class="rounded-xl border border-white/15 bg-white/8 px-4 py-2 text-sm text-white transition hover:bg-white/15"
+                  >
+                    Sign out
+                  </button>
+                </form>
+              </aside>
+            </section>
+          </>
+        )
+      }
     </div>
   </div>
 </Layout>

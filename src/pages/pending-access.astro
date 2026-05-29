@@ -1,7 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 
-const { user, isLinkedStudent } = Astro.locals;
+const { user, role, isLinkedStudent } = Astro.locals;
 ---
 
 <Layout title="Pending access">
@@ -19,13 +19,29 @@ const { user, isLinkedStudent } = Astro.locals;
       <p class="mt-4 text-sm text-blue-100/70">
         {
           isLinkedStudent
-            ? "This account is linked to a student profile, but the student-facing history view has not shipped yet."
+            ? "This account is linked to a student profile. If you still see this page after signing in, the student history route is not being reached correctly."
             : "This account exists, but it has not been assigned professor access or linked student access yet."
         }
       </p>
       <p class="mt-2 text-sm text-blue-100/50">
         Please contact the professor workspace owner if you believe you should already have access.
       </p>
+      <div class="mt-4 rounded-xl border border-white/10 bg-slate-950/25 p-3 text-left text-xs text-blue-100/70">
+        <p>Debug role: <span class="font-semibold text-white">{role ?? "null"}</span></p>
+        <p class="mt-1">
+          Debug linked student: <span class="font-semibold text-white">{String(isLinkedStudent)}</span>
+        </p>
+      </div>
+      {
+        isLinkedStudent ? (
+          <a
+            href="/dashboard"
+            class="mt-6 inline-flex rounded-lg border border-emerald-300/20 bg-emerald-300/15 px-4 py-2 text-sm text-emerald-50 transition-colors hover:bg-emerald-300/25"
+          >
+            Continue to dashboard
+          </a>
+        ) : null
+      }
       <form method="POST" action="/api/auth/signout" class="mt-6">
         <button
           type="submit"

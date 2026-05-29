@@ -140,6 +140,30 @@ export async function getStudentHistory(
   };
 }
 
+export async function getLinkedStudentHistoryForUser(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<StudentWithHistory | null> {
+  const studentResult = await supabase
+    .from("students")
+    .select("id, professor_profile_id, student_profile_id, full_name, email, created_at, updated_at")
+    .eq("student_profile_id", userId)
+    .maybeSingle<StudentRow>();
+  const studentData = studentResult.data;
+  const studentError = studentResult.error;
+
+  if (studentError) {
+    throw toError(studentError, "Unable to load the linked student record.");
+  }
+
+  const student = studentData;
+  if (!student) {
+    return null;
+  }
+
+  return getStudentHistory(supabase, student.id);
+}
+
 async function loadNoteItems(supabase: SupabaseClient, noteIds: string[]): Promise<NoteItemRow[]> {
   const noteItemsResult = await supabase
     .from("note_items")

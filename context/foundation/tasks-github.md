@@ -35,7 +35,7 @@ Top blocker:
 Current roadmap items:
 - `F-01` foundation, closed on GitHub after implementation
 - `F-02` foundation, reconciled across local backlog docs, GitHub, and Linear
-- `S-01` slice, implemented locally; remote backlog mirrors still need reconciliation
+- `S-01` slice, implemented and reconciled across GitHub + Linear
 - `S-02` slice, implemented and reconciled across GitHub + Linear
 - `S-03` slice, blocked
 - `S-04` slice, blocked
@@ -80,7 +80,7 @@ Current GitHub milestones:
 Current open issue counts:
 
 - `M1 Foundation`: `0` documented open issues pending reconciliation
-- `M2 Professor Core Flow`: `1` documented issue pending reconciliation (`S-01`)
+- `M2 Professor Core Flow`: `0` documented issues pending reconciliation
 - `M3 Student Access`: `1`
 - `M4 Shared Collaboration`: `2`
 
@@ -95,7 +95,7 @@ Current GitHub issue state:
   State: `closed on GitHub; done in Linear`
   Labels: `type:foundation`, `status:ready`, `stream:core-professor-flow`
 - `#3` `[S-01] Professor can create and browse a student roster`
-  State: `implemented locally; GitHub + Linear reconciliation still pending`
+  State: `closed on GitHub; done in Linear`
   Labels: `type:slice`, `status:proposed`, `stream:core-professor-flow`
 - `#4` `[S-02] Professor can create a post-meeting note and revisit one student's history`
   State: `closed on GitHub; done in Linear`
@@ -159,7 +159,7 @@ These are still open at the roadmap level and may affect backlog refinement:
 
 `S-02` (`professor-note-history`) now has a local implementation record in [context/changes/professor-note-history/change.md](C:\Users\olguno5421\Documents\GitHub\10xdev\context\changes\professor-note-history\change.md) and its remote backlog mirrors should stay aligned with that implemented state.
 
-`S-01` (`professor-student-roster`) now has a local implementation record in [context/changes/professor-student-roster/change.md](C:\Users\olguno5421\Documents\GitHub\10xdev\context\changes\professor-student-roster\change.md). The next close-out step is to reconcile GitHub issue `#3` first and then the corresponding Linear issue.
+`S-01` (`professor-student-roster`) is now reconciled across the local implementation record, GitHub issue `#3`, and Linear issue `OUN-7`.
 
 ## Parked Work
 

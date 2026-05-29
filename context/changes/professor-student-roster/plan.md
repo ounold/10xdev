@@ -164,7 +164,7 @@ Stabilize the roster slice, verify it against the hosted Supabase project, and c
 #### Manual verification:
 - [x] The professor can create students successfully against the hosted Supabase project, not just local assumptions. - Phase 3
 - [x] The roster slice still avoids editing, linking, and broader management behavior outside `S-01`. - Phase 3
-- [ ] Close-out does not leave GitHub or Linear behind the local change state.
+- [x] Close-out does not leave GitHub or Linear behind the local change state. - GitHub #3 closed, Linear OUN-7 done
 
 ## Risks and Mitigations
 
@@ -215,4 +215,4 @@ Stabilize the roster slice, verify it against the hosted Supabase project, and c
 #### Manual Verification:
 - [x] 3.4 Hosted Supabase accepts professor-owned student creation through the current shipped write path
 - [x] 3.5 The delivered slice does not include editing, linking, or broader management behavior
-- [ ] 3.6 Local and remote backlog mirrors match the final change state
+- [x] 3.6 Local and remote backlog mirrors match the final change state

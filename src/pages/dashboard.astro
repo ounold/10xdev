@@ -1,18 +1,28 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import { listProfessorStudents } from "@/lib/supervision";
+import { getLinkedStudentHistoryForUser, listProfessorStudents } from "@/lib/supervision";
 import { createClient } from "@/lib/supabase";
 
 const { user, role, isLinkedStudent } = Astro.locals;
 const supabase = createClient(Astro.request.headers, Astro.cookies);
 const isStudentDashboard = role === "student" && isLinkedStudent;
 const students = supabase && role === "professor" ? await listProfessorStudents(supabase) : [];
+const linkedStudentHistory =
+  supabase && user && isStudentDashboard ? await getLinkedStudentHistoryForUser(supabase, user.id) : null;
 const searchParams = Astro.url.searchParams;
 const creationError = searchParams.get("creationError");
 const creationReady = searchParams.get("creationReady");
 const createdStudent = searchParams.get("createdStudent");
 const draftFullName = searchParams.get("draftFullName") ?? "";
 const draftEmail = searchParams.get("draftEmail") ?? "";
+
+function formatMeetingDate(value: string) {
+  return new Date(`${value}T00:00:00`).toLocaleDateString("en-CA", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
 ---
 
 <Layout title="Dashboard">
@@ -47,32 +57,96 @@ const draftEmail = searchParams.get("draftEmail") ?? "";
             <section class="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(20rem,1fr)]">
               <div class="rounded-[2rem] border border-white/10 bg-slate-950/25 p-6 backdrop-blur-xl">
                 <div class="rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.08] p-4 text-sm text-emerald-50/90">
-                  <p class="font-medium text-white">Linked student access confirmed</p>
+                  <p class="font-medium text-white">
+                    {linkedStudentHistory ? linkedStudentHistory.full_name : "Linked student access confirmed"}
+                  </p>
                   <p class="mt-2 leading-6 text-emerald-50/80">
-                    The app recognizes this account as a linked student. The dedicated read-only history presentation
-                    will replace this transition view in Phase 2.
+                    {linkedStudentHistory
+                      ? "This view is read-only and shows only your own supervision history in chronological order."
+                      : "The app recognizes this account as a linked student, but the linked supervision record could not be loaded."}
                   </p>
                 </div>
 
                 <div class="mt-5 rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-                  <p class="text-sm font-medium text-white">Phase 1 student route check</p>
-                  <p class="mt-2 text-sm leading-6 text-slate-300/75">
-                    Linked students can now reach the protected dashboard route without seeing the professor roster
-                    controls.
-                  </p>
-                  <p class="mt-3 text-xs leading-5 text-slate-400/80">
-                    This branch intentionally avoids professor roster controls and note-writing actions.
-                  </p>
+                  <div class="flex items-start justify-between gap-4">
+                    <div>
+                      <p class="text-sm font-medium text-white">Your history</p>
+                      <p class="mt-2 text-sm leading-6 text-slate-300/75">
+                        {linkedStudentHistory
+                          ? "Meeting notes are shown below in reverse chronological order. Informational items stay separate from follow-up tasks."
+                          : "No linked supervision record is available to render yet."}
+                      </p>
+                    </div>
+                    <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-200/80">
+                      {linkedStudentHistory
+                        ? `${linkedStudentHistory.notes.length} note${linkedStudentHistory.notes.length === 1 ? "" : "s"}`
+                        : "0 notes"}
+                    </span>
+                  </div>
+
+                  {linkedStudentHistory ? (
+                    linkedStudentHistory.notes.length === 0 ? (
+                      <div class="mt-5 rounded-2xl border border-dashed border-white/15 bg-slate-950/30 p-5 text-sm text-slate-300/75">
+                        No meeting notes are visible yet for this student record.
+                      </div>
+                    ) : (
+                      <ol class="mt-5 space-y-4">
+                        {linkedStudentHistory.notes.map((note) => (
+                          <li class="rounded-2xl border border-white/10 bg-slate-950/35 p-5">
+                            <div class="flex flex-wrap items-start justify-between gap-3">
+                              <div>
+                                <p class="text-sm font-medium text-white">{formatMeetingDate(note.meeting_date)}</p>
+                                <p class="mt-1 text-xs text-slate-400/80">
+                                  {note.items.length} item{note.items.length === 1 ? "" : "s"}
+                                </p>
+                              </div>
+                              <span class="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs text-cyan-50/80">
+                                Read only
+                              </span>
+                            </div>
+
+                            <ul class="mt-4 space-y-3">
+                              {note.items.map((item) => (
+                                <li class="rounded-xl border border-white/8 bg-white/[0.04] p-3">
+                                  <div class="flex flex-wrap items-center gap-2">
+                                    <span
+                                      class:list={[
+                                        "rounded-full px-2.5 py-1 text-[11px] font-medium tracking-[0.2em] uppercase",
+                                        item.item_type === "task"
+                                          ? "border border-amber-300/25 bg-amber-300/10 text-amber-100"
+                                          : "border border-sky-300/25 bg-sky-300/10 text-sky-100",
+                                      ]}
+                                    >
+                                      {item.item_type}
+                                    </span>
+                                    <span class="text-xs text-slate-400/75">Item {item.position}</span>
+                                  </div>
+                                  <p class="mt-3 text-sm leading-6 text-slate-100/90">{item.content}</p>
+                                </li>
+                              ))}
+                            </ul>
+                          </li>
+                        ))}
+                      </ol>
+                    )
+                  ) : null}
                 </div>
               </div>
 
               <aside class="rounded-[2rem] border border-white/10 bg-linear-to-b from-white/10 to-white/[0.03] p-6 backdrop-blur-xl">
-                <p class="text-xs tracking-[0.25em] text-emerald-200/70 uppercase">Phase 1</p>
-                <h2 class="mt-3 text-xl font-semibold text-white">Student route foundation</h2>
+                <p class="text-xs tracking-[0.25em] text-emerald-200/70 uppercase">Phase 2</p>
+                <h2 class="mt-3 text-xl font-semibold text-white">Read-only history</h2>
                 <p class="mt-3 text-sm leading-6 text-slate-200/75">
-                  Linked students can now reach the protected app surface safely. The next phase will replace this
-                  transition state with the real read-only chronology view.
+                  This student branch now shows a read-only chronology of supervision notes. It intentionally avoids
+                  creation, editing, linking, and completion controls until later slices.
                 </p>
+                <div class="mt-6 rounded-2xl border border-white/10 bg-slate-950/25 p-4 text-sm text-slate-200/80">
+                  <p class="font-medium text-white">Student scope</p>
+                  <p class="mt-2 leading-6">
+                    Only the linked student's own history is visible here. Task-like items are distinguished visually,
+                    but they cannot be changed yet.
+                  </p>
+                </div>
                 <form method="POST" action="/api/auth/signout" class="mt-6">
                   <button
                     type="submit"

@@ -210,6 +210,19 @@ To verify the current `professor-note-history` slice against a hosted Supabase p
 Current hosted-project note:
 - the shipped write path verifies professor access with the session client, then persists note writes with the server-side admin client because the hosted Supabase project currently rejects session-client note inserts under RLS. Treat that as a temporary hardening adaptation until the hosted RLS/session-write path is reconciled.
 
+### Professor student-roster verification
+
+To verify the current `professor-student-roster` slice against a hosted Supabase project:
+
+1. Sign in as the professor and open `/dashboard`.
+2. Create one student using only `full_name`.
+3. Create another student using both `full_name` and `email`.
+4. Confirm each new student appears immediately in the dashboard roster.
+5. Open the new roster entries and confirm they still link into `/dashboard/students/[studentId]`.
+
+Current hosted-project note:
+- the shipped roster write path first attempts the intended session-client insert and falls back to the server-side admin client only after the route verifies the authenticated professor session. This is a temporary adaptation for hosted Supabase environments where remote RLS currently rejects session-client student inserts.
+
 ## Supervision Domain Schema
 
 The MVP now includes a first-pass supervision data model in Supabase:

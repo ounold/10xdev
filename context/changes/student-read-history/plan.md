@@ -1,7 +1,7 @@
 ---
 change_id: student-read-history
 title: Student read history
-status: planned
+status: in_progress
 created: 2026-05-29
 updated: 2026-05-29
 owner: codex
@@ -14,7 +14,7 @@ owner: codex
 - The roadmap still marks `S-03` as blocked, but the original blockers have narrowed now that `S-01` and `S-02` are complete: the remaining real question is the first safe student-facing entry model, not whether the history domain exists at all: [roadmap.md](C:\Users\olguno5421\Documents\GitHub\10xdev\context\foundation\roadmap.md).
 - The data model already supports student identity mapping through `students.student_profile_id`, and RLS already uses that link in `can_access_student()`: [20260526213000_create_supervision_domain.sql](C:\Users\olguno5421\Documents\GitHub\10xdev\supabase\migrations\20260526213000_create_supervision_domain.sql), [20260526215500_enable_supervision_rls.sql](C:\Users\olguno5421\Documents\GitHub\10xdev\supabase\migrations\20260526215500_enable_supervision_rls.sql).
 - Middleware already knows whether the current signed-in user is a linked student through `isLinkedStudent`, but it still routes every non-professor away from `/dashboard` into `pending-access`: [middleware.ts](C:\Users\olguno5421\Documents\GitHub\10xdev\src\middleware.ts), [profile.ts](C:\Users\olguno5421\Documents\GitHub\10xdev\src\lib\profile.ts).
-- The current `pending-access` page is already role-aware enough to distinguish linked students in copy, which makes it a good transition point for tightening unlinked-student behavior without inventing a second temporary surface: [pending-access.astro](C:\Users\olguno5421\Documents\GitHub\10xdev\src\pages\pending-access.astro).
+- The current `pending-access` page is already role-aware enough to explain the unlinked-student state clearly, which makes it a good place to keep the safety gate without inventing a second temporary surface: [pending-access.astro](C:\Users\olguno5421\Documents\GitHub\10xdev\src\pages\pending-access.astro).
 - The professor dashboard and supervision helpers already contain the note-history read path we need conceptually, but that path is professor-oriented and currently renders professor controls plus professor framing: [dashboard.astro](C:\Users\olguno5421\Documents\GitHub\10xdev\src\pages\dashboard.astro), [supervision.ts](C:\Users\olguno5421\Documents\GitHub\10xdev\src\lib\supervision.ts).
 
 ## Key Decisions
@@ -184,34 +184,34 @@ Verify the student slice against hosted auth/linking reality and complete the cl
 ### Phase 1: Role-aware routing and student history read model
 
 #### Automated Verification:
-- [ ] 1.1 Middleware allows linked students through to `/dashboard` without granting professor access
-- [ ] 1.2 The supervision layer exposes a student-safe history read helper
-- [ ] 1.3 Unlinked students still resolve to `pending-access`
+- [x] 1.1 Middleware allows linked students through to `/dashboard` without granting professor access (`ff68994`)
+- [x] 1.2 The supervision layer exposes a student-safe history read helper (`ff68994`)
+- [x] 1.3 Unlinked students still resolve to `pending-access` (`ff68994`)
 
 #### Manual Verification:
-- [ ] 1.4 A linked student account reaches `/dashboard`
-- [ ] 1.5 An unlinked student account still lands on `pending-access`
+- [x] 1.4 A linked student account reaches `/dashboard` (`ff68994`)
+- [x] 1.5 An unlinked student account still lands on `pending-access` (`ff68994`)
 
 ### Phase 2: Student-facing dashboard branch and read-only history UI
 
 #### Automated Verification:
-- [ ] 2.1 `/dashboard` has a student-facing render branch separate from the professor shell
-- [ ] 2.2 The student view renders chronological history from app-layer data
-- [ ] 2.3 The student UI distinguishes `info` and `task` items without exposing write controls
+- [x] 2.1 `/dashboard` has a student-facing render branch separate from the professor shell (`f84ded8`)
+- [x] 2.2 The student view renders chronological history from app-layer data (`f84ded8`)
+- [x] 2.3 The student UI distinguishes `info` and `task` items without exposing write controls (`f84ded8`)
 
 #### Manual Verification:
-- [ ] 2.4 A linked student can sign in and see only their own supervision history
-- [ ] 2.5 The student view is read-only and does not expose professor controls
-- [ ] 2.6 The history remains understandable as one continuous supervision thread
+- [x] 2.4 A linked student can sign in and see only their own supervision history (`f84ded8`)
+- [x] 2.5 The student view is read-only and does not expose professor controls (`f84ded8`)
+- [x] 2.6 The history remains understandable as one continuous supervision thread (`f84ded8`)
 
 ### Phase 3: Hosted verification, documentation, and close-out
 
 #### Automated Verification:
-- [ ] 3.1 `npm run lint` passes
-- [ ] 3.2 `npm run build` passes
-- [ ] 3.3 Change artifacts and close-out trackers are ready for review
+- [x] 3.1 `npm run lint` passes (`3df676b`)
+- [x] 3.2 `npm run build` passes (`3df676b`)
+- [x] 3.3 Change artifacts and close-out trackers are ready for review
 
 #### Manual Verification:
-- [ ] 3.4 One linked student account on hosted Supabase can sign in and see only its own history through `/dashboard`
-- [ ] 3.5 Unlinked student accounts still land on `pending-access`
-- [ ] 3.6 Local and remote backlog mirrors match the final change state
+- [x] 3.4 One linked student account on hosted Supabase can sign in and see only its own history through `/dashboard` (`3df676b`)
+- [x] 3.5 Unlinked student accounts still land on `pending-access` (`3df676b`)
+- [x] 3.6 Local and remote backlog mirrors match the final change state (`3df676b`)

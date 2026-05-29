@@ -48,12 +48,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     const isAllowedLinkedStudent = context.locals.role === "student" && context.locals.isLinkedStudent;
 
     if (context.locals.role !== "professor" && !isAllowedLinkedStudent) {
-      const debugQuery = new URLSearchParams({
-        from: context.url.pathname,
-        debugRole: context.locals.role ?? "null",
-        debugLinkedStudent: String(context.locals.isLinkedStudent),
-      });
-      return context.redirect(`${PENDING_ACCESS_ROUTE}?${debugQuery.toString()}`);
+      return context.redirect(PENDING_ACCESS_ROUTE);
     }
   }
 

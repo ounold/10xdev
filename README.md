@@ -223,6 +223,20 @@ To verify the current `professor-student-roster` slice against a hosted Supabase
 Current hosted-project note:
 - the shipped roster write path first attempts the intended session-client insert and falls back to the server-side admin client only after the route verifies the authenticated professor session. This is a temporary adaptation for hosted Supabase environments where remote RLS currently rejects session-client student inserts.
 
+### Student read-history verification
+
+To verify the current `student-read-history` slice against a hosted Supabase project:
+
+1. Make sure one `public.students` row is linked to a real student profile by setting `student_profile_id` to that student's `profiles.id`.
+2. Sign in with the linked student account and open `/dashboard`.
+3. Confirm the student sees only their own chronological supervision history in a read-only view.
+4. Confirm the student dashboard does not expose professor roster, note-creation, or editing controls.
+5. Sign out and sign in with an unlinked student account.
+6. Confirm the unlinked account still lands on `/pending-access`.
+
+Current hosted-project note:
+- `student-read-history` depends on a real hosted link between `students.student_profile_id` and the student's `profiles.id`. The slice does not provide in-app linking yet; that setup still happens outside the UI.
+
 ## Supervision Domain Schema
 
 The MVP now includes a first-pass supervision data model in Supabase:

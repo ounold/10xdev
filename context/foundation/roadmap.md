@@ -32,7 +32,7 @@ The main blocker is the data model and access rules for professor, student, note
 | F-02 | foundation | Professor role bootstrap and seeded first-owner path | done |
 | S-01 | slice | Professor can create and browse a student roster | done |
 | S-02 | slice | Professor can create a post-meeting note and revisit one student's history | done |
-| S-03 | slice | Student can sign in and read only their own supervision history | blocked |
+| S-03 | slice | Student can sign in and read only their own supervision history | done |
 | S-04 | slice | Professor and student can update a shared note without losing continuity | blocked |
 | S-05 | slice | Professor and student can mark task-like note items complete | blocked |
 
@@ -118,16 +118,15 @@ Definition of done:
 ### S-03: Student can sign in and read only their own supervision history
 
 - Change ID: `student-read-history`
-- Status: `blocked`
+- Status: `done`
 - Depends on: `F-01`, `F-02`, `S-02`
-- Blocked by: student-to-record linking and access policy details
 - PRD refs: `US-02`, `FR-003`, `FR-005`
 
 The student can authenticate and view only their own notes and current supervision context.
 
-Why it is blocked:
-- the app already has generic auth, but not domain-specific identity mapping
-- the exact rule tying a student account to one supervision thread must be encoded in data and policy first
+Why this slice matters:
+- it proves the first student-facing product value without opening shared editing yet
+- it validates that hosted auth, linking, and narrow student visibility work together safely
 
 Definition of done:
 - a student can access only their own note history
@@ -214,7 +213,7 @@ Definition of done:
 | F-02 | `professor-bootstrap` | done | This converted generic auth into the professor/student ownership model required by the PRD. |
 | S-01 | `professor-student-roster` | done | This creates the first real professor-facing navigation surface for the product. |
 | S-02 | `professor-note-history` | done | This is the smallest complete validation milestone for the product promise. |
-| S-03 | `student-read-history` | blocked | This should follow once identity mapping and access rules are encoded safely. |
+| S-03 | `student-read-history` | done | This now proves linked students can access only their own read-only history through the shared dashboard route. |
 | S-04 | `shared-note-updates` | blocked | This depends on a clear continuity model instead of naïve overwrite editing. |
 | S-05 | `note-item-completion` | blocked | This should ship only after note-item identity and shared editing semantics exist. |
 
@@ -224,3 +223,4 @@ Definition of done:
 - **F-02: Professor role bootstrap and first-owner setup** - Implemented 2026-05-27 -> `context/changes/professor-bootstrap/`. Note: local backlog records are reconciled; archive and remote issue closure can follow separately.
 - **S-01: Professor can create and browse a student roster** - Implemented 2026-05-29 -> `context/changes/professor-student-roster/`. Note: hosted verification currently uses a guarded admin-client fallback when remote Supabase rejects session-client student inserts under RLS.
 - **S-02: Professor can create a post-meeting note and revisit one student's history** - Implemented 2026-05-28 -> `context/changes/professor-note-history/`. Note: hosted verification currently uses an admin-client write adaptation until the remote Supabase RLS/session-write path is reconciled.
+- **S-03: Student can sign in and read only their own supervision history** - Implemented 2026-05-29 -> `context/changes/student-read-history/`. Note: hosted verification depends on a real `students.student_profile_id -> profiles.id` link because student linking is still out of scope in the UI.

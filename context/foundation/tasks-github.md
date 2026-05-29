@@ -37,7 +37,7 @@ Current roadmap items:
 - `F-02` foundation, reconciled across local backlog docs, GitHub, and Linear
 - `S-01` slice, implemented and reconciled across GitHub + Linear
 - `S-02` slice, implemented and reconciled across GitHub + Linear
-- `S-03` slice, blocked
+- `S-03` slice, implemented and reconciled across GitHub + Linear
 - `S-04` slice, blocked
 - `S-05` slice, blocked
 
@@ -81,7 +81,7 @@ Current open issue counts:
 
 - `M1 Foundation`: `0` documented open issues pending reconciliation
 - `M2 Professor Core Flow`: `0` documented issues pending reconciliation
-- `M3 Student Access`: `1`
+- `M3 Student Access`: `0` documented issues pending reconciliation
 - `M4 Shared Collaboration`: `2`
 
 ## Current Issue Backlog
@@ -101,7 +101,7 @@ Current GitHub issue state:
   State: `closed on GitHub; done in Linear`
   Labels: `type:slice`, `status:ready`, `stream:core-professor-flow`, `north-star`
 - `#5` `[S-03] Student can sign in and read only their own supervision history`
-  State: `open`
+  State: `closed on GitHub; done in Linear`
   Labels: `type:slice`, `status:blocked`, `stream:student-visibility`
 - `#6` `[S-04] Professor and student can update a shared note without losing continuity`
   State: `open`
@@ -160,6 +160,8 @@ These are still open at the roadmap level and may affect backlog refinement:
 `S-02` (`professor-note-history`) now has a local implementation record in [context/changes/professor-note-history/change.md](C:\Users\olguno5421\Documents\GitHub\10xdev\context\changes\professor-note-history\change.md) and its remote backlog mirrors should stay aligned with that implemented state.
 
 `S-01` (`professor-student-roster`) is now reconciled across the local implementation record, GitHub issue `#3`, and Linear issue `OUN-7`.
+
+`S-03` (`student-read-history`) is now reconciled across the local implementation record, GitHub issue `#5`, and Linear issue `OUN-9`.
 
 ## Parked Work
 

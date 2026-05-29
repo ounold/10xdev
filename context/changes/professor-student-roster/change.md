@@ -1,0 +1,13 @@
+---
+change_id: professor-student-roster
+title: Professor student roster
+status: planned
+created: 2026-05-29
+updated: 2026-05-29
+archived_at: null
+---
+
+## Notes
+
+- Change created during research to assess whether the current codebase is ready for the professor roster slice after `S-02`.
+- Planning confirmed `S-01` should extend the existing professor dashboard with student creation and a clearer roster shell, while preserving the `S-02` thread-entry flow.

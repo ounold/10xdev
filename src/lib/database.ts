@@ -66,3 +66,14 @@ export interface CreateNoteInput {
   updated_by: string;
   items: CreateNoteItemInput[];
 }
+
+export interface CreateStudentInput {
+  professor_profile_id: string;
+  full_name: string;
+  email: string | null;
+}
+
+export interface CreateStudentFormInput {
+  full_name: string;
+  email: string;
+}

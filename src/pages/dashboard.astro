@@ -6,6 +6,9 @@ import { createClient } from "@/lib/supabase";
 const { user, role } = Astro.locals;
 const supabase = createClient(Astro.request.headers, Astro.cookies);
 const students = supabase ? await listProfessorStudents(supabase) : [];
+const searchParams = Astro.url.searchParams;
+const creationError = searchParams.get("creationError");
+const creationReady = searchParams.get("creationReady");
 ---
 
 <Layout title="Dashboard">
@@ -38,11 +41,38 @@ const students = supabase ? await listProfessorStudents(supabase) : [];
 
       <section class="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(20rem,1fr)]">
         <div class="rounded-[2rem] border border-white/10 bg-slate-950/25 p-6 backdrop-blur-xl">
+          <div
+            class="mb-5 rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.08] p-4 text-sm text-emerald-50/90"
+          >
+            <p class="font-medium text-white">Student roster home</p>
+            <p class="mt-2 leading-6 text-emerald-50/80">
+              This dashboard is now the canonical professor roster screen. It already handles thread browsing, and the
+              inline student-creation flow is wired through this same surface in the next phase.
+            </p>
+          </div>
+
+          {
+            creationReady ? (
+              <div class="mb-5 rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.08] p-4 text-sm text-cyan-50/90">
+                The roster creation path is ready. Phase 2 will expose the inline form on this screen.
+              </div>
+            ) : null
+          }
+
+          {
+            creationError ? (
+              <div class="mb-5 rounded-2xl border border-rose-300/20 bg-rose-300/[0.08] p-4 text-sm text-rose-50/90">
+                {creationError}
+              </div>
+            ) : null
+          }
+
           <div class="mb-5 flex items-center justify-between gap-4">
             <div>
               <p class="text-sm font-medium text-white">Available student threads</p>
               <p class="mt-1 text-sm text-slate-300/70">
-                Pick a student to enter their note history. Student creation stays out of this slice.
+                Pick a student to enter their note history. Student creation will live on this same dashboard rather
+                than on a separate roster route.
               </p>
             </div>
             <span class="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs text-cyan-100/80">
@@ -88,11 +118,19 @@ const students = supabase ? await listProfessorStudents(supabase) : [];
           class="rounded-[2rem] border border-white/10 bg-linear-to-b from-white/10 to-white/[0.03] p-6 backdrop-blur-xl"
         >
           <p class="text-xs tracking-[0.25em] text-emerald-200/70 uppercase">Phase 1</p>
-          <h2 class="mt-3 text-xl font-semibold text-white">Thin by design</h2>
+          <h2 class="mt-3 text-xl font-semibold text-white">Roster contract</h2>
           <p class="mt-3 text-sm leading-6 text-slate-200/75">
-            This screen is just enough to open one student thread. It is not the future roster-management surface, and
-            it avoids absorbing student creation, filtering, or admin controls too early.
+            The dashboard remains intentionally simple, but it is now explicitly the home for both student browsing and
+            the upcoming creation flow. Editing, linking, filtering, and broader management behavior still stay out of
+            scope for this slice.
           </p>
+          <div class="mt-6 rounded-2xl border border-white/10 bg-slate-950/25 p-4 text-sm text-slate-200/80">
+            <p class="font-medium text-white">Creation path prepared in Phase 1</p>
+            <p class="mt-2 leading-6">
+              The app-layer write path is reserved for professor-owned student creation through the authenticated
+              session. Phase 2 will connect the inline dashboard form to that path.
+            </p>
+          </div>
           <form method="POST" action="/api/auth/signout" class="mt-6">
             <button
               type="submit"

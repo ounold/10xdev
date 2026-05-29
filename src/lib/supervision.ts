@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type {
   CreateNoteInput,
+  CreateStudentInput,
   NoteItemRow,
   NoteRow,
   NoteWithItems,
@@ -203,4 +204,24 @@ export async function createStudentNote(supabase: SupabaseClient, input: CreateN
     ...note,
     items: (noteItemsData ?? []).sort((left, right) => left.position - right.position),
   } satisfies NoteWithItems;
+}
+
+export async function createProfessorStudent(supabase: SupabaseClient, input: CreateStudentInput): Promise<StudentRow> {
+  const studentResult = await supabase
+    .from("students")
+    .insert(input)
+    .select("id, professor_profile_id, student_profile_id, full_name, email, created_at, updated_at")
+    .single();
+  const studentData = studentResult.data;
+  const studentError = studentResult.error;
+
+  if (studentError) {
+    throw toError(studentError, "Unable to create the student record.");
+  }
+
+  if (!studentData) {
+    throw new Error("Expected student creation to return a row");
+  }
+
+  return studentData satisfies StudentRow;
 }

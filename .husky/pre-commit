@@ -1,1 +1,7 @@
 npx lint-staged
+
+INTEGRATION_RELEVANT_FILES="$(git diff --cached --name-only -- src/lib/supervision.ts src/lib/database.ts tests/integration vitest.config.ts)"
+
+if [ -n "$INTEGRATION_RELEVANT_FILES" ]; then
+  npm run test:integration
+fi

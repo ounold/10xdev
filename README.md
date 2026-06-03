@@ -57,6 +57,7 @@ If `npm run dev` fails inside Codex on Windows with `Access is denied` or `Canno
 - `npm run test:e2e` - Run the critical-path Playwright dashboard role-flow spec against an already-running local server
 - `npm run test:e2e:headed` - Run the same e2e spec with a visible browser
 - `npm run test:e2e:install` - Install the Chromium browser used by the local e2e spec
+- `npm run test:integration` - Run the shared read-model continuity integration checks
 - `npm run lint` - Run ESLint with type-checked rules
 - `npm run lint:fix` - Auto-fix ESLint issues
 - `npm run format` - Run Prettier
@@ -106,6 +107,27 @@ E2E_UNLINKED_STUDENT_PASSWORD=
 ```
 
 If one of those account pairs is missing, the corresponding check is skipped intentionally. A partial green run does not replace hosted verification.
+
+## Testing Continuity and Read-Model Integration
+
+The repository now includes a first integration-level continuity check for the shared supervision read model in [tests/integration/supervision-read-model.test.ts](C:\Users\olguno5421\Documents\GitHub\10xdev\tests\integration\supervision-read-model.test.ts).
+
+Run it like this:
+
+```bash
+npm run test:integration
+```
+
+What it protects:
+- newest-first note ordering
+- same-`meeting_date`, different-`created_at` tie-break behavior
+- item ordering by `position`
+- `info` / `task` semantic preservation through `src/lib/supervision.ts`
+
+Important local note:
+- this suite is intentionally below the browser layer and exercises Supabase-shaped reads with local stubs
+- if `npm run test:integration` fails inside Codex on Windows with config-loading or esbuild filesystem errors, rerun it from a normal PowerShell session outside Codex
+- a green local integration run does not replace hosted smoke for remote Supabase drift
 
 ## Project Structure
 

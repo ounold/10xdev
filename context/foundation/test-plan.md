@@ -6,13 +6,13 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-01
+> Last updated: 2026-06-03
 
 ## 1. Strategy
 
 Tests follow three non-negotiable principles for this project:
 
-1. **Cost × signal.** The cheapest test that gives a real signal for the risk wins. Do not promote to e2e because e2e feels safer. Do not use multimodal review where deterministic checks already catch the regression.
+1. **Cost x signal.** The cheapest test that gives a real signal for the risk wins. Do not promote to e2e because e2e feels safer. Do not use multimodal review where deterministic checks already catch the regression.
 2. **User concerns are first-class evidence.** Access separation and student-only visibility outrank cosmetic regressions because a role leak breaks the product promise directly.
 3. **Risks are scenarios, not code locations.** This plan names failure scenarios and why they are likely. Exact code anchors belong to `/10x-research` inside each rollout phase.
 
@@ -20,9 +20,9 @@ Hot-spot scope used for likelihood weighting: `src/pages/dashboard.astro`, `src/
 
 ## 2. Risk Map
 
-The top failure scenarios this project must protect against, ordered by risk = impact × likelihood. The Source column cites the evidence that surfaced this risk, never a specific code anchor.
+The top failure scenarios this project must protect against, ordered by risk = impact x likelihood. The Source column cites the evidence that surfaced this risk, never a specific code anchor.
 
-| # | Risk (failure scenario) | Impact | Likelihood | Source (evidence — not anchor) |
+| # | Risk (failure scenario) | Impact | Likelihood | Source (evidence - not anchor) |
 |---|---|---|---|---|
 | 1 | An unlinked or wrong student account can reach another student's supervision history | High | High | PRD `US-02`, `FR-003`, `FR-005` | roadmap `S-03` | interview Q1=`access and role separation` |
 | 2 | A linked student is blocked from their own history because auth, linking, and dashboard routing drift apart | High | High | PRD `US-02` | roadmap `S-03` | hot-spot dirs `src/pages/` and `src/lib/` via churn on `dashboard`, `middleware`, `supervision` |
@@ -49,8 +49,8 @@ Each row is a discrete rollout phase that will open its own change folder via `/
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|---|---|---|---|---|---|
 | 1 | Access safety and critical flows | Defend linked/unlinked student access and preserve the professor path | #1, #2, #3, #5 | e2e + smoke | phase 1 complete | `context/changes/testing-access-safety-and-critical-flows/` |
-| 2 | Continuity and read-model integration | Catch chronology and item-semantics regressions at the cheapest app boundary | #4, #5 | integration | not started | — |
-| 3 | Shared-note continuity contract | Establish the first regression net for the upcoming shared-edit slice | #6 | integration + contract | not started | — |
+| 2 | Continuity and read-model integration | Catch chronology and item-semantics regressions at the cheapest app boundary | #4, #5 | integration | planned | `context/changes/testing-continuity-and-read-model-integration/` |
+| 3 | Shared-note continuity contract | Establish the first regression net for the upcoming shared-edit slice | #6 | integration + contract | not started | - |
 
 ## 4. Stack
 
@@ -58,16 +58,16 @@ The classic test base for this project. Recommendations are grounded in local ma
 
 | Layer | Tool | Version | Notes |
 |------|------|------|------|
-| unit + integration | none yet — see Phase 2 | — | No runner is configured in `package.json` today |
-| API mocking | none yet — see Phase 2 | — | Add only if integration work proves the boundary needs isolation |
-| e2e | browser-driven verification first; dedicated runner TBD in Phase 1 | — | Current highest-signal path is real browser flow against localhost + hosted Supabase |
-| accessibility | none yet | — | Not a first-wave priority for this rollout |
-| AI-native | Browser MCP / multimodal review — checked: 2026-06-01 | n/a | Use selectively for high-risk route verification; do not use for routine assertions |
+| unit + integration | Vitest | `^4.1.8` | Minimal repo-local integration runner added in rollout Phase 2 |
+| API mocking | local Supabase-shaped stubs | n/a | Use only at query-shape level; avoid bypassing read-model composition |
+| e2e | Playwright | `^1.60.0` | Current highest-signal browser path is shared `/dashboard` role-flow verification |
+| accessibility | none yet | - | Not a first-wave priority for this rollout |
+| AI-native | Browser MCP / multimodal review - checked: 2026-06-01 | n/a | Use selectively for high-risk route verification; do not use for routine assertions |
 
 **Stack grounding tools (current session):**
-- Docs: none — no dedicated docs MCP used; grounded from repo manifests and config; checked: 2026-06-01
-- Search: Exa.ai available but not needed for this first repo-specific strategy pass; checked: 2026-06-01
-- Runtime/browser: in-app browser available — useful for hosted and localhost auth/path verification; checked: 2026-06-01
+- Docs: none - no dedicated docs MCP used; grounded from repo manifests and config; checked: 2026-06-01
+- Search: Exa.ai available but not needed for this repo-specific strategy pass; checked: 2026-06-01
+- Runtime/browser: in-app browser available - useful for hosted and localhost auth/path verification; checked: 2026-06-01
 - Provider/platform: GitHub and Linear available; Supabase is verified through repo runtime and hosted manual checks rather than a dedicated MCP; checked: 2026-06-01
 
 ## 5. Quality Gates
@@ -85,15 +85,47 @@ The full set of gates that must pass before a change reaches production.
 
 ## 6. Cookbook Patterns
 
-How to add new tests in this project. Each sub-section is filled in once the relevant rollout phase ships; before that, the sub-section reads "TBD — see §3 Phase <N>."
+How to add new tests in this project. Each sub-section is filled in once the relevant rollout phase ships; before that, the sub-section reads "TBD - see §3 Phase <N>."
 
 ### 6.1 Adding a unit test
 
-TBD — see §3 Phase 2.
+TBD - see §3 Phase 2.
 
 ### 6.2 Adding an integration test
 
-TBD — see §3 Phase 2.
+Use integration tests when the risk lives in read-model composition, ordering, or provider-shaped boundary behavior, but does not require browser navigation or real hosted auth.
+
+Current convention:
+- put integration specs under `tests/integration/`
+- keep small support doubles under `tests/integration/support/`
+- wire the runner through `package.json`
+- use `vitest.config.ts` for repo-local integration setup
+
+Run sequence:
+1. Run `npm run test:integration`.
+2. If the command fails inside Codex on Windows with config-loading or esbuild filesystem errors, rerun it from a normal PowerShell session outside Codex.
+
+What to stub:
+- preserve the shape of Supabase-style chained reads such as `.from()`, `.select()`, `.eq()`, `.in()`, `.order()`, and `.maybeSingle()`
+- return realistic row payloads, including ordering fields like `meeting_date`, `created_at`, and `position`
+- avoid bypassing the read-model helper by constructing the final expected output directly
+
+What to assert:
+- ordering contracts that matter to users
+- semantic fields that must survive unchanged through the read model
+- empty or missing-record cases that affect route or view behavior later
+
+When integration is the right layer:
+- the same helper output feeds multiple UI surfaces
+- browser rendering would be more brittle than the underlying continuity contract
+- the failure mode is composition drift, not click-flow drift
+
+Current shipped example:
+- `tests/integration/supervision-read-model.test.ts`
+
+Hosted caveat:
+- local integration green does not replace hosted smoke when the feature depends on remote Supabase link state, RLS behavior, or data-shape drift
+- keep hosted verification explicit in README and rollout notes
 
 ### 6.3 Adding an e2e test
 
@@ -153,20 +185,20 @@ In those cases, pair the local Playwright spec with the hosted smoke checklist f
 
 ### 6.5 Adding a test for shared note continuity
 
-TBD — see §3 Phase 3.
+TBD - see §3 Phase 3.
 
 ## 7. What We Deliberately Don't Test
 
 Exclusions agreed during the rollout.
 
-- **Cosmetic styling and theme polish** — not part of the first rollout because the current highest-risk failures are access and continuity, not presentation. Re-evaluate if visual churn starts causing real regressions. (Source: interview Q3.)
-- **Broad visual regression across every screen** — too expensive for the current stage; reserve visual checks for critical auth/dashboard flows only if classic assertions miss meaningful defects. Re-evaluate if UI density increases. (Source: interview Q3.)
-- **Infrastructure/deploy mechanics beyond hosted smoke** — this rollout focuses on product-risk behavior, not full platform test automation. Re-evaluate if release issues start coming from Worker or deploy plumbing. (Source: interview Q3.)
+- **Cosmetic styling and theme polish** - not part of the first rollout because the current highest-risk failures are access and continuity, not presentation. Re-evaluate if visual churn starts causing real regressions. (Source: interview Q3.)
+- **Broad visual regression across every screen** - too expensive for the current stage; reserve visual checks for critical auth/dashboard flows only if classic assertions miss meaningful defects. Re-evaluate if UI density increases. (Source: interview Q3.)
+- **Infrastructure/deploy mechanics beyond hosted smoke** - this rollout focuses on product-risk behavior, not full platform test automation. Re-evaluate if release issues start coming from Worker or deploy plumbing. (Source: interview Q3.)
 
 ## 8. Freshness Ledger
 
-- Strategy (§1-§5) last reviewed: 2026-06-01
-- Stack versions last verified: 2026-06-01
+- Strategy (§1-§5) last reviewed: 2026-06-03
+- Stack versions last verified: 2026-06-03
 - AI-native tool references last verified: 2026-06-01
 
 Refresh (`/10x-test-plan --refresh`) when:

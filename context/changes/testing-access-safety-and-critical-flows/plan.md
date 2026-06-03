@@ -149,9 +149,9 @@ Make the first rollout operationally usable by preserving the hosted verificatio
 ### Phase 2: Encode hosted smoke guidance and professor sentinel expectations
 
 #### Automated Verification:
-- [ ] 2.1 Record the local command and location convention for the new critical-path spec
-- [ ] 2.2 Update the Phase 1 cookbook path in `context/foundation/test-plan.md`
+- [x] 2.1 Record the local command and location convention for the new critical-path spec
+- [x] 2.2 Update the Phase 1 cookbook path in `context/foundation/test-plan.md`
 
 #### Manual Verification:
-- [ ] 2.3 Confirm the linked/unlinked/professor verification path is reproducible from repo docs and the new spec
-- [ ] 2.4 Confirm hosted smoke remains an explicit gate rather than an implied one
+- [x] 2.3 Confirm the linked/unlinked/professor verification path is reproducible from repo docs and the new spec
+- [x] 2.4 Confirm hosted smoke remains an explicit gate rather than an implied one

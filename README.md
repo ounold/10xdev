@@ -54,9 +54,58 @@ If `npm run dev` fails inside Codex on Windows with `Access is denied` or `Canno
 - `npm run dev` - Start development server (Cloudflare workerd runtime)
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build
+- `npm run test:e2e` - Run the critical-path Playwright dashboard role-flow spec against an already-running local server
+- `npm run test:e2e:headed` - Run the same e2e spec with a visible browser
+- `npm run test:e2e:install` - Install the Chromium browser used by the local e2e spec
 - `npm run lint` - Run ESLint with type-checked rules
 - `npm run lint:fix` - Auto-fix ESLint issues
 - `npm run format` - Run Prettier
+
+## Testing Access Safety and Critical Flows
+
+The repository now includes a first browser-level regression check for the shared `/dashboard` route in [tests/e2e/dashboard-role-flow.spec.ts](C:\Users\olguno5421\Documents\GitHub\10xdev\tests\e2e\dashboard-role-flow.spec.ts).
+
+Run it like this:
+
+1. Start the local server first:
+
+```bash
+npm run dev
+```
+
+2. In a second shell, run the e2e spec:
+
+```bash
+npm run test:e2e
+```
+
+Important local note:
+- the Playwright setup intentionally does not start Astro for you
+- in this Windows/Codex environment, Playwright-managed `npm run dev` was not reliable
+- if no server is already listening on `http://127.0.0.1:4321`, the spec will fail with `ERR_CONNECTION_REFUSED`
+
+### Local dashboard role-flow coverage
+
+Without any extra credentials, the spec always proves:
+- unauthenticated `/dashboard` requests redirect to `/auth/signin`
+
+If you also provide role-specific test credentials in `.env` or `.dev.vars`, the same spec can additionally verify:
+- unlinked student -> `/pending-access`
+- linked student -> read-only `/dashboard`
+- professor -> roster visibility plus thread-entry sentinel
+
+Supported variables:
+
+```bash
+E2E_PROFESSOR_EMAIL=
+E2E_PROFESSOR_PASSWORD=
+E2E_LINKED_STUDENT_EMAIL=
+E2E_LINKED_STUDENT_PASSWORD=
+E2E_UNLINKED_STUDENT_EMAIL=
+E2E_UNLINKED_STUDENT_PASSWORD=
+```
+
+If one of those account pairs is missing, the corresponding check is skipped intentionally. A partial green run does not replace hosted verification.
 
 ## Project Structure
 
@@ -236,6 +285,30 @@ To verify the current `student-read-history` slice against a hosted Supabase pro
 
 Current hosted-project note:
 - `student-read-history` depends on a real hosted link between `students.student_profile_id` and the student's `profiles.id`. The slice does not provide in-app linking yet; that setup still happens outside the UI.
+
+### Hosted smoke for dashboard role-flow checks
+
+Use this when local `npm run test:e2e` is green and you still need to confirm the hosted auth/linking reality behind the same shared `/dashboard` seam.
+
+1. Linked student check
+   - sign in with a hosted account whose `profiles.id` is already linked through `public.students.student_profile_id`
+   - open `/dashboard`
+   - confirm the account sees only its own read-only supervision history
+   - confirm no professor roster or note-creation controls are visible
+
+2. Unlinked student check
+   - sign in with a hosted student account that has no matching `public.students.student_profile_id`
+   - open `/dashboard`
+   - confirm the account lands on `/pending-access`
+
+3. Professor sentinel check
+   - sign in as the hosted professor
+   - open `/dashboard`
+   - confirm the roster is visible
+   - open one student thread
+   - confirm the thread still renders its chronological history
+
+Treat these hosted checks as required smoke, not optional confidence polish. The local e2e spec protects the route contract, but it cannot prove remote Supabase link state by itself.
 
 ## Supervision Domain Schema
 

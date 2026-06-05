@@ -2,14 +2,13 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { expect, test } from "@playwright/test";
-
-const defaultStorageStatePath = ".auth/linked-student-olgierd.json";
+import { defaultLinkedStudentStorageStatePath } from "./support/linkedStudentFixture";
 
 test("linked student can edit their own shared note without seeing professor-only surfaces", async ({
   baseURL,
   browser,
 }) => {
-  const storageStatePath = process.env.E2E_LINKED_STUDENT_STORAGE_STATE ?? defaultStorageStatePath;
+  const storageStatePath = process.env.E2E_LINKED_STUDENT_STORAGE_STATE ?? defaultLinkedStudentStorageStatePath;
 
   test.skip(!fs.existsSync(storageStatePath), `Missing storageState fixture: ${storageStatePath}`);
 

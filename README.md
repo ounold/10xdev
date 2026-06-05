@@ -81,6 +81,7 @@ npm run test:e2e
 ```
 
 Important local note:
+
 - the Playwright setup intentionally does not start Astro for you
 - in this Windows/Codex environment, Playwright-managed `npm run dev` was not reliable
 - if no server is already listening on `http://127.0.0.1:4321`, the spec will fail with `ERR_CONNECTION_REFUSED`
@@ -88,9 +89,11 @@ Important local note:
 ### Local dashboard role-flow coverage
 
 Without any extra credentials, the spec always proves:
+
 - unauthenticated `/dashboard` requests redirect to `/auth/signin`
 
 If you also provide role-specific test credentials in `.env` or `.dev.vars`, the same spec can additionally verify:
+
 - unlinked student -> `/pending-access`
 - linked student -> read-only `/dashboard`
 - professor -> roster visibility plus thread-entry sentinel
@@ -108,6 +111,43 @@ E2E_UNLINKED_STUDENT_PASSWORD=
 
 If one of those account pairs is missing, the corresponding check is skipped intentionally. A partial green run does not replace hosted verification.
 
+### Stored Playwright auth states in this repo
+
+Before assuming a browser-level check needs fresh credentials, inspect the repo-local `.auth/` directory.
+
+Current repo-specific fixtures:
+
+- `.auth/user.json` - saved Playwright `storageState` for a professor session on `http://127.0.0.1:4321`
+- `.auth/linked-student-olgierd.json` - saved Playwright `storageState` for one linked student session
+- `.auth/linked-student-olgierd.meta.json` - companion metadata for the linked-student fixture, including own and foreign student ids used by cross-student access checks
+
+Important usage note:
+
+- these saved states are not wired into every existing spec automatically
+- `tests/e2e/dashboard-role-flow.spec.ts` still uses `E2E_*_EMAIL` / `E2E_*_PASSWORD`
+- `tests/e2e/linked-student-foreign-thread.spec.ts` already uses a repo-local `storageState` fixture by default
+- `tests/e2e/linked-student-note-edit.spec.ts` and `tests/e2e/linked-student-note-append.spec.ts` can also reuse that linked-student fixture through `E2E_LINKED_STUDENT_STORAGE_STATE`
+- `tests/e2e/linked-student-foreign-note-post.spec.ts` can derive a real foreign note id from the saved professor fixture in `.auth/user.json`
+
+Agent rule for this repository:
+
+- before concluding that professor or student E2E verification is blocked on missing credentials, check whether an appropriate `.auth/*.json` Playwright state already exists and whether the target spec can use it directly or with a small test-only adaptation
+
+### Shared-note continuity E2E coverage
+
+The repo now includes linked-student browser checks around the shared-note continuity slice:
+
+- `tests/e2e/linked-student-note-edit.spec.ts` - linked student can update an existing shared note without seeing professor-only surfaces
+- `tests/e2e/linked-student-note-append.spec.ts` - linked student can append a new item at the tail of a shared note and the spec restores state afterward
+- `tests/e2e/linked-student-foreign-thread.spec.ts` - linked student cannot open another student's thread by direct URL
+- `tests/e2e/linked-student-foreign-note-post.spec.ts` - linked student cannot submit direct POST updates to another student's note id
+
+Recommended local run for this slice:
+
+```bash
+npx playwright test tests/e2e/linked-student-note-edit.spec.ts tests/e2e/linked-student-note-append.spec.ts tests/e2e/linked-student-foreign-thread.spec.ts tests/e2e/linked-student-foreign-note-post.spec.ts
+```
+
 ## Testing Continuity and Read-Model Integration
 
 The repository now includes a first integration-level continuity check for the shared supervision read model in [tests/integration/supervision-read-model.test.ts](C:\Users\olguno5421\Documents\GitHub\10xdev\tests\integration\supervision-read-model.test.ts).
@@ -119,12 +159,14 @@ npm run test:integration
 ```
 
 What it protects:
+
 - newest-first note ordering
 - same-`meeting_date`, different-`created_at` tie-break behavior
 - item ordering by `position`
 - `info` / `task` semantic preservation through `src/lib/supervision.ts`
 
 Important local note:
+
 - this suite is intentionally below the browser layer and exercises Supabase-shaped reads with local stubs
 - if `npm run test:integration` fails inside Codex on Windows with config-loading or esbuild filesystem errors, rerun it from a normal PowerShell session outside Codex
 - a green local integration run does not replace hosted smoke for remote Supabase drift
@@ -279,6 +321,7 @@ To verify the current `professor-note-history` slice against a hosted Supabase p
 4. Create a fresh dated note with multiple `info` / `task` rows and confirm it appears on the same thread after submit.
 
 Current hosted-project note:
+
 - the shipped write path verifies professor access with the session client, then persists note writes with the server-side admin client because the hosted Supabase project currently rejects session-client note inserts under RLS. Treat that as a temporary hardening adaptation until the hosted RLS/session-write path is reconciled.
 
 ### Professor student-roster verification
@@ -292,6 +335,7 @@ To verify the current `professor-student-roster` slice against a hosted Supabase
 5. Open the new roster entries and confirm they still link into `/dashboard/students/[studentId]`.
 
 Current hosted-project note:
+
 - the shipped roster write path first attempts the intended session-client insert and falls back to the server-side admin client only after the route verifies the authenticated professor session. This is a temporary adaptation for hosted Supabase environments where remote RLS currently rejects session-client student inserts.
 
 ### Student read-history verification
@@ -306,6 +350,7 @@ To verify the current `student-read-history` slice against a hosted Supabase pro
 6. Confirm the unlinked account still lands on `/pending-access`.
 
 Current hosted-project note:
+
 - `student-read-history` depends on a real hosted link between `students.student_profile_id` and the student's `profiles.id`. The slice does not provide in-app linking yet; that setup still happens outside the UI.
 
 ### Hosted smoke for dashboard role-flow checks
@@ -329,6 +374,8 @@ Use this when local `npm run test:e2e` is green and you still need to confirm th
    - confirm the roster is visible
    - open one student thread
    - confirm the thread still renders its chronological history
+
+For local browser-level verification, the repo also carries a saved professor Playwright state in `.auth/user.json`. Prefer checking that fixture before asking for fresh professor credentials.
 
 Treat these hosted checks as required smoke, not optional confidence polish. The local e2e spec protects the route contract, but it cannot prove remote Supabase link state by itself.
 

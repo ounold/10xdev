@@ -1,29 +1,15 @@
-// Origin: Risk #1 from context/foundation/test-plan.md.
-// Protects against a linked student reaching another student's supervision history by direct URL.
 import fs from "node:fs";
 import path from "node:path";
 
 import { expect, test } from "@playwright/test";
+import { defaultLinkedStudentStorageStatePath, readLinkedStudentFixtureMeta } from "./support/linkedStudentFixture";
 
-interface LinkedStudentFixtureMeta {
-  foreignStudentId?: string;
-}
-
-const defaultStorageStatePath = ".auth/linked-student-olgierd.json";
-const defaultMetaPath = ".auth/linked-student-olgierd.meta.json";
-
-function readFixtureMeta() {
-  const metaPath = process.env.E2E_LINKED_STUDENT_META_PATH ?? defaultMetaPath;
-  if (!fs.existsSync(metaPath)) {
-    return {};
-  }
-
-  return JSON.parse(fs.readFileSync(metaPath, "utf8")) as LinkedStudentFixtureMeta;
-}
+// Origin: Risk #1 from context/foundation/test-plan.md.
+// Protects against a linked student reaching another student's supervision history by direct URL.
 
 test("linked student cannot open another student's thread by direct URL", async ({ baseURL, browser }) => {
-  const storageStatePath = process.env.E2E_LINKED_STUDENT_STORAGE_STATE ?? defaultStorageStatePath;
-  const meta = readFixtureMeta();
+  const storageStatePath = process.env.E2E_LINKED_STUDENT_STORAGE_STATE ?? defaultLinkedStudentStorageStatePath;
+  const meta = readLinkedStudentFixtureMeta();
   const foreignStudentId = process.env.E2E_FOREIGN_STUDENT_ID ?? meta.foreignStudentId;
 
   test.skip(!fs.existsSync(storageStatePath), `Missing storageState fixture: ${storageStatePath}`);

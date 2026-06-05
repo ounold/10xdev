@@ -70,6 +70,8 @@ export interface AppendNoteItemInput {
   content: string;
 }
 
+export type TaskCompletionState = "complete" | "incomplete";
+
 export interface CreateNoteInput {
   student_id: string;
   meeting_date: string;
@@ -86,6 +88,13 @@ export interface UpdateNoteInput {
   updated_by: string;
   existing_items: UpdateExistingNoteItemInput[];
   new_items: AppendNoteItemInput[];
+}
+
+export interface SetTaskCompletionInput {
+  note_id: string;
+  note_item_id: string;
+  completed_by: string;
+  state: TaskCompletionState;
 }
 
 export interface CreateStudentInput {

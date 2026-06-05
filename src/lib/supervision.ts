@@ -10,6 +10,7 @@ import type {
   StudentRow,
   StudentThreadSummary,
   StudentWithHistory,
+  SetTaskCompletionInput,
   UpdateNoteInput,
 } from "@/lib/database";
 
@@ -338,6 +339,52 @@ export async function updateStudentNote(supabase: SupabaseClient, input: UpdateN
     ...updatedNoteData,
     items: sortItemsByPosition(latestItems),
   } satisfies NoteWithItems;
+}
+
+export async function setTaskCompletion(supabase: SupabaseClient, input: SetTaskCompletionInput): Promise<NoteItemRow> {
+  const { data: existingItem, error: itemLookupError } = await supabase
+    .from("note_items")
+    .select("id, note_id, position, item_type, content, completed_at, completed_by, created_at, updated_at")
+    .eq("id", input.note_item_id)
+    .eq("note_id", input.note_id)
+    .maybeSingle<NoteItemRow>();
+
+  if (itemLookupError) {
+    throw toError(itemLookupError, "Unable to load the selected note item.");
+  }
+
+  if (!existingItem) {
+    throw new Error("The selected note item is not accessible.");
+  }
+
+  if (existingItem.item_type !== "task") {
+    throw new Error("Only task items can change completion state.");
+  }
+
+  const completionPatch =
+    input.state === "complete"
+      ? {
+          completed_at: new Date().toISOString(),
+          completed_by: input.completed_by,
+        }
+      : {
+          completed_at: null,
+          completed_by: null,
+        };
+
+  const { data: updatedItem, error: itemUpdateError } = await supabase
+    .from("note_items")
+    .update(completionPatch)
+    .eq("id", input.note_item_id)
+    .eq("note_id", input.note_id)
+    .select("id, note_id, position, item_type, content, completed_at, completed_by, created_at, updated_at")
+    .single<NoteItemRow>();
+
+  if (itemUpdateError) {
+    throw toError(itemUpdateError, "Unable to update task completion state.");
+  }
+
+  return updatedItem;
 }
 
 export async function createProfessorStudent(supabase: SupabaseClient, input: CreateStudentInput): Promise<StudentRow> {

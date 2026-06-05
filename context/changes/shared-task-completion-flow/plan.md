@@ -220,14 +220,14 @@ Allow the linked student to use the same durable task-completion contract while 
 
 #### Automated Verification:
 
-- [ ] 2.1 Add a professor-facing completion route that delegates to the shared helper
-- [ ] 2.2 Render visual completion state plus `Completed by ... on ...` metadata in the professor thread
-- [ ] 2.3 Keep `info` items free of completion controls
+- [x] 2.1 Add a professor-facing completion route that delegates to the shared helper
+- [x] 2.2 Render visual completion state plus `Completed by ... on ...` metadata in the professor thread
+- [x] 2.3 Keep `info` items free of completion controls
 
 #### Manual Verification:
 
-- [ ] 2.4 Confirm a professor can complete and reopen a task directly from the thread view
-- [ ] 2.5 Confirm completion reads clearly without implying a larger task-inbox workflow
+- [x] 2.4 Confirm a professor can complete and reopen a task directly from the thread view
+- [x] 2.5 Confirm completion reads clearly without implying a larger task-inbox workflow
 
 ### Phase 3: Open the same completion contract to the linked student branch and verify boundaries
 

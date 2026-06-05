@@ -194,27 +194,27 @@ Allow the assigned student to edit their own note through the same app-layer con
 
 #### Automated Verification:
 
-- [x] 1.1 Add note/item update payload types and a shared app-layer update path
-- [x] 1.2 Extend integration test support and prove stable item identity survives edits
-- [x] 1.3 Keep immutable note fields and no-delete semantics enforced in the first contract
+- [x] 1.1 Add note/item update payload types and a shared app-layer update path - c5b963d
+- [x] 1.2 Extend integration test support and prove stable item identity survives edits - c5b963d
+- [x] 1.3 Keep immutable note fields and no-delete semantics enforced in the first contract - c5b963d
 
 #### Manual Verification:
 
-- [x] 1.4 Confirm the update contract is not a wholesale rewrite of the item set
-- [x] 1.5 Confirm the contract leaves task completion work cleanly for the next slice
+- [x] 1.4 Confirm the update contract is not a wholesale rewrite of the item set - c5b963d
+- [x] 1.5 Confirm the contract leaves task completion work cleanly for the next slice - c5b963d
 
 ### Phase 2: Expose professor note editing with visible continuity metadata
 
 #### Automated Verification:
 
-- [ ] 2.1 Generalize the note form to carry existing item ids for edit flows
-- [ ] 2.2 Add a professor-facing note update route that delegates to the shared contract
-- [ ] 2.3 Render note-level continuity metadata and preserve note creation behavior
+- [x] 2.1 Generalize the note form to carry existing item ids for edit flows
+- [x] 2.2 Add a professor-facing note update route that delegates to the shared contract
+- [x] 2.3 Render note-level continuity metadata and preserve note creation behavior
 
 #### Manual Verification:
 
-- [ ] 2.4 Confirm the professor thread still reads coherently after editing an existing note
-- [ ] 2.5 Confirm the UI does not imply delete or completion behavior that is not yet supported
+- [x] 2.4 Confirm the professor thread still reads coherently after editing an existing note
+- [x] 2.5 Confirm the UI does not imply delete or completion behavior that is not yet supported
 
 ### Phase 3: Open the same shared update contract to the linked student branch
 

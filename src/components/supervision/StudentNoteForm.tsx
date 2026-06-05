@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 
 interface NoteItemDraft {
   id: string;
+  persistedId?: string;
   itemType: NoteItemType;
   content: string;
 }
@@ -12,6 +13,14 @@ interface NoteItemDraft {
 interface Props {
   action: string;
   defaultMeetingDate: string;
+  defaultItems?: {
+    id?: string;
+    itemType: NoteItemType;
+    content: string;
+  }[];
+  noteId?: string;
+  meetingDateReadOnly?: boolean;
+  mode?: "create" | "edit";
 }
 
 interface FormErrors {
@@ -27,15 +36,36 @@ function createDraft(itemType: NoteItemType = "info"): NoteItemDraft {
   };
 }
 
-export default function StudentNoteForm({ action, defaultMeetingDate }: Props) {
+function createDraftFromDefault(item: { id?: string; itemType: NoteItemType; content: string }): NoteItemDraft {
+  return {
+    id: crypto.randomUUID(),
+    persistedId: item.id,
+    itemType: item.itemType,
+    content: item.content,
+  };
+}
+
+export default function StudentNoteForm({
+  action,
+  defaultMeetingDate,
+  defaultItems,
+  noteId,
+  meetingDateReadOnly = false,
+  mode = "create",
+}: Props) {
   const [meetingDate, setMeetingDate] = useState(defaultMeetingDate);
-  const [items, setItems] = useState<NoteItemDraft[]>([createDraft("info"), createDraft("task")]);
+  const [items, setItems] = useState<NoteItemDraft[]>(
+    defaultItems && defaultItems.length > 0
+      ? defaultItems.map((item) => createDraftFromDefault(item))
+      : [createDraft("info"), createDraft("task")],
+  );
   const [errors, setErrors] = useState<FormErrors>({});
 
   const serializedItems = useMemo(
     () =>
       JSON.stringify(
         items.map((item) => ({
+          id: item.persistedId,
           item_type: item.itemType,
           content: item.content.trim(),
         })),
@@ -63,9 +93,10 @@ export default function StudentNoteForm({ action, defaultMeetingDate }: Props) {
   }
 
   function removeItem(id: string) {
-    setItems((currentItems) =>
-      currentItems.length > 1 ? currentItems.filter((item) => item.id !== id) : currentItems,
-    );
+    setItems((currentItems) => {
+      const nextItems = currentItems.filter((item) => item.id !== id);
+      return nextItems.length > 0 ? nextItems : currentItems;
+    });
 
     if (errors.items) {
       setErrors((currentErrors) => ({ ...currentErrors, items: undefined }));
@@ -115,6 +146,8 @@ export default function StudentNoteForm({ action, defaultMeetingDate }: Props) {
       }}
       noValidate
     >
+      {noteId ? <input type="hidden" name="noteId" value={noteId} /> : null}
+      {meetingDateReadOnly ? <input type="hidden" name="meetingDate" value={meetingDate} /> : null}
       <input type="hidden" name="itemsPayload" value={serializedItems} />
 
       <div className="grid gap-4 md:grid-cols-[minmax(0,14rem)_1fr] md:items-start">
@@ -122,8 +155,9 @@ export default function StudentNoteForm({ action, defaultMeetingDate }: Props) {
           <span className="text-sm font-medium text-white">Meeting date</span>
           <input
             type="date"
-            name="meetingDate"
+            name={meetingDateReadOnly ? undefined : "meetingDate"}
             value={meetingDate}
+            disabled={meetingDateReadOnly}
             onChange={(event) => {
               setMeetingDate(event.target.value);
               if (errors.meetingDate) {
@@ -132,6 +166,7 @@ export default function StudentNoteForm({ action, defaultMeetingDate }: Props) {
             }}
             className={cn(
               "w-full rounded-xl border bg-slate-950/40 px-3 py-2 text-sm text-white transition outline-none",
+              meetingDateReadOnly ? "cursor-not-allowed opacity-80" : "",
               errors.meetingDate
                 ? "border-rose-300/70 focus:border-rose-200"
                 : "border-white/10 focus:border-cyan-300/50",
@@ -148,6 +183,12 @@ export default function StudentNoteForm({ action, defaultMeetingDate }: Props) {
                 Capture short bullet points in the order they happened. Use <code>info</code> for context and{" "}
                 <code>task</code> for follow-ups.
               </p>
+              {mode === "edit" ? (
+                <p className="mt-2 text-xs leading-5 text-amber-100/80">
+                  Existing items can be edited in place and new items can be appended. Removing saved items is not
+                  supported in this slice.
+                </p>
+              ) : null}
             </div>
             <div className="flex gap-2">
               <button
@@ -211,15 +252,15 @@ export default function StudentNoteForm({ action, defaultMeetingDate }: Props) {
                     onClick={() => {
                       removeItem(item.id);
                     }}
-                    disabled={items.length === 1}
+                    disabled={Boolean(item.persistedId) || items.length === 1}
                     className={cn(
                       "rounded-xl px-3 py-2 text-sm transition md:mt-7",
-                      items.length === 1
+                      item.persistedId || items.length === 1
                         ? "cursor-not-allowed border border-white/5 bg-white/[0.03] text-slate-500"
                         : "border border-white/10 bg-white/5 text-slate-100 hover:bg-white/10",
                     )}
                   >
-                    Remove
+                    {item.persistedId ? "Saved item" : "Remove"}
                   </button>
                 </div>
               </div>
@@ -231,12 +272,16 @@ export default function StudentNoteForm({ action, defaultMeetingDate }: Props) {
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-4">
-        <p className="text-xs text-slate-300/70">This adds one dated note and keeps the current item order as saved.</p>
+        <p className="text-xs text-slate-300/70">
+          {mode === "edit"
+            ? "This updates one existing note, keeps saved item order stable, and only appends new items at the tail."
+            : "This adds one dated note and keeps the current item order as saved."}
+        </p>
         <button
           type="submit"
           className="rounded-xl border border-cyan-300/20 bg-cyan-300/15 px-4 py-2 text-sm font-medium text-cyan-50 transition hover:bg-cyan-300/25"
         >
-          Save note to this thread
+          {mode === "edit" ? "Save note changes" : "Save note to this thread"}
         </button>
       </div>
     </form>

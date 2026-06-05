@@ -1,58 +1,12 @@
 import type { APIRoute } from "astro";
 
-import type { CreateNoteItemInput, NoteItemType } from "@/lib/database";
-import { createStudentNote, getStudentHistory } from "@/lib/supervision";
+import { normalizeSubmittedNoteItems, splitSubmittedNoteItems } from "@/lib/note-items-payload";
+import { createStudentNote, getStudentHistory, updateStudentNote } from "@/lib/supervision";
 import { createAdminClient, createClient } from "@/lib/supabase";
 
 function redirectToStudentThread(studentId: string, query: URLSearchParams) {
   const suffix = query.size > 0 ? `?${query.toString()}` : "";
   return `/dashboard/students/${studentId}${suffix}`;
-}
-
-function isNoteItemType(value: string): value is NoteItemType {
-  return value === "info" || value === "task";
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
-}
-
-function normalizeItems(rawPayload: FormDataEntryValue | null): CreateNoteItemInput[] {
-  if (typeof rawPayload !== "string" || rawPayload.length === 0) {
-    return [];
-  }
-
-  let parsed: unknown;
-
-  try {
-    parsed = JSON.parse(rawPayload);
-  } catch {
-    return [];
-  }
-
-  if (!Array.isArray(parsed)) {
-    return [];
-  }
-
-  return parsed.flatMap((item): CreateNoteItemInput[] => {
-    if (!isRecord(item)) {
-      return [];
-    }
-
-    const itemType = typeof item.item_type === "string" ? item.item_type : "";
-    const content = typeof item.content === "string" ? item.content.trim() : "";
-
-    if (!isNoteItemType(itemType) || content.length === 0) {
-      return [];
-    }
-
-    return [
-      {
-        item_type: itemType,
-        content,
-      },
-    ];
-  });
 }
 
 export const POST: APIRoute = async (context) => {
@@ -62,6 +16,8 @@ export const POST: APIRoute = async (context) => {
   }
 
   const formData = await context.request.formData();
+  const noteIdEntry = formData.get("noteId");
+  const noteId = typeof noteIdEntry === "string" && noteIdEntry.length > 0 ? noteIdEntry : null;
   const rawMeetingDate = formData.get("meetingDate");
   const meetingDate = typeof rawMeetingDate === "string" ? rawMeetingDate.trim() : "";
   const query = new URLSearchParams();
@@ -91,7 +47,7 @@ export const POST: APIRoute = async (context) => {
     return context.redirect(redirectToStudentThread(studentId, query));
   }
 
-  const items = normalizeItems(formData.get("itemsPayload"));
+  const items = normalizeSubmittedNoteItems(formData.get("itemsPayload"));
   const adminClient = createAdminClient();
 
   if (!meetingDate) {
@@ -110,13 +66,32 @@ export const POST: APIRoute = async (context) => {
   }
 
   try {
-    await createStudentNote(adminClient, {
-      student_id: studentId,
-      meeting_date: meetingDate,
-      created_by: user.id,
-      updated_by: user.id,
-      items,
-    });
+    if (noteId) {
+      const targetNote = accessibleStudent.notes.find((note) => note.id === noteId);
+      if (!targetNote) {
+        query.set("error", "The selected note is not available in this thread.");
+        return context.redirect(redirectToStudentThread(studentId, query));
+      }
+
+      const { existing_items, new_items } = splitSubmittedNoteItems(items);
+      await updateStudentNote(adminClient, {
+        note_id: noteId,
+        student_id: studentId,
+        meeting_date: targetNote.meeting_date,
+        created_by: targetNote.created_by,
+        updated_by: user.id,
+        existing_items,
+        new_items,
+      });
+    } else {
+      await createStudentNote(adminClient, {
+        student_id: studentId,
+        meeting_date: meetingDate,
+        created_by: user.id,
+        updated_by: user.id,
+        items,
+      });
+    }
   } catch (error) {
     if (error instanceof Error) {
       query.set("error", error.message);
@@ -128,6 +103,6 @@ export const POST: APIRoute = async (context) => {
     return context.redirect(redirectToStudentThread(studentId, query));
   }
 
-  query.set("saved", "1");
+  query.set(noteId ? "updated" : "saved", "1");
   return context.redirect(redirectToStudentThread(studentId, query));
 };

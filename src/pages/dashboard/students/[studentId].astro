@@ -4,13 +4,36 @@ import StudentNoteForm from "@/components/supervision/StudentNoteForm";
 import { getStudentHistory } from "@/lib/supervision";
 import { createClient } from "@/lib/supabase";
 
+if (Astro.locals.role !== "professor") {
+  return Astro.redirect("/dashboard");
+}
+
 const supabase = createClient(Astro.request.headers, Astro.cookies);
 const studentId = Astro.params.studentId;
 const student = supabase && studentId ? await getStudentHistory(supabase, studentId) : null;
 const noteCount = student?.notes.length ?? 0;
 const defaultMeetingDate = new Date().toISOString().slice(0, 10);
 const saved = Astro.url.searchParams.get("saved") === "1";
+const updated = Astro.url.searchParams.get("updated") === "1";
 const error = Astro.url.searchParams.get("error");
+const editNoteId = Astro.url.searchParams.get("edit");
+const noteBeingEdited = student?.notes.find((note) => note.id === editNoteId) ?? null;
+
+function getLastEditorLabel(noteUpdatedBy: string) {
+  if (!student) {
+    return "Unknown collaborator";
+  }
+
+  if (noteUpdatedBy === student.professor_profile_id) {
+    return "Professor";
+  }
+
+  if (noteUpdatedBy === student.student_profile_id) {
+    return student.full_name;
+  }
+
+  return "Current collaborator";
+}
 ---
 
 <Layout title={student ? `${student.full_name} - Thread` : "Student thread"}>
@@ -33,7 +56,7 @@ const error = Astro.url.searchParams.get("error");
                     {noteCount} note{noteCount === 1 ? "" : "s"} in history
                   </p>
                   <p class="mt-1 text-slate-300/70">
-                    Phase 1 exposes the route and thread context. Inline note creation arrives in the next phase.
+                    Professor edits now reuse the shared continuity contract without implying delete or task completion.
                   </p>
                 </div>
               </div>
@@ -62,12 +85,21 @@ const error = Astro.url.searchParams.get("error");
                         <div>
                           <p class="text-sm font-medium text-white">Meeting date {note.meeting_date}</p>
                           <p class="mt-1 text-xs text-slate-300/70">
-                            Updated {new Date(note.updated_at).toLocaleString("en-GB")}
+                            Last edited by {getLastEditorLabel(note.updated_by)} on{" "}
+                            {new Date(note.updated_at).toLocaleString("en-GB")}
                           </p>
                         </div>
-                        <span class="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs text-cyan-100/80">
-                          {note.items.length} item{note.items.length === 1 ? "" : "s"}
-                        </span>
+                        <div class="flex flex-wrap items-center gap-2">
+                          <span class="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs text-cyan-100/80">
+                            {note.items.length} item{note.items.length === 1 ? "" : "s"}
+                          </span>
+                          <a
+                            href={`/dashboard/students/${student.id}?edit=${note.id}`}
+                            class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-100 transition hover:bg-white/10"
+                          >
+                            Edit note
+                          </a>
+                        </div>
                       </div>
 
                       <ul class="mt-4 grid gap-2 text-sm text-slate-100/85">
@@ -89,10 +121,18 @@ const error = Astro.url.searchParams.get("error");
             <section class="rounded-[2rem] border border-white/10 bg-white/[0.06] p-6 backdrop-blur-xl">
               <div class="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
                 <div>
-                  <p class="text-xs tracking-[0.3em] text-emerald-200/70 uppercase">New note</p>
-                  <h2 class="mt-2 text-xl font-semibold text-white">Capture the next supervision update</h2>
+                  <p class="text-xs tracking-[0.3em] text-emerald-200/70 uppercase">
+                    {noteBeingEdited ? "Edit note" : "New note"}
+                  </p>
+                  <h2 class="mt-2 text-xl font-semibold text-white">
+                    {noteBeingEdited
+                      ? `Update ${noteBeingEdited.meeting_date} without rewriting the thread`
+                      : "Capture the next supervision update"}
+                  </h2>
                   <p class="mt-2 text-sm text-slate-300/75">
-                    Add one dated note directly inside this thread. Item order is preserved exactly as entered.
+                    {noteBeingEdited
+                      ? "Edit saved items in place and append new ones at the end. Deleting saved items stays out of scope for this slice."
+                      : "Add one dated note directly inside this thread. Item order is preserved exactly as entered."}
                   </p>
                 </div>
               </div>
@@ -100,6 +140,12 @@ const error = Astro.url.searchParams.get("error");
               {saved ? (
                 <div class="mb-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-50">
                   The note was saved to this thread.
+                </div>
+              ) : null}
+
+              {updated ? (
+                <div class="mb-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-50">
+                  The note changes were saved to this thread.
                 </div>
               ) : null}
 
@@ -112,7 +158,17 @@ const error = Astro.url.searchParams.get("error");
               <StudentNoteForm
                 client:load
                 action={`/api/dashboard/students/${student.id}/notes`}
-                defaultMeetingDate={defaultMeetingDate}
+                defaultMeetingDate={noteBeingEdited?.meeting_date ?? defaultMeetingDate}
+                defaultItems={
+                  noteBeingEdited?.items.map((item) => ({
+                    id: item.id,
+                    itemType: item.item_type,
+                    content: item.content,
+                  })) ?? undefined
+                }
+                meetingDateReadOnly={Boolean(noteBeingEdited)}
+                mode={noteBeingEdited ? "edit" : "create"}
+                noteId={noteBeingEdited?.id}
               />
             </section>
           </>

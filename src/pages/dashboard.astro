@@ -17,6 +17,7 @@ const createdStudent = searchParams.get("createdStudent");
 const draftFullName = searchParams.get("draftFullName") ?? "";
 const draftEmail = searchParams.get("draftEmail") ?? "";
 const updated = searchParams.get("updated") === "1";
+const taskUpdated = searchParams.get("taskUpdated");
 const error = searchParams.get("error");
 const editNoteId = searchParams.get("edit");
 const noteBeingEdited = linkedStudentHistory?.notes.find((note) => note.id === editNoteId) ?? null;
@@ -43,6 +44,32 @@ function getLastEditorLabel(noteUpdatedBy: string) {
   }
 
   return "Current collaborator";
+}
+
+function getCompletionActorLabel(completedBy: string) {
+  if (!linkedStudentHistory) {
+    return "Current collaborator";
+  }
+
+  if (completedBy === linkedStudentHistory.student_profile_id) {
+    return linkedStudentHistory.full_name;
+  }
+
+  if (completedBy === linkedStudentHistory.professor_profile_id) {
+    return "Professor";
+  }
+
+  return "Current collaborator";
+}
+
+function formatCompletionTimestamp(value: string) {
+  return new Date(value).toLocaleString("en-GB", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 ---
 
@@ -91,6 +118,18 @@ function getLastEditorLabel(noteUpdatedBy: string) {
                 {updated ? (
                   <div class="mt-5 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-50">
                     Your note changes were saved to the shared thread.
+                  </div>
+                ) : null}
+
+                {taskUpdated === "complete" ? (
+                  <div class="mt-5 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-50">
+                    The task was marked as completed in the shared thread.
+                  </div>
+                ) : null}
+
+                {taskUpdated === "incomplete" ? (
+                  <div class="mt-5 rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm text-amber-50">
+                    The task was reopened in the shared thread.
                   </div>
                 ) : null}
 
@@ -146,21 +185,77 @@ function getLastEditorLabel(noteUpdatedBy: string) {
 
                             <ul class="mt-4 space-y-3">
                               {note.items.map((item) => (
-                                <li class="rounded-xl border border-white/8 bg-white/[0.04] p-3">
-                                  <div class="flex flex-wrap items-center gap-2">
-                                    <span
-                                      class:list={[
-                                        "rounded-full px-2.5 py-1 text-[11px] font-medium tracking-[0.2em] uppercase",
-                                        item.item_type === "task"
-                                          ? "border border-amber-300/25 bg-amber-300/10 text-amber-100"
-                                          : "border border-sky-300/25 bg-sky-300/10 text-sky-100",
-                                      ]}
-                                    >
-                                      {item.item_type}
-                                    </span>
-                                    <span class="text-xs text-slate-400/75">Item {item.position}</span>
+                                <li
+                                  class:list={[
+                                    "rounded-xl border p-3",
+                                    item.item_type === "task" && item.completed_at
+                                      ? "border-emerald-300/20 bg-emerald-300/[0.08]"
+                                      : "border-white/8 bg-white/[0.04]",
+                                  ]}
+                                >
+                                  <div class="flex flex-wrap items-center justify-between gap-3">
+                                    <div class="flex flex-wrap items-center gap-2">
+                                      <span
+                                        class:list={[
+                                          "rounded-full px-2.5 py-1 text-[11px] font-medium tracking-[0.2em] uppercase",
+                                          item.item_type === "task"
+                                            ? "border border-amber-300/25 bg-amber-300/10 text-amber-100"
+                                            : "border border-sky-300/25 bg-sky-300/10 text-sky-100",
+                                        ]}
+                                      >
+                                        {item.item_type}
+                                      </span>
+                                      <span class="text-xs text-slate-400/75">Item {item.position}</span>
+                                    </div>
+
+                                    {item.item_type === "task" ? (
+                                      <form
+                                        method="POST"
+                                        action={`/api/dashboard/notes/${note.id}/items/${item.id}/completion`}
+                                        class="flex items-center gap-2"
+                                      >
+                                        <input
+                                          type="hidden"
+                                          name="state"
+                                          value={item.completed_at ? "incomplete" : "complete"}
+                                        />
+                                        <input
+                                          type="hidden"
+                                          name="returnToEdit"
+                                          value={editNoteId === note.id ? note.id : ""}
+                                        />
+                                        <button
+                                          type="submit"
+                                          class:list={[
+                                            "rounded-full border px-3 py-1.5 text-xs font-medium transition",
+                                            item.completed_at
+                                              ? "border-amber-300/25 bg-amber-300/10 text-amber-50 hover:bg-amber-300/20"
+                                              : "border-emerald-300/25 bg-emerald-300/10 text-emerald-50 hover:bg-emerald-300/20",
+                                          ]}
+                                        >
+                                          {item.completed_at ? "Reopen task" : "Mark done"}
+                                        </button>
+                                      </form>
+                                    ) : null}
                                   </div>
-                                  <p class="mt-3 text-sm leading-6 text-slate-100/90">{item.content}</p>
+
+                                  <p
+                                    class:list={[
+                                      "mt-3 text-sm leading-6 text-slate-100/90",
+                                      item.item_type === "task" &&
+                                        item.completed_at &&
+                                        "text-slate-300/80 line-through",
+                                    ]}
+                                  >
+                                    {item.content}
+                                  </p>
+
+                                  {item.item_type === "task" && item.completed_at && item.completed_by ? (
+                                    <p class="mt-2 text-xs text-emerald-100/80">
+                                      Completed by {getCompletionActorLabel(item.completed_by)} on{" "}
+                                      {formatCompletionTimestamp(item.completed_at)}
+                                    </p>
+                                  ) : null}
                                 </li>
                               ))}
                             </ul>
@@ -180,8 +275,8 @@ function getLastEditorLabel(noteUpdatedBy: string) {
                           Update {noteBeingEdited.meeting_date} inside your shared thread
                         </h2>
                         <p class="mt-2 text-sm leading-6 text-slate-300/75">
-                          Edit saved items in place and append new ones at the end. This view still avoids
-                          professor-only routes, item deletion, and task completion controls.
+                          Edit saved items in place and append new ones at the end. Task completion now stays in the
+                          thread itself, while professor-only routes and item deletion remain out of scope.
                         </p>
                       </div>
                     </div>
@@ -221,8 +316,8 @@ function getLastEditorLabel(noteUpdatedBy: string) {
                 <div class="mt-6 rounded-2xl border border-white/10 bg-slate-950/25 p-4 text-sm text-slate-200/80">
                   <p class="font-medium text-white">Student scope</p>
                   <p class="mt-2 leading-6">
-                    Only the linked student's own history is visible here. Notes can be edited in place, but this branch
-                    still avoids professor-only roster surfaces, item deletion, and task completion behavior.
+                    Only the linked student's own history is visible here. Notes can be edited in place and shared tasks
+                    can be toggled inline, without exposing professor-only roster surfaces.
                   </p>
                 </div>
                 <form method="POST" action="/api/auth/signout" class="mt-6">

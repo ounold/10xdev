@@ -233,11 +233,11 @@ Allow the linked student to use the same durable task-completion contract while 
 
 #### Automated Verification:
 
-- [ ] 3.1 Allow a linked student to toggle completion for an accessible task item
-- [ ] 3.2 Cover one happy-path completion flow and one foreign-item denial path at browser level
-- [ ] 3.3 Preserve student-only visibility while exposing task completion controls
+- [x] 3.1 Allow a linked student to toggle completion for an accessible task item
+- [x] 3.2 Cover one happy-path completion flow and one foreign-item denial path at browser level
+- [x] 3.3 Preserve student-only visibility while exposing task completion controls
 
 #### Manual Verification:
 
-- [ ] 3.4 Confirm the linked student can complete only tasks from their own shared history
-- [ ] 3.5 Confirm completion feels like a thread-local extension of the existing shared-note workflow
+- [x] 3.4 Confirm the linked student can complete only tasks from their own shared history
+- [x] 3.5 Confirm completion feels like a thread-local extension of the existing shared-note workflow

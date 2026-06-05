@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type {
+  AppendNoteItemInput,
   CreateNoteInput,
   CreateStudentInput,
   NoteItemRow,
@@ -9,6 +10,7 @@ import type {
   StudentRow,
   StudentThreadSummary,
   StudentWithHistory,
+  UpdateNoteInput,
 } from "@/lib/database";
 
 function toError(error: unknown, fallbackMessage: string) {
@@ -165,6 +167,7 @@ export async function getLinkedStudentHistoryForUser(
 }
 
 async function loadNoteItems(supabase: SupabaseClient, noteIds: string[]): Promise<NoteItemRow[]> {
+  // Preserve item ordering at the shared read-model boundary for both dashboard branches and future readers.
   const noteItemsResult = await supabase
     .from("note_items")
     .select("id, note_id, position, item_type, content, completed_at, completed_by, created_at, updated_at")
@@ -178,6 +181,19 @@ async function loadNoteItems(supabase: SupabaseClient, noteIds: string[]): Promi
   }
 
   return noteItemsData ?? [];
+}
+
+function mapAppendedItems(noteId: string, startingPosition: number, items: AppendNoteItemInput[]) {
+  return items.map((item, index) => ({
+    note_id: noteId,
+    position: startingPosition + index,
+    item_type: item.item_type,
+    content: item.content,
+  }));
+}
+
+function sortItemsByPosition(items: NoteItemRow[]) {
+  return [...items].sort((left, right) => left.position - right.position);
 }
 
 export async function createStudentNote(supabase: SupabaseClient, input: CreateNoteInput) {
@@ -226,7 +242,101 @@ export async function createStudentNote(supabase: SupabaseClient, input: CreateN
 
   return {
     ...note,
-    items: (noteItemsData ?? []).sort((left, right) => left.position - right.position),
+    items: sortItemsByPosition(noteItemsData ?? []),
+  } satisfies NoteWithItems;
+}
+
+export async function updateStudentNote(supabase: SupabaseClient, input: UpdateNoteInput): Promise<NoteWithItems> {
+  const { data: existingNote, error: noteLookupError } = await supabase
+    .from("notes")
+    .select("id, student_id, meeting_date, created_by, updated_by, created_at, updated_at")
+    .eq("id", input.note_id)
+    .eq("student_id", input.student_id)
+    .maybeSingle<NoteRow>();
+
+  if (noteLookupError) {
+    throw toError(noteLookupError, "Unable to load the existing note.");
+  }
+
+  if (!existingNote) {
+    throw new Error("The selected note is not accessible.");
+  }
+
+  if (existingNote.meeting_date !== input.meeting_date) {
+    throw new Error("Meeting date cannot be changed for an existing note.");
+  }
+
+  if (existingNote.created_by !== input.created_by) {
+    throw new Error("Note ownership cannot be changed for an existing note.");
+  }
+
+  const currentItems = await loadNoteItems(supabase, [input.note_id]);
+  const currentItemsById = new Map(currentItems.map((item) => [item.id, item]));
+
+  for (const item of input.existing_items) {
+    if (!currentItemsById.has(item.id)) {
+      throw new Error("The selected note item is not accessible.");
+    }
+  }
+
+  const noteUpdateResult = await supabase
+    .from("notes")
+    .update({
+      updated_by: input.updated_by,
+    })
+    .eq("id", input.note_id)
+    .eq("student_id", input.student_id)
+    .select("id, student_id, meeting_date, created_by, updated_by, created_at, updated_at")
+    .single();
+  const updatedNoteData = noteUpdateResult.data;
+  const noteUpdateError = noteUpdateResult.error;
+
+  if (noteUpdateError) {
+    throw toError(noteUpdateError, "Unable to update the note.");
+  }
+
+  if (!updatedNoteData) {
+    throw new Error("Expected note update to return a row");
+  }
+
+  for (const item of input.existing_items) {
+    const currentItem = currentItemsById.get(item.id);
+    if (!currentItem) {
+      throw new Error("The selected note item is not accessible.");
+    }
+
+    const { error: itemUpdateError } = await supabase
+      .from("note_items")
+      .update({
+        item_type: item.item_type,
+        content: item.content,
+      })
+      .eq("id", item.id)
+      .eq("note_id", input.note_id);
+
+    if (itemUpdateError) {
+      throw toError(itemUpdateError, "Unable to update one of the existing note items.");
+    }
+  }
+
+  if (input.new_items.length > 0) {
+    const maxPosition = currentItems.reduce((highestPosition, item) => Math.max(highestPosition, item.position), 0);
+    const noteItemsResult = await supabase
+      .from("note_items")
+      .insert(mapAppendedItems(input.note_id, maxPosition + 1, input.new_items))
+      .select("id, note_id, position, item_type, content, completed_at, completed_by, created_at, updated_at");
+    const noteItemsError = noteItemsResult.error;
+
+    if (noteItemsError) {
+      throw toError(noteItemsError, "Unable to append new note items.");
+    }
+  }
+
+  const latestItems = await loadNoteItems(supabase, [input.note_id]);
+
+  return {
+    ...updatedNoteData,
+    items: sortItemsByPosition(latestItems),
   } satisfies NoteWithItems;
 }
 

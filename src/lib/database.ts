@@ -59,12 +59,33 @@ export interface CreateNoteItemInput {
   content: string;
 }
 
+export interface UpdateExistingNoteItemInput {
+  id: string;
+  item_type: NoteItemType;
+  content: string;
+}
+
+export interface AppendNoteItemInput {
+  item_type: NoteItemType;
+  content: string;
+}
+
 export interface CreateNoteInput {
   student_id: string;
   meeting_date: string;
   created_by: string;
   updated_by: string;
   items: CreateNoteItemInput[];
+}
+
+export interface UpdateNoteInput {
+  note_id: string;
+  student_id: string;
+  meeting_date: string;
+  created_by: string;
+  updated_by: string;
+  existing_items: UpdateExistingNoteItemInput[];
+  new_items: AppendNoteItemInput[];
 }
 
 export interface CreateStudentInput {

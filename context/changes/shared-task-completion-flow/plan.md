@@ -207,37 +207,37 @@ Allow the linked student to use the same durable task-completion contract while 
 
 #### Automated Verification:
 
-- [x] 1.1 Add typed item-level completion inputs and a focused app-layer completion helper
-- [x] 1.2 Extend the integration stub and add contract coverage for complete/undo/task-only semantics
-- [x] 1.3 Preserve item identity and position through completion toggles
+- [x] 1.1 Add typed item-level completion inputs and a focused app-layer completion helper — 9415e69
+- [x] 1.2 Extend the integration stub and add contract coverage for complete/undo/task-only semantics — 9415e69
+- [x] 1.3 Preserve item identity and position through completion toggles — 9415e69
 
 #### Manual Verification:
 
-- [x] 1.4 Confirm the completion contract stays separate from whole-note editing
-- [x] 1.5 Confirm `info` items remain outside completion semantics
+- [x] 1.4 Confirm the completion contract stays separate from whole-note editing — 9415e69
+- [x] 1.5 Confirm `info` items remain outside completion semantics — 9415e69
 
 ### Phase 2: Expose professor task completion with visible continuity metadata
 
 #### Automated Verification:
 
-- [x] 2.1 Add a professor-facing completion route that delegates to the shared helper
-- [x] 2.2 Render visual completion state plus `Completed by ... on ...` metadata in the professor thread
-- [x] 2.3 Keep `info` items free of completion controls
+- [x] 2.1 Add a professor-facing completion route that delegates to the shared helper — aefe5b5
+- [x] 2.2 Render visual completion state plus `Completed by ... on ...` metadata in the professor thread — aefe5b5
+- [x] 2.3 Keep `info` items free of completion controls — aefe5b5
 
 #### Manual Verification:
 
-- [x] 2.4 Confirm a professor can complete and reopen a task directly from the thread view
-- [x] 2.5 Confirm completion reads clearly without implying a larger task-inbox workflow
+- [x] 2.4 Confirm a professor can complete and reopen a task directly from the thread view — aefe5b5
+- [x] 2.5 Confirm completion reads clearly without implying a larger task-inbox workflow — aefe5b5
 
 ### Phase 3: Open the same completion contract to the linked student branch and verify boundaries
 
 #### Automated Verification:
 
-- [x] 3.1 Allow a linked student to toggle completion for an accessible task item
-- [x] 3.2 Cover one happy-path completion flow and one foreign-item denial path at browser level
-- [x] 3.3 Preserve student-only visibility while exposing task completion controls
+- [x] 3.1 Allow a linked student to toggle completion for an accessible task item — 027bc78
+- [x] 3.2 Cover one happy-path completion flow and one foreign-item denial path at browser level — 027bc78
+- [x] 3.3 Preserve student-only visibility while exposing task completion controls — 027bc78
 
 #### Manual Verification:
 
-- [x] 3.4 Confirm the linked student can complete only tasks from their own shared history
-- [x] 3.5 Confirm completion feels like a thread-local extension of the existing shared-note workflow
+- [x] 3.4 Confirm the linked student can complete only tasks from their own shared history — 027bc78
+- [x] 3.5 Confirm completion feels like a thread-local extension of the existing shared-note workflow — 027bc78

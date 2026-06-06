@@ -175,24 +175,24 @@ Close the loop so both operators and future contributors can trust the claim flo
 
 #### Automated Verification:
 
-- [x] 1.1 Extend claim-flow integration coverage for null filtering, duplicate blocking, and post-claim state changes
-- [x] 1.2 Add a deterministic E2E prep helper for claim-ready and duplicate states
+- [x] 1.1 Extend claim-flow integration coverage for null filtering, duplicate blocking, and post-claim state changes — 105b89e
+- [x] 1.2 Add a deterministic E2E prep helper for claim-ready and duplicate states — 105b89e
 
 #### Manual Verification:
 
-- [x] 1.3 Confirm the fixture-prep path is understandable without manual DB rediscovery
+- [x] 1.3 Confirm the fixture-prep path is understandable without manual DB rediscovery — 105b89e
 
 ### Phase 2: Add dedicated claim-flow Playwright coverage
 
 #### Automated Verification:
 
-- [ ] 2.1 Add a separate claim-flow Playwright spec using repo-local auth state
-- [ ] 2.2 Cover happy-path claim redirect to `/dashboard?claimReady=1`
-- [ ] 2.3 Cover duplicate-email blocking on `pending-access`
+- [x] 2.1 Add a separate claim-flow Playwright spec using repo-local auth state
+- [x] 2.2 Cover happy-path claim redirect to `/dashboard?claimReady=1`
+- [x] 2.3 Cover duplicate-email blocking on `pending-access`
 
 #### Manual Verification:
 
-- [ ] 2.4 Rerun the same browser checks locally without hand-editing claim rows between cases
+- [x] 2.4 Rerun the same browser checks locally without hand-editing claim rows between cases
 
 ### Phase 3: Verify post-claim roster coherence and document the E2E path
 

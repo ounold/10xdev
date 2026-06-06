@@ -1,6 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 
+import { readClaimStudentFixtureMeta } from "./studentClaimFixture";
+
 export interface RoleAccount {
   email: string;
   password: string;
@@ -55,4 +57,17 @@ export function getLinkedStudentAccount() {
 
 export function getUnlinkedStudentAccount() {
   return accountFromEnv("E2E_UNLINKED_STUDENT");
+}
+
+export function getClaimStudentAccount() {
+  return accountFromEnv("E2E_CLAIM_STUDENT") ?? getUnlinkedStudentAccount();
+}
+
+export function getClaimStudentEmail() {
+  return (
+    process.env.E2E_CLAIM_STUDENT_EMAIL?.trim() ??
+    process.env.E2E_UNLINKED_STUDENT_EMAIL?.trim() ??
+    readClaimStudentFixtureMeta().email?.trim() ??
+    null
+  );
 }

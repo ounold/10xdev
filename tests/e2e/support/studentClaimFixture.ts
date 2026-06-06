@@ -1,3 +1,5 @@
+import fs from "node:fs";
+
 interface ClaimFixtureHeaders {
   apikey: string;
   Authorization: string;
@@ -7,20 +9,34 @@ interface ClaimFixtureHeaders {
 
 interface ClaimFixtureOptions {
   email: string;
-  professorProfileId: string;
+  professorProfileId?: string;
   fullName: string;
 }
 
 interface DuplicateClaimFixtureOptions {
   email: string;
-  professorProfileId: string;
+  professorProfileId?: string;
   fullNames: [string, string];
 }
 
 export const defaultClaimStudentStorageStatePath = ".auth/claim-student.json";
+export const defaultClaimStudentMetaPath = ".auth/claim-student.meta.json";
+
+export interface ClaimStudentFixtureMeta {
+  email?: string;
+}
 
 function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
+}
+
+export function readClaimStudentFixtureMeta() {
+  const metaPath = process.env.E2E_CLAIM_STUDENT_META_PATH ?? defaultClaimStudentMetaPath;
+  if (!fs.existsSync(metaPath)) {
+    return {};
+  }
+
+  return JSON.parse(fs.readFileSync(metaPath, "utf8")) as ClaimStudentFixtureMeta;
 }
 
 function getClaimFixtureEnv() {
@@ -41,6 +57,31 @@ function getHeaders(serviceRoleKey: string): ClaimFixtureHeaders {
     "Content-Type": "application/json",
     Prefer: "return=minimal",
   };
+}
+
+async function resolveProfessorProfileId() {
+  const explicitProfessorProfileId = process.env.E2E_PROFESSOR_PROFILE_ID?.trim();
+  if (explicitProfessorProfileId) {
+    return explicitProfessorProfileId;
+  }
+
+  const { supabaseUrl, serviceRoleKey } = getClaimFixtureEnv();
+  const response = await fetch(
+    `${supabaseUrl}/rest/v1/profiles?role=eq.professor&select=id&order=created_at.asc&limit=1`,
+    {
+      headers: getHeaders(serviceRoleKey),
+    },
+  );
+
+  await assertOk(response, "Unable to resolve a professor profile id for student claim fixture prep.");
+
+  const rows = (await response.json()) as { id?: string }[];
+  const professorProfileId = rows[0]?.id;
+  if (!professorProfileId) {
+    throw new Error("No professor profile is available for student claim fixture prep.");
+  }
+
+  return professorProfileId;
 }
 
 async function assertOk(response: Response, fallbackMessage: string) {
@@ -85,10 +126,11 @@ async function insertStudentRows(
 
 export async function prepareClaimReadyFixture(options: ClaimFixtureOptions) {
   const normalizedEmail = normalizeEmail(options.email);
+  const professorProfileId = options.professorProfileId ?? (await resolveProfessorProfileId());
   await resetStudentClaimFixture(normalizedEmail);
   await insertStudentRows([
     {
-      professor_profile_id: options.professorProfileId,
+      professor_profile_id: professorProfileId,
       student_profile_id: null,
       full_name: options.fullName,
       email: normalizedEmail,
@@ -98,10 +140,11 @@ export async function prepareClaimReadyFixture(options: ClaimFixtureOptions) {
 
 export async function prepareDuplicateClaimFixture(options: DuplicateClaimFixtureOptions) {
   const normalizedEmail = normalizeEmail(options.email);
+  const professorProfileId = options.professorProfileId ?? (await resolveProfessorProfileId());
   await resetStudentClaimFixture(normalizedEmail);
   await insertStudentRows(
     options.fullNames.map((fullName) => ({
-      professor_profile_id: options.professorProfileId,
+      professor_profile_id: professorProfileId,
       student_profile_id: null,
       full_name: fullName,
       email: normalizedEmail,

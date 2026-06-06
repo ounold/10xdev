@@ -115,16 +115,17 @@ If one of those account pairs is missing, the corresponding check is skipped int
 
 Before assuming a browser-level check needs fresh credentials, inspect the repo-local `.auth/` directory.
 
-Current repo-specific fixtures:
+Current repo-specific fixtures or local fixture targets:
 
 - `.auth/user.json` - saved Playwright `storageState` for a professor session on `http://127.0.0.1:4321`
 - `.auth/linked-student-olgierd.json` - saved Playwright `storageState` for one linked student session
 - `.auth/linked-student-olgierd.meta.json` - companion metadata for the linked-student fixture, including own and foreign student ids used by cross-student access checks
-- `.auth/claim-student.json` - saved Playwright `storageState` for a student account that should begin on `/pending-access`
-- `.auth/claim-student.meta.json` - companion metadata for the claim-flow fixture, currently storing the claim-student email anchor
+- `.auth/claim-student.json` - local Playwright `storageState` target for a student account that should begin on `/pending-access`
+- `.auth/claim-student.meta.json` - local companion metadata target for the claim-flow fixture, currently storing the claim-student email anchor
 
 Important usage note:
 
+- `.auth/` is gitignored in this repository, so `claim-student.*` fixtures are local artifacts that must be generated or refreshed on your machine
 - these saved states are not wired into every existing spec automatically
 - `tests/e2e/dashboard-role-flow.spec.ts` still uses `E2E_*_EMAIL` / `E2E_*_PASSWORD`
 - `tests/e2e/linked-student-foreign-thread.spec.ts` already uses a repo-local `storageState` fixture by default
@@ -143,6 +144,7 @@ The claim-flow E2E follow-up uses a dedicated prep helper instead of manual Stud
 - helper path: `tests/e2e/support/studentClaimFixture.ts`
 - purpose: reset all `students` rows for one email, then rebuild either a single claim-ready row or a duplicate-email blocked state
 - auth model: this prep is server-side and requires `SUPABASE_URL` plus `SUPABASE_SERVICE_ROLE_KEY`
+- safety scope: this prep also requires `E2E_PROFESSOR_PROFILE_ID` so fixture rows are always attached to the intended professor workspace instead of guessing globally
 
 Planned repo-native paths:
 
@@ -150,6 +152,12 @@ Planned repo-native paths:
 - `prepareDuplicateClaimFixture(...)` - creates two unlinked rows for the same email so `/pending-access` must stay blocked
 - `resetStudentClaimFixture(...)` - cleanup helper for the same email anchor
 - `readClaimStudentFixtureMeta()` - reads the local email anchor from `.auth/claim-student.meta.json` when `.env` does not define a dedicated claim-student account
+
+Required env for safe fixture prep:
+
+```bash
+E2E_PROFESSOR_PROFILE_ID=
+```
 
 Rule for future E2E work on this slice:
 

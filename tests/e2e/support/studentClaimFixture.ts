@@ -59,29 +59,12 @@ function getHeaders(serviceRoleKey: string): ClaimFixtureHeaders {
   };
 }
 
-async function resolveProfessorProfileId() {
+function resolveProfessorProfileId() {
   const explicitProfessorProfileId = process.env.E2E_PROFESSOR_PROFILE_ID?.trim();
   if (explicitProfessorProfileId) {
     return explicitProfessorProfileId;
   }
-
-  const { supabaseUrl, serviceRoleKey } = getClaimFixtureEnv();
-  const response = await fetch(
-    `${supabaseUrl}/rest/v1/profiles?role=eq.professor&select=id&order=created_at.asc&limit=1`,
-    {
-      headers: getHeaders(serviceRoleKey),
-    },
-  );
-
-  await assertOk(response, "Unable to resolve a professor profile id for student claim fixture prep.");
-
-  const rows = (await response.json()) as { id?: string }[];
-  const professorProfileId = rows[0]?.id;
-  if (!professorProfileId) {
-    throw new Error("No professor profile is available for student claim fixture prep.");
-  }
-
-  return professorProfileId;
+  throw new Error("E2E_PROFESSOR_PROFILE_ID is required for student claim fixture prep.");
 }
 
 async function assertOk(response: Response, fallbackMessage: string) {
@@ -126,7 +109,7 @@ async function insertStudentRows(
 
 export async function prepareClaimReadyFixture(options: ClaimFixtureOptions) {
   const normalizedEmail = normalizeEmail(options.email);
-  const professorProfileId = options.professorProfileId ?? (await resolveProfessorProfileId());
+  const professorProfileId = options.professorProfileId ?? resolveProfessorProfileId();
   await resetStudentClaimFixture(normalizedEmail);
   await insertStudentRows([
     {
@@ -140,7 +123,7 @@ export async function prepareClaimReadyFixture(options: ClaimFixtureOptions) {
 
 export async function prepareDuplicateClaimFixture(options: DuplicateClaimFixtureOptions) {
   const normalizedEmail = normalizeEmail(options.email);
-  const professorProfileId = options.professorProfileId ?? (await resolveProfessorProfileId());
+  const professorProfileId = options.professorProfileId ?? resolveProfessorProfileId();
   await resetStudentClaimFixture(normalizedEmail);
   await insertStudentRows(
     options.fullNames.map((fullName) => ({

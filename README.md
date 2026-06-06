@@ -120,6 +120,8 @@ Current repo-specific fixtures:
 - `.auth/user.json` - saved Playwright `storageState` for a professor session on `http://127.0.0.1:4321`
 - `.auth/linked-student-olgierd.json` - saved Playwright `storageState` for one linked student session
 - `.auth/linked-student-olgierd.meta.json` - companion metadata for the linked-student fixture, including own and foreign student ids used by cross-student access checks
+- `.auth/claim-student.json` - saved Playwright `storageState` for a student account that should begin on `/pending-access`
+- `.auth/claim-student.meta.json` - companion metadata for the claim-flow fixture, currently storing the claim-student email anchor
 
 Important usage note:
 
@@ -128,6 +130,7 @@ Important usage note:
 - `tests/e2e/linked-student-foreign-thread.spec.ts` already uses a repo-local `storageState` fixture by default
 - `tests/e2e/linked-student-note-edit.spec.ts` and `tests/e2e/linked-student-note-append.spec.ts` can also reuse that linked-student fixture through `E2E_LINKED_STUDENT_STORAGE_STATE`
 - `tests/e2e/linked-student-foreign-note-post.spec.ts` can derive a real foreign note id from the saved professor fixture in `.auth/user.json`
+- `tests/e2e/student-claim-flow.spec.ts` first looks for `.auth/claim-student.json`, then falls back to `E2E_CLAIM_STUDENT_*` or `E2E_UNLINKED_STUDENT_*` only if that saved state is absent
 
 Agent rule for this repository:
 
@@ -146,12 +149,26 @@ Planned repo-native paths:
 - `prepareClaimReadyFixture(...)` - creates exactly one unlinked `students` row for the target email
 - `prepareDuplicateClaimFixture(...)` - creates two unlinked rows for the same email so `/pending-access` must stay blocked
 - `resetStudentClaimFixture(...)` - cleanup helper for the same email anchor
+- `readClaimStudentFixtureMeta()` - reads the local email anchor from `.auth/claim-student.meta.json` when `.env` does not define a dedicated claim-student account
 
 Rule for future E2E work on this slice:
 
 - start from repo-local Playwright `storageState` when available
 - use the claim-fixture helper to prepare data states
 - ask for fresh credentials only if neither repo-local state nor controlled fixture prep can satisfy the scenario
+
+Recommended local run for the claim-flow slice:
+
+```powershell
+$env:E2E_BASE_URL='http://localhost:4325'
+& 'C:\Program Files\nodejs\npx.cmd' playwright test tests/e2e/student-claim-flow.spec.ts
+```
+
+What that spec now proves:
+
+- one prepared unlinked row lets the student claim access and land on `/dashboard?claimReady=1`
+- duplicate prepared rows keep the same student blocked on `/pending-access`
+- both scenarios can be rerun without hand-editing `students.student_profile_id`
 
 ### Shared-note continuity E2E coverage
 

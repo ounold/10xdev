@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { listProfessorStudents } from "@/lib/supervision";
+import { claimStudentLink, listProfessorStudents } from "@/lib/supervision";
 import { createSupabaseStub } from "./support/supabaseStub";
 
 describe("professor roster link status", () => {
@@ -45,6 +45,44 @@ describe("professor roster link status", () => {
       ["student-claim-ready", "claim-ready"],
       ["student-linked", "linked"],
       ["student-missing-email", "missing-email"],
+    ]);
+  });
+
+  it("shows a claimed student as linked in the professor roster after the claim mutation succeeds", async () => {
+    const supabase = createSupabaseStub({
+      students: [
+        {
+          id: "student-claim-ready",
+          professor_profile_id: "prof-1",
+          student_profile_id: null,
+          full_name: "Claim Ready Student",
+          email: "claim-ready@example.com",
+          created_at: "2026-06-05T09:00:00Z",
+          updated_at: "2026-06-05T09:00:00Z",
+        },
+      ],
+      notes: [],
+      note_items: [],
+    });
+
+    const claimResult = await claimStudentLink(supabase as never, {
+      user_id: "user-claim",
+      email: "claim-ready@example.com",
+    });
+
+    expect(claimResult).toEqual({
+      status: "claimable",
+      linked_student_id: "student-claim-ready",
+    });
+
+    const roster = await listProfessorStudents(supabase as never);
+
+    expect(roster).toEqual([
+      expect.objectContaining({
+        id: "student-claim-ready",
+        linking_status: "linked",
+        student_profile_id: "user-claim",
+      }),
     ]);
   });
 });

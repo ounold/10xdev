@@ -186,22 +186,22 @@ Close the loop so both operators and future contributors can trust the claim flo
 
 #### Automated Verification:
 
-- [x] 2.1 Add a separate claim-flow Playwright spec using repo-local auth state
-- [x] 2.2 Cover happy-path claim redirect to `/dashboard?claimReady=1`
-- [x] 2.3 Cover duplicate-email blocking on `pending-access`
+- [x] 2.1 Add a separate claim-flow Playwright spec using repo-local auth state — 2502a08
+- [x] 2.2 Cover happy-path claim redirect to `/dashboard?claimReady=1` — 2502a08
+- [x] 2.3 Cover duplicate-email blocking on `pending-access` — 2502a08
 
 #### Manual Verification:
 
-- [x] 2.4 Rerun the same browser checks locally without hand-editing claim rows between cases
+- [x] 2.4 Rerun the same browser checks locally without hand-editing claim rows between cases — 2502a08
 
 ### Phase 3: Verify post-claim roster coherence and document the E2E path
 
 #### Automated Verification:
 
-- [ ] 3.1 Add a light smoke for professor-visible roster state after claim
-- [ ] 3.2 Update repo docs/lessons to point future contributors at saved-state-plus-prep verification
-- [ ] 3.3 Run the required repo verification for the touched area
+- [x] 3.1 Add a light smoke for professor-visible roster state after claim
+- [x] 3.2 Update repo docs/lessons to point future contributors at saved-state-plus-prep verification
+- [x] 3.3 Run the required repo verification for the touched area
 
 #### Manual Verification:
 
-- [ ] 3.4 Follow the documented claim-flow verification path end to end as a sanity check
+- [x] 3.4 Follow the documented claim-flow verification path end to end as a sanity check

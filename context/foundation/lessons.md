@@ -36,3 +36,24 @@
 - **Problem**: PowerShell `Invoke-RestMethod` can fail against the Supabase REST API on this machine with transport-level receive errors even when the project URL and service-role key are valid, which makes remote-data checks look flaky or broken.
 - **Rule**: For safe remote Supabase checks here, load `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` from the repo `.env` file and prefer a small read-only Node `fetch()` script against `/rest/v1` over `Invoke-RestMethod`. Treat the Node path as the default inspection method before suspecting the remote project itself.
 - **Applies to**: research, implement, impl-review
+
+## Verify Windows hook payloads and compatibility before debugging Codex hook logic
+
+- **Context**: Repo `PostToolUse` hooks on Windows when `apply_patch` payloads can contain absolute paths and the local runtime may use an older PowerShell/.NET surface.
+- **Problem**: A hook can be dispatched successfully but still exit before quality gates if its parser assumes relative paths or relies on unsupported APIs such as `ConvertFrom-Json -Depth` or `System.IO.Path::GetRelativePath`, which makes the failure look like a Codex dispatch problem instead of a compatibility bug in the hook itself.
+- **Rule**: When debugging Codex hooks on Windows, confirm three things separately before changing higher-level logic: that the hook is actually dispatched, what exact payload shape it receives, and that its path/parser logic works with absolute Windows paths and the local PowerShell/.NET version. Do not use Windows hook code that depends on newer PowerShell/.NET APIs without checking compatibility in the actual runtime first.
+- **Applies to**: implement, impl-review
+
+## Check repo-local Playwright auth fixtures before asking for E2E credentials
+
+- **Context**: Manual or browser-level E2E verification in this repository, especially for professor/student dashboard flows.
+- **Problem**: It is easy to infer that E2E is blocked because `E2E_PROFESSOR_*` or other login credentials are missing from `.env`, even when the repo already contains reusable Playwright `storageState` fixtures under `.auth/`.
+- **Rule**: Before declaring browser-level verification blocked on missing credentials in this repo, inspect `.auth/` and the existing Playwright specs for saved `storageState` usage. Treat repo-local auth fixtures as the first verification path, then fall back to fresh credentials only if no suitable saved state exists.
+- **Applies to**: research, implement, impl-review
+
+## Store claim-flow E2E identity in repo-local auth metadata before falling back to env
+
+- **Context**: Browser-level verification of the student claim flow, where the spec needs both an authenticated student session and the email anchor used by fixture prep.
+- **Problem**: A saved `storageState` alone is not enough for claim-flow setup if the spec cannot also rediscover which email should be reset and rebuilt in `students`; without that metadata, the test falls back to env vars too early and looks blocked again.
+- **Rule**: When capturing or refreshing a repo-local Playwright state for the claim-flow student, also store a small companion meta file with the email anchor and teach the spec to read it before requiring `E2E_CLAIM_STUDENT_*` or `E2E_UNLINKED_STUDENT_*`. Treat `storageState + meta` as the complete repo-native fixture for this slice.
+- **Applies to**: research, implement, impl-review

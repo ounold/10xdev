@@ -198,10 +198,10 @@ Close the loop so both operators and future contributors can trust the claim flo
 
 #### Automated Verification:
 
-- [x] 3.1 Add a light smoke for professor-visible roster state after claim
-- [x] 3.2 Update repo docs/lessons to point future contributors at saved-state-plus-prep verification
-- [x] 3.3 Run the required repo verification for the touched area
+- [x] 3.1 Add a light smoke for professor-visible roster state after claim — 24924a5
+- [x] 3.2 Update repo docs/lessons to point future contributors at saved-state-plus-prep verification — 24924a5
+- [x] 3.3 Run the required repo verification for the touched area — 24924a5
 
 #### Manual Verification:
 
-- [x] 3.4 Follow the documented claim-flow verification path end to end as a sanity check
+- [x] 3.4 Follow the documented claim-flow verification path end to end as a sanity check — 24924a5

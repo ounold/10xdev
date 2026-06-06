@@ -71,6 +71,30 @@ function formatCompletionTimestamp(value: string) {
     minute: "2-digit",
   });
 }
+
+function getProfessorLinkStatusBadge(student: (typeof students)[number]) {
+  if (student.linking_status === "linked") {
+    return {
+      label: "Linked",
+      tone: "border-emerald-300/20 bg-emerald-300/10 text-emerald-100",
+      detail: "Student already claimed access",
+    };
+  }
+
+  if (student.linking_status === "claim-ready") {
+    return {
+      label: "Email ready",
+      tone: "border-amber-300/20 bg-amber-300/10 text-amber-100",
+      detail: "Waiting for student claim",
+    };
+  }
+
+  return {
+    label: "Missing email",
+    tone: "border-slate-300/20 bg-slate-300/10 text-slate-100",
+    detail: "Professor still needs an email anchor",
+  };
+}
 ---
 
 <Layout title="Dashboard">
@@ -460,27 +484,44 @@ function formatCompletionTimestamp(value: string) {
                   <ul class="grid gap-3">
                     {students.map((student) => (
                       <li>
-                        <a
-                          href={`/dashboard/students/${student.id}`}
-                          class="group flex items-center justify-between gap-4 rounded-2xl border border-white/8 bg-white/[0.04] px-4 py-4 transition hover:border-cyan-300/30 hover:bg-cyan-300/[0.08]"
-                        >
-                          <div>
-                            <p class="font-medium text-white transition group-hover:text-cyan-100">
-                              {student.full_name}
-                            </p>
-                            <p class="mt-1 text-sm text-slate-300/70">{student.email ?? "No linked email yet"}</p>
-                          </div>
-                          <div class="text-right text-xs text-slate-300/75">
-                            <p>
-                              {student.note_count} note{student.note_count === 1 ? "" : "s"}
-                            </p>
-                            <p class="mt-1">
-                              {student.last_meeting_date
-                                ? `Last meeting ${student.last_meeting_date}`
-                                : "No meetings yet"}
-                            </p>
-                          </div>
-                        </a>
+                        {(() => {
+                          const linkStatus = getProfessorLinkStatusBadge(student);
+
+                          return (
+                            <a
+                              href={`/dashboard/students/${student.id}`}
+                              class="group flex items-center justify-between gap-4 rounded-2xl border border-white/8 bg-white/[0.04] px-4 py-4 transition hover:border-cyan-300/30 hover:bg-cyan-300/[0.08]"
+                            >
+                              <div>
+                                <p class="font-medium text-white transition group-hover:text-cyan-100">
+                                  {student.full_name}
+                                </p>
+                                <p class="mt-1 text-sm text-slate-300/70">{student.email ?? "No linked email yet"}</p>
+                                <div class="mt-2 flex flex-wrap items-center gap-2">
+                                  <span
+                                    class:list={[
+                                      "rounded-full border px-2.5 py-1 text-[11px] font-medium",
+                                      linkStatus.tone,
+                                    ]}
+                                  >
+                                    {linkStatus.label}
+                                  </span>
+                                  <span class="text-xs text-slate-400/75">{linkStatus.detail}</span>
+                                </div>
+                              </div>
+                              <div class="text-right text-xs text-slate-300/75">
+                                <p>
+                                  {student.note_count} note{student.note_count === 1 ? "" : "s"}
+                                </p>
+                                <p class="mt-1">
+                                  {student.last_meeting_date
+                                    ? `Last meeting ${student.last_meeting_date}`
+                                    : "No meetings yet"}
+                                </p>
+                              </div>
+                            </a>
+                          );
+                        })()}
                       </li>
                     ))}
                   </ul>
@@ -488,18 +529,17 @@ function formatCompletionTimestamp(value: string) {
               </div>
 
               <aside class="rounded-[2rem] border border-white/10 bg-linear-to-b from-white/10 to-white/[0.03] p-6 backdrop-blur-xl">
-                <p class="text-xs tracking-[0.25em] text-emerald-200/70 uppercase">Phase 2</p>
-                <h2 class="mt-3 text-xl font-semibold text-white">Inline roster flow</h2>
+                <p class="text-xs tracking-[0.25em] text-emerald-200/70 uppercase">Phase 3</p>
+                <h2 class="mt-3 text-xl font-semibold text-white">Linking status visibility</h2>
                 <p class="mt-3 text-sm leading-6 text-slate-200/75">
-                  This roster stays on one screen: add a student, see the record appear, and move into the existing
-                  thread view when you are ready to capture supervision history. Editing, linking, filtering, and
-                  broader management behavior still stay out of scope for this slice.
+                  The roster now shows whether each student already claimed access, still has a prepared email waiting
+                  for claim, or still needs an email anchor before the student can link their account.
                 </p>
                 <div class="mt-6 rounded-2xl border border-white/10 bg-slate-950/25 p-4 text-sm text-slate-200/80">
-                  <p class="font-medium text-white">Phase 2 contract</p>
+                  <p class="font-medium text-white">Phase 3 contract</p>
                   <p class="mt-2 leading-6">
-                    Student creation uses the authenticated professor session and returns you to the same dashboard. The
-                    list below remains the canonical launch point into `/dashboard/students/[studentId]`.
+                    Status stays read-only in this slice. Professors can diagnose onboarding state from the roster
+                    without opening relink or account-management controls.
                   </p>
                 </div>
                 <form method="POST" action="/api/auth/signout" class="mt-6">

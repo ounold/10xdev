@@ -52,6 +52,40 @@ export interface StudentWithHistory extends StudentRow {
 export interface StudentThreadSummary extends StudentRow {
   note_count: number;
   last_meeting_date: string | null;
+  linking_status: "linked" | "claim-ready" | "missing-email";
+}
+
+export type StudentLinkClaimStatus =
+  | "claimable"
+  | "missing-email"
+  | "missing-match"
+  | "ambiguous-match"
+  | "already-linked";
+
+export interface StudentLinkClaimTarget {
+  student_id: string;
+  full_name: string;
+  email: string;
+}
+
+export interface StudentLinkClaimability {
+  status: StudentLinkClaimStatus;
+  normalized_email: string | null;
+  target: StudentLinkClaimTarget | null;
+  conflict_count: number;
+}
+
+export interface ClaimStudentLinkInput {
+  user_id: string;
+  email: string;
+}
+
+export interface ClaimStudentLinkResult {
+  status: Extract<
+    StudentLinkClaimStatus,
+    "claimable" | "missing-email" | "missing-match" | "ambiguous-match" | "already-linked"
+  >;
+  linked_student_id: string | null;
 }
 
 export interface CreateNoteItemInput {

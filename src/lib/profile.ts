@@ -1,7 +1,7 @@
 import { BOOTSTRAP_PROFESSOR_EMAIL } from "astro:env/server";
 import type { User } from "@supabase/supabase-js";
 
-import type { AppRole, ProfileRow } from "@/lib/database";
+import type { AppRole, ProfileRow, StudentLinkClaimability, StudentRow } from "@/lib/database";
 import { createAdminClient } from "@/lib/supabase";
 
 export interface CurrentProfileState {
@@ -12,8 +12,20 @@ export interface CurrentProfileState {
   isLinkedStudent: boolean;
 }
 
-function normalizeEmail(email: string) {
+export function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
+}
+
+function toClaimTarget(student: StudentRow) {
+  if (!student.email) {
+    return null;
+  }
+
+  return {
+    student_id: student.id,
+    full_name: student.full_name,
+    email: normalizeEmail(student.email),
+  };
 }
 
 export function getBootstrapProfessorEmail() {
@@ -85,6 +97,90 @@ export async function professorExists() {
   }
 
   return data.length > 0;
+}
+
+export async function getStudentLinkClaimabilityForUser(user: User): Promise<StudentLinkClaimability> {
+  const adminClient = createAdminClient();
+  if (!adminClient) {
+    throw new Error("SUPABASE_SERVICE_ROLE_KEY is required for student account linking");
+  }
+
+  if (!user.email) {
+    return {
+      status: "missing-email",
+      normalized_email: null,
+      target: null,
+      conflict_count: 0,
+    };
+  }
+
+  const normalizedEmail = normalizeEmail(user.email);
+
+  const { data: existingLink, error: existingLinkError } = await adminClient
+    .from("students")
+    .select("id, professor_profile_id, student_profile_id, full_name, email, created_at, updated_at")
+    .eq("student_profile_id", user.id)
+    .maybeSingle<StudentRow>();
+
+  if (existingLinkError) {
+    throw existingLinkError;
+  }
+
+  if (existingLink) {
+    return {
+      status: "already-linked",
+      normalized_email: normalizedEmail,
+      target: toClaimTarget(existingLink),
+      conflict_count: 0,
+    };
+  }
+
+  const { data: matchingStudents, error: matchingStudentsError } = await adminClient
+    .from("students")
+    .select("id, professor_profile_id, student_profile_id, full_name, email, created_at, updated_at")
+    .eq("email", normalizedEmail)
+    .is("student_profile_id", null)
+    .overrideTypes<StudentRow[], { merge: false }>();
+
+  if (matchingStudentsError) {
+    throw matchingStudentsError;
+  }
+
+  if (matchingStudents.length === 0) {
+    return {
+      status: "missing-match",
+      normalized_email: normalizedEmail,
+      target: null,
+      conflict_count: 0,
+    };
+  }
+
+  if (matchingStudents.length > 1) {
+    return {
+      status: "ambiguous-match",
+      normalized_email: normalizedEmail,
+      target: null,
+      conflict_count: matchingStudents.length,
+    };
+  }
+
+  const [match] = matchingStudents;
+  const target = toClaimTarget(match);
+  if (!target) {
+    return {
+      status: "missing-match",
+      normalized_email: normalizedEmail,
+      target: null,
+      conflict_count: 0,
+    };
+  }
+
+  return {
+    status: "claimable",
+    normalized_email: normalizedEmail,
+    target,
+    conflict_count: 1,
+  };
 }
 
 export async function claimProfessorRoleForUser(user: User) {

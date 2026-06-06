@@ -1,7 +1,28 @@
 ---
+import { buildPendingAccessViewModel } from "@/lib/pending-access";
+import { getStudentLinkClaimabilityForUser } from "@/lib/profile";
 import Layout from "@/layouts/Layout.astro";
 
 const { user, isLinkedStudent } = Astro.locals;
+const claimError = Astro.url.searchParams.get("claimError");
+
+let claimability: Awaited<ReturnType<typeof getStudentLinkClaimabilityForUser>> | null = null;
+let claimabilityError: string | null = null;
+
+if (user) {
+  try {
+    claimability = await getStudentLinkClaimabilityForUser(user);
+  } catch (error) {
+    claimabilityError = error instanceof Error ? error.message : "Student account linking is unavailable right now.";
+  }
+}
+
+const viewModel = buildPendingAccessViewModel({
+  claimability,
+  claimabilityError,
+  claimError,
+  isLinkedStudent,
+});
 ---
 
 <Layout title="Pending access">
@@ -16,24 +37,39 @@ const { user, isLinkedStudent } = Astro.locals;
       <p class="text-blue-100/80">
         Signed in as <span class="font-semibold text-white">{user?.email}</span>
       </p>
-      <p class="mt-4 text-sm text-blue-100/70">
+      {
+        viewModel.feedback ? (
+          <div class="mt-4 rounded-xl border border-amber-200/25 bg-amber-100/10 px-4 py-3 text-left text-sm text-amber-100">
+            {viewModel.feedback}
+          </div>
+        ) : null
+      }
+      <div class="mt-4 space-y-3 text-left text-sm text-blue-100/75">
+        <p>{viewModel.body}</p>
+        {viewModel.detail ? <p class="text-blue-100/55">{viewModel.detail}</p> : null}
+      </div>
+      <div class="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
         {
-          isLinkedStudent
-            ? "This account is linked to a student profile. If you still see this page after signing in, the student history route is not being reached correctly."
-            : "This account exists, but it has not been assigned professor access or linked student access yet."
+          viewModel.can_claim ? (
+            <form method="POST" action="/api/student/claim-access">
+              <button
+                type="submit"
+                class="rounded-lg border border-emerald-200/30 bg-emerald-200/15 px-4 py-2 text-sm font-medium text-emerald-50 transition-colors hover:bg-emerald-200/25"
+              >
+                Link my student access
+              </button>
+            </form>
+          ) : null
         }
-      </p>
-      <p class="mt-2 text-sm text-blue-100/50">
-        Please contact the professor workspace owner if you believe you should already have access.
-      </p>
-      <form method="POST" action="/api/auth/signout" class="mt-6">
-        <button
-          type="submit"
-          class="rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm transition-colors hover:bg-white/20"
-        >
-          Sign out
-        </button>
-      </form>
+        <form method="POST" action="/api/auth/signout">
+          <button
+            type="submit"
+            class="rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm transition-colors hover:bg-white/20"
+          >
+            Sign out
+          </button>
+        </form>
+      </div>
     </div>
   </div>
 </Layout>

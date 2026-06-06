@@ -136,6 +136,11 @@ class QueryBuilder<T extends Row> {
     return this;
   }
 
+  is(key: string, value: unknown) {
+    this.state.filters.push((row) => row[key] == value);
+    return this;
+  }
+
   in(key: string, values: unknown[]) {
     const allowedValues = new Set(values);
     this.state.filters.push((row) => allowedValues.has(row[key]));

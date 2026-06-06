@@ -338,40 +338,56 @@ Current hosted-project note:
 
 - the shipped roster write path first attempts the intended session-client insert and falls back to the server-side admin client only after the route verifies the authenticated professor session. This is a temporary adaptation for hosted Supabase environments where remote RLS currently rejects session-client student inserts.
 
-### Student read-history verification
+### Student claim-and-read verification
 
 To verify the current `student-read-history` slice against a hosted Supabase project:
 
-1. Make sure one `public.students` row is linked to a real student profile by setting `student_profile_id` to that student's `profiles.id`.
-2. Sign in with the linked student account and open `/dashboard`.
-3. Confirm the student sees only their own chronological supervision history in a read-only view.
-4. Confirm the student dashboard does not expose professor roster, note-creation, or editing controls.
-5. Sign out and sign in with an unlinked student account.
-6. Confirm the unlinked account still lands on `/pending-access`.
+1. As the professor, make sure exactly one `public.students` row exists for the student's email.
+2. Set that row's `email` to the real student account email and leave `student_profile_id = null`.
+3. Sign in with that student account and open `/pending-access`.
+4. Confirm the page shows the claim action and lets the student link access without leaving the in-app flow.
+5. Confirm the app redirects the same user into `/dashboard` after claim.
+6. Confirm the student sees only their own chronological supervision history and no professor roster surfaces.
+7. Sign out and sign in with an account that has no matching roster email.
+8. Confirm the unlinked account stays on `/pending-access` with a blocked-state explanation.
+9. Create a duplicate-email conflict in `public.students` and confirm the student still stays blocked on `/pending-access`.
 
 Current hosted-project note:
 
-- `student-read-history` depends on a real hosted link between `students.student_profile_id` and the student's `profiles.id`. The slice does not provide in-app linking yet; that setup still happens outside the UI.
+- the primary happy path no longer requires manual `student_profile_id` editing
+- duplicate matching emails intentionally block claim until the professor resolves the roster conflict
 
 ### Hosted smoke for dashboard role-flow checks
 
 Use this when local `npm run test:e2e` is green and you still need to confirm the hosted auth/linking reality behind the same shared `/dashboard` seam.
 
-1. Linked student check
-   - sign in with a hosted account whose `profiles.id` is already linked through `public.students.student_profile_id`
-   - open `/dashboard`
+1. Student claim check
+   - sign in with a hosted student account whose email matches exactly one unlinked `public.students.email`
+   - open `/pending-access`
+   - confirm the claim action is visible
+   - submit the claim and confirm the account lands on `/dashboard`
+
+2. Linked student check
+   - after claim, reopen `/dashboard`
    - confirm the account sees only its own read-only supervision history
    - confirm no professor roster or note-creation controls are visible
 
-2. Unlinked student check
+3. Unlinked student check
    - sign in with a hosted student account that has no matching `public.students.student_profile_id`
-   - open `/dashboard`
-   - confirm the account lands on `/pending-access`
+   - open `/pending-access`
+   - confirm the account stays blocked with no claim action
 
-3. Professor sentinel check
+4. Duplicate-email blocked check
+   - prepare two unlinked `public.students` rows with the same email as the student account
+   - sign in with that student account
+   - open `/pending-access`
+   - confirm the account stays blocked and the page explains that the app will not choose automatically
+
+5. Professor sentinel check
    - sign in as the hosted professor
    - open `/dashboard`
    - confirm the roster is visible
+   - confirm the roster surfaces linked vs email-ready vs missing-email status hints
    - open one student thread
    - confirm the thread still renders its chronological history
 

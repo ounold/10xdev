@@ -2,6 +2,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type {
   AppendNoteItemInput,
+  ClaimStudentLinkInput,
+  ClaimStudentLinkResult,
   CreateNoteInput,
   CreateStudentInput,
   NoteItemRow,
@@ -91,6 +93,7 @@ export async function listProfessorStudents(supabase: SupabaseClient): Promise<S
     ...student,
     note_count: noteCounts.get(student.id) ?? 0,
     last_meeting_date: latestMeetingDates.get(student.id) ?? null,
+    linking_status: student.student_profile_id ? "linked" : student.email ? "claim-ready" : "missing-email",
   }));
 }
 
@@ -405,4 +408,77 @@ export async function createProfessorStudent(supabase: SupabaseClient, input: Cr
   }
 
   return studentData satisfies StudentRow;
+}
+
+export async function claimStudentLink(
+  supabase: SupabaseClient,
+  input: ClaimStudentLinkInput,
+): Promise<ClaimStudentLinkResult> {
+  const normalizedEmail = input.email.trim().toLowerCase();
+  if (!normalizedEmail) {
+    return {
+      status: "missing-email",
+      linked_student_id: null,
+    };
+  }
+
+  const { data: existingLink, error: existingLinkError } = await supabase
+    .from("students")
+    .select("id")
+    .eq("student_profile_id", input.user_id)
+    .maybeSingle<{ id: string }>();
+
+  if (existingLinkError) {
+    throw toError(existingLinkError, "Unable to verify existing student access.");
+  }
+
+  if (existingLink) {
+    return {
+      status: "already-linked",
+      linked_student_id: existingLink.id,
+    };
+  }
+
+  const { data: matches, error: matchesError } = await supabase
+    .from("students")
+    .select("id, student_profile_id")
+    .eq("email", normalizedEmail)
+    .is("student_profile_id", null)
+    .overrideTypes<Pick<StudentRow, "id" | "student_profile_id">[], { merge: false }>();
+
+  if (matchesError) {
+    throw toError(matchesError, "Unable to verify claimable student access.");
+  }
+
+  if (matches.length === 0) {
+    return {
+      status: "missing-match",
+      linked_student_id: null,
+    };
+  }
+
+  if (matches.length > 1) {
+    return {
+      status: "ambiguous-match",
+      linked_student_id: null,
+    };
+  }
+
+  const [match] = matches;
+  const { data: updatedStudent, error: updateError } = await supabase
+    .from("students")
+    .update({ student_profile_id: input.user_id })
+    .eq("id", match.id)
+    .is("student_profile_id", null)
+    .select("id")
+    .single<{ id: string }>();
+
+  if (updateError) {
+    throw toError(updateError, "Unable to link the student account.");
+  }
+
+  return {
+    status: "claimable",
+    linked_student_id: updatedStudent.id,
+  };
 }

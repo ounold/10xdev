@@ -133,6 +133,26 @@ Agent rule for this repository:
 
 - before concluding that professor or student E2E verification is blocked on missing credentials, check whether an appropriate `.auth/*.json` Playwright state already exists and whether the target spec can use it directly or with a small test-only adaptation
 
+### Student claim-flow fixture prep
+
+The claim-flow E2E follow-up uses a dedicated prep helper instead of manual Studio edits:
+
+- helper path: `tests/e2e/support/studentClaimFixture.ts`
+- purpose: reset all `students` rows for one email, then rebuild either a single claim-ready row or a duplicate-email blocked state
+- auth model: this prep is server-side and requires `SUPABASE_URL` plus `SUPABASE_SERVICE_ROLE_KEY`
+
+Planned repo-native paths:
+
+- `prepareClaimReadyFixture(...)` - creates exactly one unlinked `students` row for the target email
+- `prepareDuplicateClaimFixture(...)` - creates two unlinked rows for the same email so `/pending-access` must stay blocked
+- `resetStudentClaimFixture(...)` - cleanup helper for the same email anchor
+
+Rule for future E2E work on this slice:
+
+- start from repo-local Playwright `storageState` when available
+- use the claim-fixture helper to prepare data states
+- ask for fresh credentials only if neither repo-local state nor controlled fixture prep can satisfy the scenario
+
 ### Shared-note continuity E2E coverage
 
 The repo now includes linked-student browser checks around the shared-note continuity slice:

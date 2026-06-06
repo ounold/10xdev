@@ -26,6 +26,13 @@ interface StubTable<T extends Row> {
 }
 
 type MutationKind = "select" | "insert" | "update";
+type QueryMethod = "select" | "insert" | "update" | "eq" | "is" | "in" | "order" | "limit" | "maybeSingle" | "single";
+
+export interface QueryTraceEntry {
+  table: string;
+  method: QueryMethod;
+  args: unknown[];
+}
 
 function applyQuery(rows: Row[], state: QueryState) {
   const filteredRows = rows.filter((row) => state.filters.every((filter) => filter(row)));
@@ -112,13 +119,27 @@ class QueryBuilder<T extends Row> {
   private insertedRows: T[] = [];
   private updatePatch: Partial<T> | null = null;
 
-  constructor(private readonly table: StubTable<T>) {}
+  constructor(
+    private readonly tableName: string,
+    private readonly table: StubTable<T>,
+    private readonly trace: QueryTraceEntry[],
+  ) {}
+
+  private record(method: QueryMethod, args: unknown[]) {
+    this.trace.push({
+      table: this.tableName,
+      method,
+      args,
+    });
+  }
 
   select() {
+    this.record("select", []);
     return this;
   }
 
   insert(payload: T | T[]) {
+    this.record("insert", [payload]);
     this.mutation = "insert";
     this.insertedRows = (Array.isArray(payload) ? payload : [payload]).map((row) => materializeInsertedRow(row));
     this.table.rows.push(...this.insertedRows);
@@ -126,28 +147,33 @@ class QueryBuilder<T extends Row> {
   }
 
   update(patch: Partial<T>) {
+    this.record("update", [patch]);
     this.mutation = "update";
     this.updatePatch = patch;
     return this;
   }
 
   eq(key: string, value: unknown) {
+    this.record("eq", [key, value]);
     this.state.filters.push((row) => row[key] === value);
     return this;
   }
 
   is(key: string, value: unknown) {
+    this.record("is", [key, value]);
     this.state.filters.push((row) => row[key] == value);
     return this;
   }
 
   in(key: string, values: unknown[]) {
+    this.record("in", [key, values]);
     const allowedValues = new Set(values);
     this.state.filters.push((row) => allowedValues.has(row[key]));
     return this;
   }
 
   order(key: string, options?: { ascending?: boolean }) {
+    this.record("order", [key, options]);
     this.state.orders.push({
       key,
       ascending: options?.ascending ?? true,
@@ -156,6 +182,7 @@ class QueryBuilder<T extends Row> {
   }
 
   limit(value: number) {
+    this.record("limit", [value]);
     this.state.limit = value;
     return this;
   }
@@ -207,6 +234,7 @@ class QueryBuilder<T extends Row> {
   }
 
   maybeSingle() {
+    this.record("maybeSingle", []);
     const result = this.resolveRows();
     return Promise.resolve({
       data: result.data?.[0] ?? null,
@@ -215,6 +243,7 @@ class QueryBuilder<T extends Row> {
   }
 
   single() {
+    this.record("single", []);
     const result = this.resolveRows();
     return Promise.resolve({
       data: result.data?.[0] ?? null,
@@ -227,10 +256,12 @@ export function createSupabaseStub(tables: Record<string, StubTableInput<Row>>) 
   const normalizedTables = Object.fromEntries(
     Object.entries(tables).map(([table, input]) => [table, normalizeTable(input)]),
   ) as Record<string, StubTable<Row>>;
+  const trace: QueryTraceEntry[] = [];
 
   return {
+    trace,
     from(table: string) {
-      return new QueryBuilder(normalizedTables[table] ?? normalizeTable<Row>(undefined));
+      return new QueryBuilder(table, normalizedTables[table] ?? normalizeTable<Row>(undefined), trace);
     },
   };
 }

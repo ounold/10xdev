@@ -1,7 +1,7 @@
 ---
 change_id: shared-task-completion-flow
 title: Shared task completion flow
-status: planned
+status: implemented
 created: 2026-06-05
 updated: 2026-06-05
 owner: codex

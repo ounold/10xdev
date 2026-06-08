@@ -26,15 +26,15 @@ The main blocker is the data model and access rules for professor, student, note
 
 ### Baseline status
 
-| ID   | Type       | Outcome                                                                                    | Status  |
-| ---- | ---------- | ------------------------------------------------------------------------------------------ | ------- |
-| F-01 | foundation | Product data model, migrations, and row-level security for students, notes, and note items | done    |
-| F-02 | foundation | Professor role bootstrap and seeded first-owner path                                       | done    |
-| S-01 | slice      | Professor can create and browse a student roster                                           | done    |
-| S-02 | slice      | Professor can create a post-meeting note and revisit one student's history                 | done    |
-| S-03 | slice      | Student can sign in and read only their own supervision history                            | done    |
-| S-04 | slice      | Professor and student can update a shared note without losing continuity                   | done    |
-| S-05 | slice      | Professor and student can mark task-like note items complete                               | blocked |
+| ID   | Type       | Outcome                                                                                    | Status |
+| ---- | ---------- | ------------------------------------------------------------------------------------------ | ------ |
+| F-01 | foundation | Product data model, migrations, and row-level security for students, notes, and note items | done   |
+| F-02 | foundation | Professor role bootstrap and seeded first-owner path                                       | done   |
+| S-01 | slice      | Professor can create and browse a student roster                                           | done   |
+| S-02 | slice      | Professor can create a post-meeting note and revisit one student's history                 | done   |
+| S-03 | slice      | Student can sign in and read only their own supervision history                            | done   |
+| S-04 | slice      | Professor and student can update a shared note without losing continuity                   | done   |
+| S-05 | slice      | Professor and student can mark task-like note items complete                               | done   |
 
 ## Baseline
 
@@ -164,17 +164,17 @@ Definition of done:
 ### S-05: Professor and student can mark task-like note items complete
 
 - Change ID: `note-item-completion`
-- Status: `blocked`
+- Status: `done`
 - Depends on: `F-01`, `S-02`, `S-03`
-- Blocked by: note-item shape and shared update semantics
 - PRD refs: `US-03`, `FR-007`
 
 Task-like note items can be completed individually, and that state remains visible in the shared history.
 
-Why it is blocked:
+Implementation notes:
 
-- completion depends on note-item identity, not just note text
-- the product must distinguish informational bullets from actionable bullets
+- the core completion contract shipped in `context/changes/shared-task-completion-flow/`
+- professor-side browser proof now lives in `context/changes/professor-task-completion-proof/`
+- the slice reuses the stable note-item identity and shared-update semantics established earlier in `S-04`
 
 Definition of done:
 
@@ -218,15 +218,15 @@ Definition of done:
 
 ## Backlog Handoff
 
-| Roadmap ID | Change ID                  | Status  | Why next                                                                                                           |
-| ---------- | -------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------ |
-| F-01       | `product-data-model`       | done    | This is the highest-leverage enabling layer and the main blocker for every real domain slice.                      |
-| F-02       | `professor-bootstrap`      | done    | This converted generic auth into the professor/student ownership model required by the PRD.                        |
-| S-01       | `professor-student-roster` | done    | This creates the first real professor-facing navigation surface for the product.                                   |
-| S-02       | `professor-note-history`   | done    | This is the smallest complete validation milestone for the product promise.                                        |
-| S-03       | `student-read-history`     | done    | This now proves linked students can access only their own read-only history through the shared dashboard route.    |
-| S-04       | `shared-note-updates`      | done    | Shared note edits now preserve continuity, and browser plus integration evidence cover the professor/student seam. |
-| S-05       | `note-item-completion`     | blocked | This should ship only after note-item identity and shared editing semantics exist.                                 |
+| Roadmap ID | Change ID                  | Status | Why next                                                                                                              |
+| ---------- | -------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------- |
+| F-01       | `product-data-model`       | done   | This is the highest-leverage enabling layer and the main blocker for every real domain slice.                         |
+| F-02       | `professor-bootstrap`      | done   | This converted generic auth into the professor/student ownership model required by the PRD.                           |
+| S-01       | `professor-student-roster` | done   | This creates the first real professor-facing navigation surface for the product.                                      |
+| S-02       | `professor-note-history`   | done   | This is the smallest complete validation milestone for the product promise.                                           |
+| S-03       | `student-read-history`     | done   | This now proves linked students can access only their own read-only history through the shared dashboard route.       |
+| S-04       | `shared-note-updates`      | done   | Shared note edits now preserve continuity, and browser plus integration evidence cover the professor/student seam.    |
+| S-05       | `note-item-completion`     | done   | Shared task completion is implemented locally, including professor/student flows, boundary checks, and browser proof. |
 
 ## Done
 
@@ -236,3 +236,4 @@ Definition of done:
 - **S-02: Professor can create a post-meeting note and revisit one student's history** - Implemented 2026-05-28 -> `context/changes/professor-note-history/`. Note: hosted verification currently uses an admin-client write adaptation until the remote Supabase RLS/session-write path is reconciled.
 - **S-03: Student can sign in and read only their own supervision history** - Implemented 2026-05-29 -> `context/changes/student-read-history/`. Note: hosted verification depends on a real `students.student_profile_id -> profiles.id` link because student linking is still out of scope in the UI.
 - **S-04: Professor and student can update a shared note without losing continuity** - Implemented 2026-06-08 -> `context/changes/shared-note-continuity-contract/`. Follow-up evidence lives in `context/changes/shared-note-cross-role-visibility-e2e/` and `context/changes/shared-note-continuity-mutation-hardening/`. Note: this slice is now closed locally with shared professor/student edit support, professor-visible continuity metadata, cross-role browser proof, and targeted mutation hardening.
+- **S-05: Professor and student can mark task-like note items complete** - Implemented 2026-06-08 -> `context/changes/shared-task-completion-flow/`. Follow-up professor browser evidence lives in `context/changes/professor-task-completion-proof/`. Note: this slice is now closed locally with a shared completion contract, professor and linked-student completion routes, task-only guards, foreign-task denial coverage, and browser proof on both role branches.

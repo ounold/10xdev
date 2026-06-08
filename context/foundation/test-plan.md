@@ -75,6 +75,19 @@ The classic test base for this project. Recommendations are grounded in local ma
 
 The full set of gates that must pass before a change reaches production.
 
+### 5.1 Gate meanings
+
+- **Required gate**: must pass for the current change before merge or release, based on the risk layer touched.
+- **E2E evidence**: browser proof for a user-visible flow; sometimes this is itself required, sometimes it only supports a lower-level change.
+- **Hardening**: extra strength beyond the minimum merge gate, used to catch cheaper or deeper regressions.
+
+In this repo today:
+
+- `lint + build` are always required
+- Playwright becomes required when the risk lives in routing, cookies, role branching, or authenticated thread UI
+- integration becomes required when the risk lives in read-model composition, ordering, or continuity contracts
+- mutation is hardening unless a specific slice explicitly promotes it to a release gate
+
 | Gate                                 | Where                    | Required?                 | Catches                                                               |
 | ------------------------------------ | ------------------------ | ------------------------- | --------------------------------------------------------------------- |
 | lint + build                         | local + CI               | required                  | syntactic, type, and build drift                                      |
@@ -134,6 +147,7 @@ Hosted caveat:
 
 - local integration green does not replace hosted smoke when the feature depends on remote Supabase link state, RLS behavior, or data-shape drift
 - keep hosted verification explicit in README and rollout notes
+- treat this layer as a required gate when the changed risk actually lives in chronology, ordering, or continuity composition
 
 ### 6.3 Adding an e2e test
 
@@ -167,6 +181,12 @@ What to assert:
 Current shipped example:
 
 - `tests/e2e/dashboard-role-flow.spec.ts`
+
+How to classify this layer:
+
+- treat it as **required** when the changed risk is routing, auth, or role-flow behavior
+- treat it as **supporting evidence** when the main change is lower-level and the browser check only proves one visible seam
+- do not use it as a substitute for hosted smoke when remote auth or linkage state is part of the contract
 
 ### 6.4 Adding a test for a new dashboard role-flow
 

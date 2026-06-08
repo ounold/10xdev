@@ -62,6 +62,37 @@ If `npm run dev` fails inside Codex on Windows with `Access is denied` or `Canno
 - `npm run lint:fix` - Auto-fix ESLint issues
 - `npm run format` - Run Prettier
 
+## Testing Policy
+
+Use the layers below for different kinds of evidence. They are not interchangeable.
+
+### Required gates
+
+- `npm run lint`
+- `npm run build`
+- the risk-appropriate local test layer for the change:
+  - `npm run test:e2e` for browser/auth/role-flow changes
+  - `npm run test:integration` for read-model/ordering/contract changes
+- hosted smoke when the feature depends on real Supabase auth, linkage, RLS, or remote data shape
+
+Current GitHub CI still enforces only `npm run lint` and `npm run build`, so stronger product checks must still be run locally before merge or release.
+
+### E2E evidence
+
+Use Playwright as browser proof for user-visible flows:
+
+- redirects and route guards
+- role separation
+- authenticated thread behavior
+
+Green E2E means the browser flow works locally. It does not, by itself, prove that hosted Supabase state is correct.
+
+### Integration and mutation hardening
+
+- `npm run test:integration` is the cheaper gate for read-model composition, chronology, and continuity semantics
+- `npm run test:mutation` is extra hardening for test strength, not a replacement for lint/build/E2E/integration gates
+- high coverage percentages do not mean the mutation layer is satisfied
+
 ## Testing Access Safety and Critical Flows
 
 The repository now includes a first browser-level regression check for the shared `/dashboard` route in [tests/e2e/dashboard-role-flow.spec.ts](C:\Users\olguno5421\Documents\GitHub\10xdev\tests\e2e\dashboard-role-flow.spec.ts).
@@ -85,6 +116,7 @@ Important local note:
 - the Playwright setup intentionally does not start Astro for you
 - in this Windows/Codex environment, Playwright-managed `npm run dev` was not reliable
 - if no server is already listening on `http://127.0.0.1:4321`, the spec will fail with `ERR_CONNECTION_REFUSED`
+- this spec is browser-level evidence for the shared dashboard seam, not a substitute for hosted smoke when remote Supabase state matters
 
 ### Local dashboard role-flow coverage
 
@@ -216,6 +248,7 @@ Important local note:
 - this suite is intentionally below the browser layer and exercises Supabase-shaped reads with local stubs
 - if `npm run test:integration` fails inside Codex on Windows with config-loading or esbuild filesystem errors, rerun it from a normal PowerShell session outside Codex
 - a green local integration run does not replace hosted smoke for remote Supabase drift
+- use this layer as the cheaper required gate when the risk is chronology, ordering, or continuity composition rather than browser navigation
 
 ## Project Structure
 

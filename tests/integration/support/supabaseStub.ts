@@ -15,6 +15,8 @@ interface QueryState {
 
 interface StubTableConfig<T extends Row> {
   error?: QueryErrorShape | null;
+  operationErrors?: Partial<Record<MutationKind, QueryErrorShape | null>>;
+  ignoreOrder?: boolean;
   rows: T[];
 }
 
@@ -22,6 +24,8 @@ type StubTableInput<T extends Row> = T[] | StubTableConfig<T>;
 
 interface StubTable<T extends Row> {
   error: QueryErrorShape | null;
+  operationErrors: Partial<Record<MutationKind, QueryErrorShape | null>>;
+  ignoreOrder: boolean;
   rows: T[];
 }
 
@@ -34,36 +38,38 @@ export interface QueryTraceEntry {
   args: unknown[];
 }
 
-function applyQuery(rows: Row[], state: QueryState) {
+function applyQuery(rows: Row[], state: QueryState, options?: { ignoreOrder?: boolean }) {
   const filteredRows = rows.filter((row) => state.filters.every((filter) => filter(row)));
-  const orderedRows = [...filteredRows].sort((left, right) => {
-    for (const order of state.orders) {
-      const leftValue = left[order.key];
-      const rightValue = right[order.key];
+  const orderedRows = options?.ignoreOrder
+    ? [...filteredRows]
+    : [...filteredRows].sort((left, right) => {
+        for (const order of state.orders) {
+          const leftValue = left[order.key];
+          const rightValue = right[order.key];
 
-      if (leftValue === rightValue) {
-        continue;
-      }
+          if (leftValue === rightValue) {
+            continue;
+          }
 
-      if (leftValue == null) {
-        return order.ascending ? -1 : 1;
-      }
+          if (leftValue == null) {
+            return order.ascending ? -1 : 1;
+          }
 
-      if (rightValue == null) {
-        return order.ascending ? 1 : -1;
-      }
+          if (rightValue == null) {
+            return order.ascending ? 1 : -1;
+          }
 
-      if (leftValue < rightValue) {
-        return order.ascending ? -1 : 1;
-      }
+          if (leftValue < rightValue) {
+            return order.ascending ? -1 : 1;
+          }
 
-      if (leftValue > rightValue) {
-        return order.ascending ? 1 : -1;
-      }
-    }
+          if (leftValue > rightValue) {
+            return order.ascending ? 1 : -1;
+          }
+        }
 
-    return 0;
-  });
+        return 0;
+      });
 
   if (state.limit == null) {
     return orderedRows;
@@ -83,12 +89,16 @@ function normalizeTable<T extends Row>(input: StubTableInput<T> | undefined): St
   if (Array.isArray(input)) {
     return {
       error: null,
+      operationErrors: {},
+      ignoreOrder: false,
       rows: [...input],
     };
   }
 
   return {
     error: input.error ?? null,
+    operationErrors: input.operationErrors ?? {},
+    ignoreOrder: input.ignoreOrder ?? false,
     rows: [...input.rows],
   };
 }
@@ -200,14 +210,28 @@ class QueryBuilder<T extends Row> {
     }
 
     if (this.mutation === "insert") {
+      if (this.table.operationErrors.insert) {
+        return {
+          data: null,
+          error: this.table.operationErrors.insert,
+        };
+      }
+
       return {
-        data: applyQuery(this.insertedRows, this.state) as T[],
+        data: applyQuery(this.insertedRows, this.state, { ignoreOrder: this.table.ignoreOrder }) as T[],
         error: null,
       };
     }
 
     if (this.mutation === "update") {
-      const matchingRows = applyQuery(this.table.rows, this.state) as T[];
+      if (this.table.operationErrors.update) {
+        return {
+          data: null,
+          error: this.table.operationErrors.update,
+        };
+      }
+
+      const matchingRows = applyQuery(this.table.rows, this.state, { ignoreOrder: this.table.ignoreOrder }) as T[];
       const patch = this.updatePatch ?? {};
       for (const row of matchingRows) {
         Object.assign(row, patch);
@@ -219,7 +243,7 @@ class QueryBuilder<T extends Row> {
     }
 
     return {
-      data: applyQuery(this.table.rows, this.state) as T[],
+      data: applyQuery(this.table.rows, this.state, { ignoreOrder: this.table.ignoreOrder }) as T[],
       error: null,
     };
   }

@@ -68,13 +68,13 @@ Make the shared note continuity integration suite strong enough to kill the curr
 
 #### Automated verification:
 
-- [ ] Additional integration tests target the top S-04 mutation survivors directly
-- [ ] `vitest` stays green for the updated update-contract suite
-- [ ] Re-running mutation testing shows the targeted S-04 survivors reduced
+- [x] Additional integration tests target the top S-04 mutation survivors directly
+- [x] `vitest` stays green for the updated update-contract suite
+- [x] Re-running mutation testing shows the targeted S-04 survivors reduced
 
 #### Manual verification:
 
-- [ ] The new tests still read like continuity-contract proofs, not stub-implementation snapshots
+- [x] The new tests still read like continuity-contract proofs, not stub-implementation snapshots
 
 ## Progress
 
@@ -91,4 +91,4 @@ Make the shared note continuity integration suite strong enough to kill the curr
 
 #### Manual Verification:
 
-- [ ] 1.5 Confirm the new tests reflect S-04 continuity invariants rather than generic helper behavior
+- [x] 1.5 Confirm the new tests reflect S-04 continuity invariants rather than generic helper behavior

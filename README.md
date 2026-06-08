@@ -184,6 +184,7 @@ The repo now includes linked-student browser checks around the shared-note conti
 
 - `tests/e2e/linked-student-note-edit.spec.ts` - linked student can update an existing shared note without seeing professor-only surfaces
 - `tests/e2e/linked-student-note-append.spec.ts` - linked student can append a new item at the tail of a shared note and the spec restores state afterward
+- `tests/e2e/shared-note-cross-role-visibility.spec.ts` - professor can see the linked student's shared-note edit in the same thread
 - `tests/e2e/linked-student-foreign-thread.spec.ts` - linked student cannot open another student's thread by direct URL
 - `tests/e2e/linked-student-foreign-note-post.spec.ts` - linked student cannot submit direct POST updates to another student's note id
 

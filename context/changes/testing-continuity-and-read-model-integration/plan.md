@@ -1,7 +1,7 @@
 ---
 change_id: testing-continuity-and-read-model-integration
 title: Testing continuity and read model integration
-status: planned
+status: implemented
 created: 2026-06-03
 updated: 2026-06-03
 owner: codex
@@ -18,13 +18,13 @@ owner: codex
 
 ## Key Decisions
 
-| Area | Decision | Why |
-| --- | --- | --- |
-| Primary integration boundary | `src/lib/supervision.ts` read helpers | They are the shared continuity seam for student and professor history views |
-| Provider realism | Stubbed Supabase client responses at query-shape level | Cheapest stable signal without needing full DB execution |
-| Mandatory edge case | Same `meeting_date`, different `created_at` tie-break | Directly protects the actual chronology contract |
-| Hosted drift handling | Keep hosted caveat explicit in cookbook/docs | Local integration green must not imply hosted history is fully verified |
-| Cookbook output | Shared read-model integration pattern | Reusable for future continuity and history changes |
+| Area                         | Decision                                               | Why                                                                         |
+| ---------------------------- | ------------------------------------------------------ | --------------------------------------------------------------------------- |
+| Primary integration boundary | `src/lib/supervision.ts` read helpers                  | They are the shared continuity seam for student and professor history views |
+| Provider realism             | Stubbed Supabase client responses at query-shape level | Cheapest stable signal without needing full DB execution                    |
+| Mandatory edge case          | Same `meeting_date`, different `created_at` tie-break  | Directly protects the actual chronology contract                            |
+| Hosted drift handling        | Keep hosted caveat explicit in cookbook/docs           | Local integration green must not imply hosted history is fully verified     |
+| Cookbook output              | Shared read-model integration pattern                  | Reusable for future continuity and history changes                          |
 
 ## Scope
 
@@ -76,11 +76,13 @@ Add the thinnest runner/config needed for one real read-model integration spec a
 #### Success criteria
 
 #### Automated verification:
+
 - [ ] An integration test command exists and runs locally through the repo script surface
 - [ ] At least one supervision read-model integration spec proves chronology and `info` / `task` continuity behavior
 - [ ] The same-`meeting_date`, different-`created_at` edge case is covered explicitly
 
 #### Manual verification:
+
 - [ ] The chosen integration boundary feels cheaper and less brittle than browser rendering tests for the same risk
 - [ ] The test setup still reflects Supabase-shaped reads rather than plain helper-unit snapshots
 
@@ -107,10 +109,12 @@ Make the continuity test layer reusable by documenting how to add new read-model
 #### Success criteria
 
 #### Automated verification:
+
 - [ ] The cookbook no longer leaves the Phase 2 integration path as `TBD`
 - [ ] The repo documents how to run the continuity integration check locally
 
 #### Manual verification:
+
 - [ ] A future change author could add another shared read-model integration test by following the cookbook
 - [ ] The docs still make it clear that local integration does not replace hosted smoke for remote Supabase drift
 
@@ -130,20 +134,24 @@ Make the continuity test layer reusable by documenting how to add new read-model
 ### Phase 1: Establish minimal integration tooling and continuity baseline
 
 #### Automated Verification:
+
 - [x] 1.1 Add the minimum integration test command/config needed for one real read-model spec
 - [x] 1.2 Add a supervision read-model spec covering chronology, tie-break ordering, and `info` / `task` preservation
 - [x] 1.3 Keep the runner and helpers intentionally narrow and proportional to the phase
 
 #### Manual Verification:
+
 - [x] 1.4 Confirm the integration boundary is cheaper and less brittle than page-level rendering tests for this risk
 - [x] 1.5 Confirm the test setup still exercises Supabase-shaped reads rather than plain output snapshots
 
 ### Phase 2: Encode the shared read-model pattern into the cookbook
 
 #### Automated Verification:
-- [ ] 2.1 Replace the Phase 2 integration cookbook placeholders with a concrete shared read-model pattern
-- [ ] 2.2 Document how to run the local continuity integration check
+
+- [x] 2.1 Replace the Phase 2 integration cookbook placeholders with a concrete shared read-model pattern
+- [x] 2.2 Document how to run the local continuity integration check
 
 #### Manual Verification:
-- [ ] 2.3 Confirm another change author could add a similar read-model integration test from the cookbook
-- [ ] 2.4 Confirm the docs still separate local continuity green from hosted smoke expectations
+
+- [x] 2.3 Confirm another change author could add a similar read-model integration test from the cookbook from `context/foundation/test-plan.md` section `6.2 Adding an integration test`
+- [x] 2.4 Confirm the docs still separate local continuity green from hosted smoke expectations in both `context/foundation/test-plan.md` and `README.md`

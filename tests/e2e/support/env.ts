@@ -48,7 +48,22 @@ function accountFromEnv(prefix: string): RoleAccount | null {
 }
 
 export function getProfessorAccount() {
-  return accountFromEnv("E2E_PROFESSOR");
+  const explicitAccount = accountFromEnv("E2E_PROFESSOR");
+  if (explicitAccount) {
+    return explicitAccount;
+  }
+
+  const bootstrapEmail = process.env.BOOTSTRAP_PROFESSOR_EMAIL?.trim();
+  const fixturePassword = process.env.E2E_FIXTURE_PASSWORD?.trim() ?? "RepoFixture!2026";
+
+  if (!bootstrapEmail) {
+    return null;
+  }
+
+  return {
+    email: bootstrapEmail,
+    password: fixturePassword,
+  };
 }
 
 export function getLinkedStudentAccount() {

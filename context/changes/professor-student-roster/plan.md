@@ -1,7 +1,7 @@
 ---
 change_id: professor-student-roster
 title: Professor student roster
-status: planned
+status: implemented
 created: 2026-05-29
 updated: 2026-05-29
 owner: codex
@@ -19,15 +19,15 @@ owner: codex
 
 ## Key Decisions
 
-| Area | Decision | Why |
-| --- | --- | --- |
-| Creation surface | Inline on the existing professor dashboard | Extends the current roster shell instead of creating a disconnected flow |
-| Minimum student record | `full_name` required, `email` optional | Fits the current schema and avoids blocking placeholder roster creation |
-| Editing | Out of scope | Keeps `S-01` focused on create-and-browse rather than management CRUD |
-| Roster behavior | Preserve current list and thread links, add stronger empty/create states | Builds on `S-02` instead of replacing it |
-| Account linking | Explicitly out of scope | Preserves the blocked boundary around `S-03` |
-| Data access shape | Extend `src/lib/supervision.ts` with student-creation support | Keeps supervision queries and writes in one app-layer module |
-| Trust model | Try authenticated session writes first, then fall back to the admin client only after professor/session verification if hosted RLS rejects the insert | Preserves the intended model where possible while keeping the hosted slice functional |
+| Area                   | Decision                                                                                                                                              | Why                                                                                   |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Creation surface       | Inline on the existing professor dashboard                                                                                                            | Extends the current roster shell instead of creating a disconnected flow              |
+| Minimum student record | `full_name` required, `email` optional                                                                                                                | Fits the current schema and avoids blocking placeholder roster creation               |
+| Editing                | Out of scope                                                                                                                                          | Keeps `S-01` focused on create-and-browse rather than management CRUD                 |
+| Roster behavior        | Preserve current list and thread links, add stronger empty/create states                                                                              | Builds on `S-02` instead of replacing it                                              |
+| Account linking        | Explicitly out of scope                                                                                                                               | Preserves the blocked boundary around `S-03`                                          |
+| Data access shape      | Extend `src/lib/supervision.ts` with student-creation support                                                                                         | Keeps supervision queries and writes in one app-layer module                          |
+| Trust model            | Try authenticated session writes first, then fall back to the admin client only after professor/session verification if hosted RLS rejects the insert | Preserves the intended model where possible while keeping the hosted slice functional |
 
 ## Scope
 
@@ -85,11 +85,13 @@ Introduce the minimal data-access and route-layer foundation for professor-owned
 #### Success criteria
 
 #### Automated verification:
+
 - [x] The supervision layer exposes a focused create-student path rather than page-local insert logic. - 3880af4
 - [x] The app has one controlled server-side write path for professor-owned student creation. - 3880af4
 - [x] The dashboard remains the canonical roster screen instead of introducing a competing navigation surface. - 3880af4
 
 #### Manual verification:
+
 - [x] A professor can open the dashboard and understand it as the place to add and browse students. - 3880af4
 - [x] The existing thread links from the roster remain intact after the creation foundation lands. - 3880af4
 
@@ -121,11 +123,13 @@ Deliver the professor-facing MVP flow: add a student inline on the dashboard and
 #### Success criteria
 
 #### Automated verification:
+
 - [x] The dashboard can submit a valid professor-owned student payload with `full_name` and optional `email`. - ab79189
 - [x] Invalid payloads are rejected at the app layer without creating partial records. - ab79189
 - [x] The roster list still links into the existing student thread route after the UI expansion. - ab79189
 
 #### Manual verification:
+
 - [x] A professor can create a student from the dashboard using only `full_name`. - ab79189
 - [x] A professor can create a student from the dashboard with both `full_name` and `email`. - ab79189
 - [x] After submit, the newly created student appears in the roster and remains linkable into the existing thread view. - ab79189
@@ -157,11 +161,13 @@ Stabilize the roster slice, verify it against the hosted Supabase project, and c
 #### Success criteria
 
 #### Automated verification:
+
 - [x] `npm run lint` passes. - Phase 3
 - [x] `npm run build` passes. - Phase 3
 - [x] Change artifacts remain sufficient for `/10x-impl-review`. - Phase 3
 
 #### Manual verification:
+
 - [x] The professor can create students successfully against the hosted Supabase project, not just local assumptions. - Phase 3
 - [x] The roster slice still avoids editing, linking, and broader management behavior outside `S-01`. - Phase 3
 - [x] Close-out does not leave GitHub or Linear behind the local change state. - GitHub #3 closed, Linear OUN-7 done
@@ -185,22 +191,26 @@ Stabilize the roster slice, verify it against the hosted Supabase project, and c
 ### Phase 1: Roster creation foundation and dashboard contract
 
 #### Automated Verification:
+
 - [x] 1.1 The supervision layer exposes a focused create-student path for this slice - 3880af4
 - [x] 1.2 The app has one controlled server-side write path for professor-owned student creation - 3880af4
 - [x] 1.3 The dashboard remains the canonical roster screen after the foundation changes - 3880af4
 
 #### Manual Verification:
+
 - [x] 1.4 A professor can recognize the dashboard as the create-and-browse home for students - 3880af4
 - [x] 1.5 Existing thread links still work after the creation foundation lands - 3880af4
 
 ### Phase 2: Inline student creation UX and roster polish
 
 #### Automated Verification:
+
 - [x] 2.1 The dashboard submits valid create-student payloads with the MVP field contract - ab79189
 - [x] 2.2 Invalid roster submissions are rejected without creating partial records - ab79189
 - [x] 2.3 The roster list continues to link into the existing thread route after the UI expansion - ab79189
 
 #### Manual Verification:
+
 - [x] 2.4 A professor can create a student using only `full_name` - ab79189
 - [x] 2.5 A professor can create a student using `full_name` plus `email` - ab79189
 - [x] 2.6 Newly created students appear in the roster and remain linkable into the existing thread view - ab79189
@@ -208,11 +218,13 @@ Stabilize the roster slice, verify it against the hosted Supabase project, and c
 ### Phase 3: Slice hardening, hosted verification, and close-out
 
 #### Automated Verification:
+
 - [x] 3.1 `npm run lint` passes
 - [x] 3.2 `npm run build` passes
 - [x] 3.3 Change artifacts and close-out trackers are ready for review
 
 #### Manual Verification:
+
 - [x] 3.4 Hosted Supabase accepts professor-owned student creation through the current shipped write path
 - [x] 3.5 The delivered slice does not include editing, linking, or broader management behavior
 - [x] 3.6 Local and remote backlog mirrors match the final change state

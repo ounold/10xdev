@@ -1,7 +1,7 @@
 ---
 change_id: professor-student-roster
 title: Professor student roster
-status: impl_reviewed
+status: implemented
 created: 2026-05-29
 updated: 2026-05-29
 archived_at: null

@@ -1,7 +1,7 @@
 ---
 change_id: professor-note-history
 title: Professor note history
-status: planned
+status: implemented
 created: 2026-05-28
 updated: 2026-05-28
 owner: codex
@@ -20,15 +20,15 @@ owner: codex
 
 ## Key Decisions
 
-| Area | Decision | Why |
-| --- | --- | --- |
-| Student entry | Direct student-detail route with a temporary minimal selector on dashboard | Validates the real thread flow without absorbing full roster scope |
-| Note creation | Inline on the student history page | Keeps context visible and matches the product promise of continuity |
-| Bullet entry | Small structured list UI with add/remove rows and explicit `info` / `task` type | Matches schema and preserves later completion semantics |
-| Manual verification | Verify both seeded-data rendering and fresh-create flow | Confirms history rendering and real note creation in one slice |
-| Student creation | Explicitly out of scope | Preserves `S-02` boundary and keeps `S-01` meaningful |
-| Data access shape | Add a focused supervision data-access helper instead of page-local queries | Avoids scattering Supabase query logic across routes |
-| Route shape | Use professor dashboard as thin entry shell plus per-student thread route | Reuses existing protected professor surface with minimal IA change |
+| Area                | Decision                                                                        | Why                                                                 |
+| ------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Student entry       | Direct student-detail route with a temporary minimal selector on dashboard      | Validates the real thread flow without absorbing full roster scope  |
+| Note creation       | Inline on the student history page                                              | Keeps context visible and matches the product promise of continuity |
+| Bullet entry        | Small structured list UI with add/remove rows and explicit `info` / `task` type | Matches schema and preserves later completion semantics             |
+| Manual verification | Verify both seeded-data rendering and fresh-create flow                         | Confirms history rendering and real note creation in one slice      |
+| Student creation    | Explicitly out of scope                                                         | Preserves `S-02` boundary and keeps `S-01` meaningful               |
+| Data access shape   | Add a focused supervision data-access helper instead of page-local queries      | Avoids scattering Supabase query logic across routes                |
+| Route shape         | Use professor dashboard as thin entry shell plus per-student thread route       | Reuses existing protected professor surface with minimal IA change  |
 
 ## Scope
 
@@ -87,17 +87,20 @@ Create the minimal app-layer foundation needed to open a real student thread wit
 #### Success criteria
 
 #### Automated verification:
+
 - [ ] `src/lib/` contains a focused supervision data-access module rather than page-local duplicated queries.
 - [ ] The app has a dedicated professor-facing student-thread route under `src/pages/`.
 - [ ] The dashboard no longer presents only a placeholder shell for professors.
 
 #### Manual verification:
+
 - [ ] A professor can land on the dashboard and open one existing student thread.
 - [ ] The student-entry surface feels intentionally thin and does not drift into full roster-management behavior.
 
 ### Phase 2: Student history rendering and inline note creation
 
 Phase boundary note:
+
 - Phase 1 intentionally pulled forward read-side history rendering on the student thread plus the `createStudentNote()` helper in `src/lib/supervision.ts` as groundwork for this phase. Phase 2 still owns the inline form, controlled write path, and end-to-end note-creation verification.
 - The shipped Phase 2 write path verifies professor access with the session client, then persists notes through the admin client because the hosted Supabase project currently rejects session-client note inserts under RLS. Treat this as a documented adaptation, not the final trust model; reconcile the hosted RLS/session-write path in follow-up hardening.
 
@@ -135,11 +138,13 @@ Deliver the smallest complete professor workflow: open one student, view chronol
 #### Success criteria
 
 #### Automated verification:
+
 - [ ] There is a write path that creates both `notes` and ordered `note_items` for one student.
 - [ ] The thread route renders loaded history using app-layer data helpers rather than hard-coded seed assumptions.
 - [ ] The note form supports explicit `info` / `task` rows and stable order.
 
 #### Manual verification:
+
 - [ ] On seeded data, a professor can open an existing student thread and see prior notes/items in chronological order.
 - [ ] A professor can add a fresh note inline with multiple bullet items and see it appear on the same thread after submit.
 - [ ] The flow feels like “working inside one supervision thread,” not like bouncing between unrelated screens.
@@ -171,11 +176,13 @@ Make the slice implementation stable enough for follow-on work and verify it aga
 #### Success criteria
 
 #### Automated verification:
+
 - [ ] `npm run lint` passes.
 - [ ] `npm run build` passes.
 - [ ] The change artifacts remain sufficient for `/10x-impl-review` to validate scope and drift.
 
 #### Manual verification:
+
 - [ ] The professor note-history flow works both against seeded local data and a fresh note-creation attempt.
 - [ ] No student-creation or broader roster-management behavior slipped into the slice.
 - [ ] If build/release happens later, the plan honors the lesson that remote Supabase state must be verified before treating deployment as complete.
@@ -199,22 +206,26 @@ Make the slice implementation stable enough for follow-on work and verify it aga
 ### Phase 1: Professor thread entry and supervision data helpers
 
 #### Automated Verification:
+
 - [x] 1.1 A focused supervision data-access module exists in `src/lib/` for this slice — d82015c
 - [x] 1.2 A dedicated professor student-thread route exists and the dashboard links into it — d82015c
 - [x] 1.3 The placeholder dashboard is replaced or extended with a real thin entry shell — d82015c
 
 #### Manual Verification:
+
 - [x] 1.4 A professor can reach one accessible student thread from the protected app shell — d82015c
 - [x] 1.5 The entry surface stays intentionally thinner than the planned roster slice — d82015c
 
 ### Phase 2: Student history rendering and inline note creation
 
 #### Automated Verification:
+
 - [x] 2.1 The app can load one student's chronological history with ordered note items — 27f72c6
 - [x] 2.2 The create-note path writes one note and its ordered items through the app layer — 27f72c6
 - [x] 2.3 The note form supports explicit `info` / `task` rows with stable ordering — 27f72c6
 
 #### Manual Verification:
+
 - [x] 2.4 Seeded note history renders correctly for a professor-owned student — 27f72c6
 - [x] 2.5 A newly created note appears on the same thread after submit — 27f72c6
 - [x] 2.6 The flow preserves a clear single-thread mental model for the professor — 27f72c6
@@ -222,11 +233,13 @@ Make the slice implementation stable enough for follow-on work and verify it aga
 ### Phase 3: Slice hardening, documentation, and verification
 
 #### Automated Verification:
+
 - [x] 3.1 `npm run lint` passes — 36c6a42
 - [x] 3.2 `npm run build` passes — 36c6a42
 - [x] 3.3 Change artifacts and backlog mirrors are ready for close-out discipline — 36c6a42
 
 #### Manual Verification:
+
 - [x] 3.4 Local verification covers both seeded data and fresh-create paths — 36c6a42
 - [x] 3.5 The delivered slice does not include student creation or full roster-management behavior — 36c6a42
 - [x] 3.6 Deployment/release confirmation does not assume remote Supabase schema state automatically matches local code — 36c6a42

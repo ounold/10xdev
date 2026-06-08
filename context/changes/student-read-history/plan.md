@@ -1,7 +1,7 @@
 ---
 change_id: student-read-history
 title: Student read history
-status: in_progress
+status: implemented
 created: 2026-05-29
 updated: 2026-05-29
 owner: codex
@@ -19,15 +19,15 @@ owner: codex
 
 ## Key Decisions
 
-| Area | Decision | Why |
-| --- | --- | --- |
-| Student linking | Out of scope for the UI; consume already-linked records only | Keeps `S-03` read-focused and avoids risky identity-management drift |
-| Landing route | Reuse `/dashboard` with role-based rendering | Matches your chosen IA and avoids a separate top-level student route |
-| Student scope | Read-only chronological history with clear `info` / `task` distinction | Fulfills the PRD promise without drifting into `S-05` |
-| Unlinked behavior | Keep unlinked students on `pending-access` with clearer copy | Preserves the existing safety gate while improving clarity |
-| Verification focus | One linked hosted student account | Validates the real boundary that matters most: link + routing + read-only access |
-| Data access shape | Extend supervision helpers with a student-safe read path | Avoids duplicating note-history queries across role-specific pages |
-| Dashboard architecture | One protected route, two role-specific render branches | Keeps routing simple while still separating professor and student UI contracts |
+| Area                   | Decision                                                               | Why                                                                              |
+| ---------------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Student linking        | Out of scope for the UI; consume already-linked records only           | Keeps `S-03` read-focused and avoids risky identity-management drift             |
+| Landing route          | Reuse `/dashboard` with role-based rendering                           | Matches your chosen IA and avoids a separate top-level student route             |
+| Student scope          | Read-only chronological history with clear `info` / `task` distinction | Fulfills the PRD promise without drifting into `S-05`                            |
+| Unlinked behavior      | Keep unlinked students on `pending-access` with clearer copy           | Preserves the existing safety gate while improving clarity                       |
+| Verification focus     | One linked hosted student account                                      | Validates the real boundary that matters most: link + routing + read-only access |
+| Data access shape      | Extend supervision helpers with a student-safe read path               | Avoids duplicating note-history queries across role-specific pages               |
+| Dashboard architecture | One protected route, two role-specific render branches                 | Keeps routing simple while still separating professor and student UI contracts   |
 
 ## Scope
 
@@ -86,11 +86,13 @@ Open a safe path for linked students to reach the protected app surface without 
 #### Success criteria
 
 #### Automated verification:
+
 - [ ] Middleware allows linked students through to the protected dashboard route without granting professor access.
 - [ ] The supervision layer exposes a student-safe history read helper instead of reusing professor-only route assumptions.
 - [ ] Unlinked students still resolve to `pending-access`.
 
 #### Manual verification:
+
 - [ ] A linked student account reaches `/dashboard`.
 - [ ] An unlinked student account still lands on `pending-access`.
 
@@ -120,11 +122,13 @@ Deliver the first student-facing experience: read only your own supervision hist
 #### Success criteria
 
 #### Automated verification:
+
 - [ ] `/dashboard` has a student-facing render branch separate from the professor roster shell.
 - [ ] The student view renders chronological history from app-layer data, not hard-coded placeholders.
 - [ ] The student UI distinguishes `info` vs `task` items without exposing write controls.
 
 #### Manual verification:
+
 - [ ] A linked student can sign in and see only their own supervision history.
 - [ ] The student view is read-only and does not expose professor creation or editing controls.
 - [ ] The history is understandable as one continuous supervision thread over time.
@@ -156,11 +160,13 @@ Verify the student slice against hosted auth/linking reality and complete the cl
 #### Success criteria
 
 #### Automated verification:
+
 - [ ] `npm run lint` passes.
 - [ ] `npm run build` passes.
 - [ ] Change artifacts remain sufficient for `/10x-impl-review`.
 
 #### Manual verification:
+
 - [ ] One linked student account on hosted Supabase can sign in and see only its own history through `/dashboard`.
 - [ ] Unlinked student accounts still land on `pending-access`.
 - [ ] Close-out leaves local docs, GitHub, and Linear aligned.
@@ -184,22 +190,26 @@ Verify the student slice against hosted auth/linking reality and complete the cl
 ### Phase 1: Role-aware routing and student history read model
 
 #### Automated Verification:
+
 - [x] 1.1 Middleware allows linked students through to `/dashboard` without granting professor access (`ff68994`)
 - [x] 1.2 The supervision layer exposes a student-safe history read helper (`ff68994`)
 - [x] 1.3 Unlinked students still resolve to `pending-access` (`ff68994`)
 
 #### Manual Verification:
+
 - [x] 1.4 A linked student account reaches `/dashboard` (`ff68994`)
 - [x] 1.5 An unlinked student account still lands on `pending-access` (`ff68994`)
 
 ### Phase 2: Student-facing dashboard branch and read-only history UI
 
 #### Automated Verification:
+
 - [x] 2.1 `/dashboard` has a student-facing render branch separate from the professor shell (`f84ded8`)
 - [x] 2.2 The student view renders chronological history from app-layer data (`f84ded8`)
 - [x] 2.3 The student UI distinguishes `info` and `task` items without exposing write controls (`f84ded8`)
 
 #### Manual Verification:
+
 - [x] 2.4 A linked student can sign in and see only their own supervision history (`f84ded8`)
 - [x] 2.5 The student view is read-only and does not expose professor controls (`f84ded8`)
 - [x] 2.6 The history remains understandable as one continuous supervision thread (`f84ded8`)
@@ -207,11 +217,13 @@ Verify the student slice against hosted auth/linking reality and complete the cl
 ### Phase 3: Hosted verification, documentation, and close-out
 
 #### Automated Verification:
+
 - [x] 3.1 `npm run lint` passes (`3df676b`)
 - [x] 3.2 `npm run build` passes (`3df676b`)
 - [x] 3.3 Change artifacts and close-out trackers are ready for review
 
 #### Manual Verification:
+
 - [x] 3.4 One linked student account on hosted Supabase can sign in and see only its own history through `/dashboard` (`3df676b`)
 - [x] 3.5 Unlinked student accounts still land on `pending-access` (`3df676b`)
 - [x] 3.6 Local and remote backlog mirrors match the final change state (`3df676b`)

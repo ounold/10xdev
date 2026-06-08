@@ -220,11 +220,11 @@ Allow the assigned student to edit their own note through the same app-layer con
 
 #### Automated Verification:
 
-- [x] 3.1 Allow linked students to submit the shared note update payload for accessible notes
-- [x] 3.2 Preserve student-only visibility and block professor-only thread surfaces
-- [x] 3.3 Cover student-side update behavior with the cheapest effective tests
+- [x] 3.1 Allow linked students to submit the shared note update payload for accessible notes - f5c0130
+- [x] 3.2 Preserve student-only visibility and block professor-only thread surfaces - f5c0130
+- [x] 3.3 Cover student-side update behavior with the cheapest effective tests - f5c0130
 
 #### Manual Verification:
 
-- [x] 3.4 Confirm the linked student can edit only their own note history
-- [x] 3.5 Confirm the shared update flow feels continuous across professor and student views
+- [x] 3.4 Confirm the linked student can edit only their own note history - f5c0130
+- [x] 3.5 Confirm the shared update flow feels continuous across professor and student views - f5c0130

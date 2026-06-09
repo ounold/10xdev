@@ -13,6 +13,7 @@ GitHub Issues are the execution backlog for the project. They are derived from t
 - Repository: [ounold/10xdev](https://github.com/ounold/10xdev)
 
 The roadmap defines:
+
 - foundation work items (`F-*`)
 - vertical slices (`S-*`)
 - dependencies
@@ -24,15 +25,19 @@ The roadmap defines:
 Project: `Post-meeting notes`
 
 Main goal:
+
 - validate the core professor workflow first
 
 North star slice:
+
 - `S-02`
 
 Top blocker:
+
 - data model and access rules for professor/student/note/note-item ownership
 
 Current roadmap items:
+
 - `F-01` foundation, closed on GitHub after implementation
 - `F-02` foundation, reconciled across local backlog docs, GitHub, and Linear
 - `S-01` slice, implemented and reconciled across GitHub + Linear
@@ -42,6 +47,7 @@ Current roadmap items:
 - `S-05` slice, blocked
 
 Streams:
+
 - core professor flow: `F-01 -> F-02 -> S-01 -> S-02`
 - student visibility: `F-01 -> F-02 -> S-02 -> S-03`
 - shared follow-up: `F-01 -> S-02 -> S-04 -> S-05`
@@ -62,6 +68,7 @@ The repository uses these labels:
 - `blocker`
 
 Intended meaning:
+
 - `type:*` separates enabling work from user-visible slices
 - `status:*` describes backlog readiness
 - `stream:*` groups issues by implementation track
@@ -104,10 +111,10 @@ Current GitHub issue state:
   State: `closed on GitHub; done in Linear`
   Labels: `type:slice`, `status:blocked`, `stream:student-visibility`
 - `#6` `[S-04] Professor and student can update a shared note without losing continuity`
-  State: `open`
+  State: `closed on GitHub; Linear mirror pending`
   Labels: `type:slice`, `status:blocked`, `stream:shared-follow-up`
 - `#7` `[S-05] Professor and student can mark task-like note items complete`
-  State: `open`
+  State: `closed on GitHub; Linear mirror pending`
   Labels: `type:slice`, `status:blocked`, `stream:shared-follow-up`
 
 ## Roadmap to GitHub Mapping
@@ -124,9 +131,9 @@ Current GitHub issue state:
 
 The repo currently contains helper scripts for setting up and importing the GitHub backlog:
 
-- [.tmp-gh-create-roadmap-labels.ps1](C:\Users\olguno5421\Documents\GitHub\10xdev\.tmp-gh-create-roadmap-labels.ps1)
-- [.tmp-gh-create-roadmap-milestones.ps1](C:\Users\olguno5421\Documents\GitHub\10xdev\.tmp-gh-create-roadmap-milestones.ps1)
-- [.tmp-gh-import-roadmap.ps1](C:\Users\olguno5421\Documents\GitHub\10xdev\.tmp-gh-import-roadmap.ps1)
+- [.tmp-gh-create-roadmap-labels.ps1](C:\Users\olguno5421\Documents\GitHub\10xdev.tmp-gh-create-roadmap-labels.ps1)
+- [.tmp-gh-create-roadmap-milestones.ps1](C:\Users\olguno5421\Documents\GitHub\10xdev.tmp-gh-create-roadmap-milestones.ps1)
+- [.tmp-gh-import-roadmap.ps1](C:\Users\olguno5421\Documents\GitHub\10xdev.tmp-gh-import-roadmap.ps1)
 
 What they do:
 

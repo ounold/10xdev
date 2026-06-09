@@ -1,9 +1,9 @@
 ---
 change_id: student-account-linking-flow
 title: Student account linking flow
-status: planned
+status: implemented
 created: 2026-06-05
-updated: 2026-06-05
+updated: 2026-06-09
 owner: codex
 ---
 

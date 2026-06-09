@@ -1,9 +1,9 @@
 ---
 change_id: professor-bootstrap
 title: Professor bootstrap
-status: planned
+status: implemented
 created: 2026-05-27
-updated: 2026-05-27
+updated: 2026-06-09
 owner: codex
 ---
 
@@ -18,16 +18,16 @@ owner: codex
 
 ## Key Decisions
 
-| Area | Decision | Why |
-| --- | --- | --- |
-| First professor designation | Manual allowlist by email | Safest MVP path; avoids accidental workspace takeover |
-| Allowlist storage | Server-side env/config | Smallest viable contract without expanding the data model |
-| Claim trigger | Auto-claim on first successful app entry | Keeps bootstrap real and user-facing without an extra claim screen |
-| Bootstrap execution | Dedicated server-side endpoint/action | Keeps role mutation explicit, testable, and out of middleware side effects |
-| Professor uniqueness | One active professor, future replacement is manual outside app | Matches MVP ownership model while preserving an operational escape hatch |
-| Non-professor fallback | Pending-access page | Gives safe and clear UX for authenticated but unlinked users |
-| F-02 scope | Role claim, guarded routing, pending-access view | Fully unlocks `S-01` and `S-02` app flow without drifting into slice work |
-| Product verification | Manual end-to-end with two accounts | Best way to validate both professor bootstrap and blocked non-professor state |
+| Area                        | Decision                                                       | Why                                                                           |
+| --------------------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| First professor designation | Manual allowlist by email                                      | Safest MVP path; avoids accidental workspace takeover                         |
+| Allowlist storage           | Server-side env/config                                         | Smallest viable contract without expanding the data model                     |
+| Claim trigger               | Auto-claim on first successful app entry                       | Keeps bootstrap real and user-facing without an extra claim screen            |
+| Bootstrap execution         | Dedicated server-side endpoint/action                          | Keeps role mutation explicit, testable, and out of middleware side effects    |
+| Professor uniqueness        | One active professor, future replacement is manual outside app | Matches MVP ownership model while preserving an operational escape hatch      |
+| Non-professor fallback      | Pending-access page                                            | Gives safe and clear UX for authenticated but unlinked users                  |
+| F-02 scope                  | Role claim, guarded routing, pending-access view               | Fully unlocks `S-01` and `S-02` app flow without drifting into slice work     |
+| Product verification        | Manual end-to-end with two accounts                            | Best way to validate both professor bootstrap and blocked non-professor state |
 
 ## Scope
 
@@ -80,10 +80,12 @@ Establish the configuration and server-side mutation path that can safely promot
 #### Success criteria
 
 #### Automated verification:
+
 - [ ] The env schema rejects missing or malformed bootstrap professor configuration in environments that expect it.
 - [ ] A dedicated server-side bootstrap path exists and references `profiles.role` rather than inventing a parallel ownership model.
 
 #### Manual verification:
+
 - [ ] Reviewing the bootstrap code shows that only the current authenticated allowlisted user can claim professor and only when no professor exists yet.
 - [ ] The bootstrap logic supports later manual owner replacement operationally by not hard-coding professor identity anywhere except current role state and env allowlist.
 
@@ -114,10 +116,12 @@ Teach the app to distinguish professor, pending-access, and unauthenticated stat
 #### Success criteria
 
 #### Automated verification:
+
 - [ ] Middleware or equivalent server request handling reads both the authenticated user and app-level profile state before deciding protected-route behavior.
 - [ ] There is a dedicated pending-access route/page for authenticated but not-yet-authorized users.
 
 #### Manual verification:
+
 - [ ] A professor user no longer gets treated as just “authenticated”; the app has a role-aware post-login path.
 - [ ] A non-professor authenticated user is routed to pending-access rather than seeing professor shell content or an ambiguous redirect loop.
 
@@ -144,10 +148,12 @@ Make the bootstrap flow operable for future implementers and verify it with the 
 #### Success criteria
 
 #### Automated verification:
+
 - [ ] README documents the bootstrap professor env and the intended verification flow.
 - [ ] The change artifacts are sufficient for `/10x-implement` to proceed without reopening unresolved design questions.
 
 #### Manual verification:
+
 - [ ] End-to-end testing with two accounts proves the allowlisted account can become professor exactly once.
 - [ ] End-to-end testing with a second non-allowlisted account proves it lands in pending-access instead of receiving professor privileges.
 
@@ -167,29 +173,35 @@ Make the bootstrap flow operable for future implementers and verify it with the 
 ### Phase 1: Bootstrap contract and first-professor claim
 
 #### Automated Verification:
+
 - [x] 1.1 Env schema rejects missing or malformed bootstrap professor configuration in environments that expect it — 4bc31fc
 - [x] 1.2 Dedicated server-side bootstrap path exists and references `profiles.role` rather than inventing a parallel ownership model — 4bc31fc
 
 #### Manual Verification:
+
 - [x] 1.3 Bootstrap code allows only the current authenticated allowlisted user to claim professor and only when no professor exists yet — 4bc31fc
 - [x] 1.4 Bootstrap logic supports later manual owner replacement operationally by not hard-coding professor identity anywhere except current role state and env allowlist — 4bc31fc
 
 ### Phase 2: Role-aware request state and guarded routing
 
 #### Automated Verification:
+
 - [x] 2.1 Middleware or equivalent server request handling reads both the authenticated user and app-level profile state before deciding protected-route behavior — 4bc31fc
 - [x] 2.2 Dedicated pending-access route/page exists for authenticated but not-yet-authorized users — 4bc31fc
 
 #### Manual Verification:
+
 - [x] 2.3 Professor users no longer get treated as just authenticated; the app has a role-aware post-login path — 4bc31fc
 - [x] 2.4 Non-professor authenticated users are routed to pending-access rather than seeing professor shell content or entering an ambiguous redirect loop — 4bc31fc
 
 ### Phase 3: Documentation and end-to-end bootstrap verification
 
 #### Automated Verification:
+
 - [x] 3.1 README documents the bootstrap professor env and the intended verification flow — 4bc31fc
 - [x] 3.2 Change artifacts are sufficient for `/10x-implement` to proceed without reopening unresolved design questions — 4bc31fc
 
 #### Manual Verification:
+
 - [x] 3.3 End-to-end testing with two accounts proves the allowlisted account can become professor exactly once — 4bc31fc
 - [x] 3.4 End-to-end testing with a second non-allowlisted account proves it lands in pending-access instead of receiving professor privileges — 4bc31fc

@@ -1,9 +1,9 @@
 ---
 change_id: shared-note-continuity-contract
 title: Shared note continuity contract
-status: planned
+status: implemented
 created: 2026-06-05
-updated: 2026-06-05
+updated: 2026-06-09
 owner: codex
 ---
 

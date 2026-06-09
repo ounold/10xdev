@@ -1,10 +1,10 @@
 ---
 change_id: student-read-history
 title: Student read history
-status: implemented
+status: archived
 created: 2026-05-29
-updated: 2026-05-29
-archived_at: null
+updated: 2026-06-09
+archived_at: 2026-06-09T10:15:00Z
 ---
 
 ## Notes

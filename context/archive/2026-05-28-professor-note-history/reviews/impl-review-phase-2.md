@@ -1,4 +1,5 @@
 <!-- IMPL-REVIEW-REPORT -->
+
 # Implementation Review: Professor note history
 
 - **Plan**: `context/changes/professor-note-history/plan.md`
@@ -9,14 +10,14 @@
 
 ## Verdicts
 
-| Dimension | Verdict |
-|-----------|---------|
-| Plan Adherence | WARNING |
-| Scope Discipline | PASS |
-| Safety & Quality | PASS |
-| Architecture | WARNING |
-| Pattern Consistency | PASS |
-| Success Criteria | PASS |
+| Dimension           | Verdict |
+| ------------------- | ------- |
+| Plan Adherence      | WARNING |
+| Scope Discipline    | PASS    |
+| Safety & Quality    | PASS    |
+| Architecture        | WARNING |
+| Pattern Consistency | PASS    |
+| Success Criteria    | PASS    |
 
 ## Findings
 

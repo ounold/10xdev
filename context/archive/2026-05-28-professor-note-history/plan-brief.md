@@ -15,23 +15,25 @@ The repo already has the hard prerequisites for this slice: professor-only routi
 
 ## Key Decisions
 
-| Area | Choice | Why |
-| --- | --- | --- |
-| Student entry | Thin dashboard selector + direct student-thread route | Validates real history flow without absorbing full roster scope |
-| Note creation | Inline on the student thread page | Keeps continuity visible while creating notes |
-| Bullet entry | Structured add/remove rows with explicit `info` / `task` type | Matches schema and preserves future task semantics |
-| Verification | Seeded-data render plus fresh-create path | Confirms both history loading and real note creation |
-| Scope guard | No student creation in this slice | Keeps `S-02` distinct from `S-01` |
+| Area          | Choice                                                        | Why                                                             |
+| ------------- | ------------------------------------------------------------- | --------------------------------------------------------------- |
+| Student entry | Thin dashboard selector + direct student-thread route         | Validates real history flow without absorbing full roster scope |
+| Note creation | Inline on the student thread page                             | Keeps continuity visible while creating notes                   |
+| Bullet entry  | Structured add/remove rows with explicit `info` / `task` type | Matches schema and preserves future task semantics              |
+| Verification  | Seeded-data render plus fresh-create path                     | Confirms both history loading and real note creation            |
+| Scope guard   | No student creation in this slice                             | Keeps `S-02` distinct from `S-01`                               |
 
 ## Scope
 
 **In scope:**
+
 - minimal professor entry into one student thread
 - chronological note-history rendering for one student
 - inline creation of a dated note with ordered bullet items
 - small supervision data-access helper in `src/lib/`
 
 **Out of scope:**
+
 - full roster management
 - student creation/editing
 - student-facing views
@@ -44,11 +46,11 @@ Treat `S-02` as “student detail + note history + create note form.” The dash
 
 ## Phases in Brief
 
-| Phase | Delivers | Key Risk |
-| --- | --- | --- |
-| 1. Thread entry | Thin dashboard selector, student-thread route, supervision helper | Scope drift into full roster UI |
+| Phase            | Delivers                                                          | Key Risk                                  |
+| ---------------- | ----------------------------------------------------------------- | ----------------------------------------- |
+| 1. Thread entry  | Thin dashboard selector, student-thread route, supervision helper | Scope drift into full roster UI           |
 | 2. Note workflow | History rendering plus inline note creation with structured items | Query/write logic scattering across pages |
-| 3. Hardening | Lint/build, docs touch-ups, close-out discipline | Dirty worktree causing unrelated edits |
+| 3. Hardening     | Lint/build, docs touch-ups, close-out discipline                  | Dirty worktree causing unrelated edits    |
 
 **Prerequisites:** existing F-01 schema/RLS and F-02 bootstrap remain the active foundation; seeded local data should be available for fast manual checks.
 **Estimated effort:** ~2-3 implementation phases in one change.

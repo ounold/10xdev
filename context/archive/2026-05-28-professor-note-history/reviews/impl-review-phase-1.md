@@ -1,4 +1,5 @@
 <!-- IMPL-REVIEW-REPORT -->
+
 # Implementation Review: Professor note history
 
 - **Plan**: `context/changes/professor-note-history/plan.md`
@@ -9,14 +10,14 @@
 
 ## Verdicts
 
-| Dimension | Verdict |
-|-----------|---------|
-| Plan Adherence | PASS |
-| Scope Discipline | WARNING |
-| Safety & Quality | PASS |
-| Architecture | PASS |
+| Dimension           | Verdict |
+| ------------------- | ------- |
+| Plan Adherence      | PASS    |
+| Scope Discipline    | WARNING |
+| Safety & Quality    | PASS    |
+| Architecture        | PASS    |
 | Pattern Consistency | WARNING |
-| Success Criteria | PASS |
+| Success Criteria    | PASS    |
 
 ## Findings
 
@@ -46,7 +47,7 @@
 - **Dimension**: Pattern Consistency
 - **Location**: `src/pages/dashboard/students/[studentId].astro:12`, `src/pages/dashboard/students/[studentId].astro:16`
 - **Details**: The file currently contains `Â·` in the page title and `â†` in the back link text, which is a source-encoding artifact rather than intentional copy. Besides looking broken in source control and some terminals, it also conflicts with the repo preference to default to ASCII unless there is a clear reason not to.
-- **Fix**: Replace the affected strings with ASCII-safe equivalents such as ` - ` in the title and `Back to student threads` for the link text.
+- **Fix**: Replace the affected strings with ASCII-safe equivalents such as `-` in the title and `Back to student threads` for the link text.
   - Strength: Restores readable source and avoids cross-environment encoding surprises.
   - Tradeoff: Minor copy change only.
   - Confidence: HIGH - the current characters are clearly corrupted in the file content.

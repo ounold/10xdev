@@ -1,10 +1,10 @@
 ---
 change_id: shared-task-completion-flow
 title: Shared task completion flow
-status: implemented
+status: archived
 created: 2026-06-05
-updated: 2026-06-05
-archived_at: null
+updated: 2026-06-09
+archived_at: 2026-06-09T10:25:00Z
 ---
 
 ## Notes

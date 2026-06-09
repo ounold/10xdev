@@ -38,6 +38,7 @@ The cheapest high-signal rollout for Phase 1 is therefore browser-led verificati
 - The linked-student flag is not computed from session claims. `loadCurrentProfileState` queries `students` by `student_profile_id = user.id` using the admin client, so the core truth for student admission is the existence of a linked row in the hosted database ([src/lib/profile.ts#L40-L73](https://github.com/ounold/10xdev/blob/b8d34a3a0ec667ec1b31ce9f87755bfdaaac8bcc/src/lib/profile.ts#L40-L73)).
 
 Implication:
+
 - Risk `#1` and `#2` are integration/e2e risks, not unit-only risks. The behavior depends on a real auth session plus a real linked/unlinked row in Supabase.
 
 ### 2. The student dashboard path is isolated from student-chosen identifiers
@@ -47,6 +48,7 @@ Implication:
 - `getLinkedStudentHistoryForUser` itself resolves the student row by `student_profile_id = userId` and then delegates to `getStudentHistory(student.id)`; this means the student branch is keyed from identity mapping, not from student navigation state ([src/lib/supervision.ts#L143-L165](https://github.com/ounold/10xdev/blob/b8d34a3a0ec667ec1b31ce9f87755bfdaaac8bcc/src/lib/supervision.ts#L143-L165)).
 
 Implication:
+
 - The most important student-isolation regression to catch is not “student changes URL param.” It is “linked student is admitted into the wrong dashboard branch” or “profile/link lookup drifts and returns the wrong student row.”
 
 ### 3. The professor path is exposed through the same route and is therefore the main regression surface
@@ -56,6 +58,7 @@ Implication:
 - The roster create API defends itself with both auth and role checks before insert; it redirects non-professors to `/pending-access`, then tries the session client and falls back to the admin client on hosted RLS failure `42501` ([src/pages/api/dashboard/students.ts#L16-L36](https://github.com/ounold/10xdev/blob/b8d34a3a0ec667ec1b31ce9f87755bfdaaac8bcc/src/pages/api/dashboard/students.ts#L16-L36), [src/pages/api/dashboard/students.ts#L66-L104](https://github.com/ounold/10xdev/blob/b8d34a3a0ec667ec1b31ce9f87755bfdaaac8bcc/src/pages/api/dashboard/students.ts#L66-L104)).
 
 Implication:
+
 - Risk `#3` should be tested as a regression on the shared route itself, not only as separate professor-unit behavior. The critical assertion is that student admission never falls through into this branch and that professor roster behavior still works after student safety changes.
 
 ### 4. Hosted smoke is a first-class requirement because the repo already documents environment-specific divergence
@@ -65,6 +68,7 @@ Implication:
 - CI currently runs only `npm run lint` and `npm run build`; there is no automated gate for auth/session/linking behavior today ([.github/workflows/ci.yml#L18-L24](https://github.com/ounold/10xdev/blob/b8d34a3a0ec667ec1b31ce9f87755bfdaaac8bcc/.github/workflows/ci.yml#L18-L24)).
 
 Implication:
+
 - Risk `#5` is real, not speculative. Hosted smoke checks are currently the only defense against “local branch logic looks correct, but the real Supabase link state or RLS behavior breaks the flow.”
 
 ### 5. There is no existing test base to lean on, so Phase 1 should not start with runner plumbing for its own sake
@@ -73,6 +77,7 @@ Implication:
 - A repo scan found no actual test suite; the only match was a scratch file `sandbox-temp-test.cmd`, which is not a real automated test base.
 
 Implication:
+
 - The cheapest useful Phase 1 rollout is to define and automate the critical browser-led flows first, then add integration coverage in Phase 2 once the first real safety net exists.
 
 ## Odniesienia do kodu

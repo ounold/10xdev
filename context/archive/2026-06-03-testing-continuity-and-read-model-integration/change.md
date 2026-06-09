@@ -1,10 +1,10 @@
 ---
 change_id: testing-continuity-and-read-model-integration
 title: Testing continuity and read model integration
-status: implemented
+status: archived
 created: 2026-06-03
-updated: 2026-06-03
-archived_at: null
+updated: 2026-06-09
+archived_at: 2026-06-09T10:45:00Z
 ---
 
 ## Notes

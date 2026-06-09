@@ -1,10 +1,10 @@
 ---
 change_id: student-account-linking-flow
 title: Student account linking flow
-status: implemented
+status: archived
 created: 2026-06-05
-updated: 2026-06-06
-archived_at: null
+updated: 2026-06-09
+archived_at: 2026-06-09T10:40:00Z
 ---
 
 ## Notes

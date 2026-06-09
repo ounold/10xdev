@@ -1,9 +1,10 @@
 ---
 change_id: student-account-linking-reliability-and-e2e
 title: Student account linking reliability and e2e
-status: implemented
+status: archived
 created: 2026-06-06
-updated: 2026-06-06
+updated: 2026-06-09
+archived_at: 2026-06-09T10:40:00Z
 owner: codex
 ---
 

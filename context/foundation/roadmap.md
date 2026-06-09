@@ -231,7 +231,7 @@ Definition of done:
 ## Done
 
 - **F-01: Product data model, migrations, and row-level security for students, notes, and note items** - Archived 2026-05-27 -> `context/archive/2026-05-26-product-data-model/`.
-- **F-02: Professor role bootstrap and first-owner setup** - Implemented 2026-05-27 -> `context/changes/professor-bootstrap/`. Note: local backlog records are reconciled; archive and remote issue closure can follow separately.
+- **F-02: Professor role bootstrap and first-owner setup** - Archived 2026-06-09 -> `context/archive/2026-05-27-professor-bootstrap/`. Note: local backlog records, GitHub, and Linear are reconciled.
 - **S-01: Professor can create and browse a student roster** - Implemented 2026-05-29 -> `context/changes/professor-student-roster/`. Note: hosted verification currently uses a guarded admin-client fallback when remote Supabase rejects session-client student inserts under RLS.
 - **S-02: Professor can create a post-meeting note and revisit one student's history** - Implemented 2026-05-28 -> `context/changes/professor-note-history/`. Note: hosted verification currently uses an admin-client write adaptation until the remote Supabase RLS/session-write path is reconciled.
 - **S-03: Student can sign in and read only their own supervision history** - Implemented 2026-05-29 -> `context/changes/student-read-history/`. Note: hosted verification depends on a real `students.student_profile_id -> profiles.id` link because student linking is still out of scope in the UI.

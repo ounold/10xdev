@@ -17,18 +17,19 @@ The app already has Supabase auth and the supervision schema, but it still treat
 
 ## Key Decisions
 
-| Area | Choice | Why |
-| --- | --- | --- |
-| First professor | Allowlist by email | Safest MVP ownership claim |
-| Config source | Server-side env | Smallest viable contract |
-| Claim moment | Auto-claim on first app entry | Fastest real bootstrap flow |
-| Claim execution | Dedicated server endpoint | Explicit and debuggable security boundary |
-| Professor uniqueness | One active professor, later replacement is manual | Matches MVP and avoids multi-owner drift |
-| Non-professor UX | Pending-access page | Safe and understandable fallback |
+| Area                 | Choice                                            | Why                                       |
+| -------------------- | ------------------------------------------------- | ----------------------------------------- |
+| First professor      | Allowlist by email                                | Safest MVP ownership claim                |
+| Config source        | Server-side env                                   | Smallest viable contract                  |
+| Claim moment         | Auto-claim on first app entry                     | Fastest real bootstrap flow               |
+| Claim execution      | Dedicated server endpoint                         | Explicit and debuggable security boundary |
+| Professor uniqueness | One active professor, later replacement is manual | Matches MVP and avoids multi-owner drift  |
+| Non-professor UX     | Pending-access page                               | Safe and understandable fallback          |
 
 ## Scope
 
 **In scope:**
+
 - Bootstrap professor email config
 - Server-side first-professor claim flow
 - Role-aware request state and protected routing
@@ -36,6 +37,7 @@ The app already has Supabase auth and the supervision schema, but it still treat
 - Docs for setup and two-account verification
 
 **Out of scope:**
+
 - Student roster UI
 - Note-history UI
 - Multi-professor support
@@ -47,11 +49,11 @@ Use Supabase Auth for identity and add a thin app-level bootstrap layer above `p
 
 ## Phases in Brief
 
-| Phase | Delivers | Key Risk |
-| --- | --- | --- |
-| 1. Bootstrap claim | Env contract plus first-professor promotion path | Accidentally over-broad claim logic |
-| 2. Guarded routing | Role-aware app entry and pending-access state | Redirect loops or ambiguous logged-in UX |
-| 3. Docs and verification | Two-account validation and setup guidance | Environment drift across local and hosted setups |
+| Phase                    | Delivers                                         | Key Risk                                         |
+| ------------------------ | ------------------------------------------------ | ------------------------------------------------ |
+| 1. Bootstrap claim       | Env contract plus first-professor promotion path | Accidentally over-broad claim logic              |
+| 2. Guarded routing       | Role-aware app entry and pending-access state    | Redirect loops or ambiguous logged-in UX         |
+| 3. Docs and verification | Two-account validation and setup guidance        | Environment drift across local and hosted setups |
 
 **Prerequisites:** `F-01` schema/RLS foundation is already deployed where this change will run.
 **Estimated effort:** ~2-3 implementation phases in one change.

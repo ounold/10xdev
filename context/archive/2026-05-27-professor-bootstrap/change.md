@@ -1,10 +1,10 @@
 ---
 change_id: professor-bootstrap
 title: Professor bootstrap
-status: implemented
+status: archived
 created: 2026-05-27
-updated: 2026-05-27
-archived_at: null
+updated: 2026-06-09
+archived_at: 2026-06-09T10:00:00Z
 ---
 
 ## Notes

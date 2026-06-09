@@ -1,0 +1,8 @@
+{
+  "hookEventName": "PostToolUse",
+  "relevantPaths": [
+    "src/lib/supervision.ts"
+  ],
+  "timestamp": "2026-06-03T20:59:05.432Z",
+  "toolName": "apply_patch"
+}

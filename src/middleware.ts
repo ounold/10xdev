@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase";
 const PROTECTED_ROUTES = ["/dashboard"];
 const PENDING_ACCESS_ROUTE = "/pending-access";
 const BOOTSTRAP_ROUTE = "/api/bootstrap/professor";
+const PROFESSOR_ONLY_DASHBOARD_ROUTE = "/dashboard/students/";
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const supabase = createClient(context.request.headers, context.cookies);
@@ -49,6 +50,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
     if (context.locals.role !== "professor" && !isAllowedLinkedStudent) {
       return context.redirect(PENDING_ACCESS_ROUTE);
+    }
+
+    if (context.url.pathname.startsWith(PROFESSOR_ONLY_DASHBOARD_ROUTE) && context.locals.role !== "professor") {
+      return context.redirect("/dashboard");
     }
   }
 

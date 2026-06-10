@@ -518,6 +518,23 @@ Hosted release note:
 
 - The same smoke should be repeated on the deployed environment only after the hosted Supabase project has the required archive lifecycle migration already applied.
 
+### Archived student history verification
+
+Recommended local verification for the current `archived-student-history` slice:
+
+1. Sign in as the professor and open `/dashboard`.
+2. Archive one already linked active student if the archive roster is still empty.
+3. Switch the roster view from `Active` to `Archived`.
+4. Confirm the archived student appears only in the archived roster with the archived badge and summary metadata.
+5. Open that archived thread and confirm the app keeps the history visible on the direct thread URL.
+6. Confirm the archived thread shows the read-only archive banner.
+7. Confirm the archived thread exposes no note edit links, no note create/edit form, and no task completion or reopen buttons.
+8. Return to the active roster and confirm active student threads still open through the normal editable path.
+
+Hosted release note:
+
+- Hosted archive-history smoke stays intentionally deferred until the next deploy-worthy batch, and only after the remote Supabase project is confirmed to include the archive lifecycle migration.
+
 ## Supervision Domain Schema
 
 The MVP now includes a first-pass supervision data model in Supabase:

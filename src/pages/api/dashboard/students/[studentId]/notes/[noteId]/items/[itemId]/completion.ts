@@ -61,6 +61,12 @@ export const POST: APIRoute = async (context) => {
     return context.redirect(redirectToStudentThread(studentId, query, returnToEdit));
   }
 
+  if (accessibleStudent.lifecycle === "archived") {
+    query.set("roster", "archived");
+    query.set("error", "Archived student threads are read-only.");
+    return context.redirect(redirectToStudentThread(studentId, query, returnToEdit));
+  }
+
   const targetNote = accessibleStudent.notes.find((note) => note.id === noteId);
   if (!targetNote) {
     query.set("error", "The selected note is not available in this thread.");

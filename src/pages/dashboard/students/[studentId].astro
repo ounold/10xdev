@@ -11,6 +11,7 @@ if (Astro.locals.role !== "professor") {
 const supabase = createClient(Astro.request.headers, Astro.cookies);
 const studentId = Astro.params.studentId;
 const student = supabase && studentId ? await getStudentHistory(supabase, studentId) : null;
+const isArchivedThread = student?.lifecycle === "archived";
 const noteCount = student?.notes.length ?? 0;
 const defaultMeetingDate = new Date().toISOString().slice(0, 10);
 const saved = Astro.url.searchParams.get("saved") === "1";
@@ -67,7 +68,12 @@ function formatCompletionTimestamp(value: string) {
 <Layout title={student ? `${student.full_name} - Thread` : "Student thread"}>
   <div class="bg-cosmic min-h-screen p-4 text-white">
     <div class="mx-auto flex max-w-5xl flex-col gap-6 py-10">
-      <a href="/dashboard" class="text-sm text-cyan-100/80 transition hover:text-cyan-50">Back to student threads</a>
+      <a
+        href={isArchivedThread ? "/dashboard?roster=archived" : "/dashboard"}
+        class="text-sm text-cyan-100/80 transition hover:text-cyan-50"
+      >
+        {isArchivedThread ? "Back to archived student threads" : "Back to student threads"}
+      </a>
 
       {
         student ? (
@@ -78,25 +84,52 @@ function formatCompletionTimestamp(value: string) {
                   <p class="text-xs tracking-[0.3em] text-cyan-200/70 uppercase">Student thread</p>
                   <h1 class="mt-3 text-4xl font-semibold text-white">{student.full_name}</h1>
                   <p class="mt-3 text-sm text-slate-200/75">{student.email ?? "No linked email yet"}</p>
+                  {isArchivedThread ? (
+                    <div class="mt-4 inline-flex items-center gap-2 rounded-full border border-rose-300/20 bg-rose-300/10 px-3 py-1 text-xs text-rose-50/90">
+                      <span>Archived</span>
+                      <span class="text-rose-100/70">Professor-only read-only history</span>
+                    </div>
+                  ) : null}
                 </div>
                 <div class="rounded-2xl border border-white/10 bg-slate-950/20 px-4 py-3 text-sm text-slate-100/80">
                   <p>
                     {noteCount} note{noteCount === 1 ? "" : "s"} in history
                   </p>
                   <p class="mt-1 text-slate-300/70">
-                    Professor edits now reuse the shared continuity contract without implying delete or task completion.
+                    {isArchivedThread
+                      ? "This historical thread stays visible to the professor, but archived records are fully read-only."
+                      : "Professor edits now reuse the shared continuity contract without implying delete or task completion."}
                   </p>
                 </div>
               </div>
             </section>
+
+            {isArchivedThread ? (
+              <section class="rounded-[2rem] border border-rose-300/20 bg-rose-300/[0.08] p-6 backdrop-blur-xl">
+                <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                  <div class="max-w-2xl">
+                    <p class="text-xs tracking-[0.3em] text-rose-200/70 uppercase">Archived thread</p>
+                    <h2 class="mt-2 text-xl font-semibold text-white">Read-only supervision history</h2>
+                    <p class="mt-2 text-sm leading-6 text-slate-100/80">
+                      This student was archived, so the historical notes and task outcomes stay visible here without any
+                      note editing, note creation, task toggles, or archive actions.
+                    </p>
+                  </div>
+                  <span class="rounded-full border border-rose-300/20 bg-rose-300/10 px-3 py-1 text-xs text-rose-50/85">
+                    Read-only archive
+                  </span>
+                </div>
+              </section>
+            ) : null}
 
             <section class="rounded-[2rem] border border-white/10 bg-slate-950/25 p-6 backdrop-blur-xl">
               <div class="mb-5 flex items-center justify-between gap-4">
                 <div>
                   <h2 class="text-xl font-semibold text-white">Chronological history</h2>
                   <p class="mt-2 text-sm text-slate-300/70">
-                    This route already loads the student's thread through the new supervision helper so the next phase
-                    can focus on richer rendering and note creation.
+                    {isArchivedThread
+                      ? "Archived history stays directly accessible by URL, but every mutating action is intentionally removed from this preserved thread."
+                      : "This route already loads the student's thread through the new supervision helper so the next phase can focus on richer rendering and note creation."}
                   </p>
                 </div>
               </div>
@@ -121,12 +154,18 @@ function formatCompletionTimestamp(value: string) {
                           <span class="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs text-cyan-100/80">
                             {note.items.length} item{note.items.length === 1 ? "" : "s"}
                           </span>
-                          <a
-                            href={`/dashboard/students/${student.id}?edit=${note.id}`}
-                            class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-100 transition hover:bg-white/10"
-                          >
-                            Edit note
-                          </a>
+                          {isArchivedThread ? (
+                            <span class="rounded-full border border-rose-300/20 bg-rose-300/10 px-3 py-1 text-xs text-rose-50/85">
+                              Read-only note
+                            </span>
+                          ) : (
+                            <a
+                              href={`/dashboard/students/${student.id}?edit=${note.id}`}
+                              class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-100 transition hover:bg-white/10"
+                            >
+                              Edit note
+                            </a>
+                          )}
                         </div>
                       </div>
 
@@ -173,7 +212,7 @@ function formatCompletionTimestamp(value: string) {
                                 </div>
                               </div>
 
-                              {item.item_type === "task" ? (
+                              {item.item_type === "task" && !isArchivedThread ? (
                                 <form
                                   method="POST"
                                   action={`/api/dashboard/students/${student.id}/notes/${note.id}/items/${item.id}/completion`}
@@ -212,71 +251,73 @@ function formatCompletionTimestamp(value: string) {
               )}
             </section>
 
-            <section class="rounded-[2rem] border border-white/10 bg-white/[0.06] p-6 backdrop-blur-xl">
-              <div class="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
-                <div>
-                  <p class="text-xs tracking-[0.3em] text-emerald-200/70 uppercase">
-                    {noteBeingEdited ? "Edit note" : "New note"}
-                  </p>
-                  <h2 class="mt-2 text-xl font-semibold text-white">
-                    {noteBeingEdited
-                      ? `Update ${noteBeingEdited.meeting_date} without rewriting the thread`
-                      : "Capture the next supervision update"}
-                  </h2>
-                  <p class="mt-2 text-sm text-slate-300/75">
-                    {noteBeingEdited
-                      ? "Edit saved items in place and append new ones at the end. Deleting saved items stays out of scope for this slice."
-                      : "Add one dated note directly inside this thread. Item order is preserved exactly as entered."}
-                  </p>
+            {isArchivedThread ? null : (
+              <section class="rounded-[2rem] border border-white/10 bg-white/[0.06] p-6 backdrop-blur-xl">
+                <div class="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+                  <div>
+                    <p class="text-xs tracking-[0.3em] text-emerald-200/70 uppercase">
+                      {noteBeingEdited ? "Edit note" : "New note"}
+                    </p>
+                    <h2 class="mt-2 text-xl font-semibold text-white">
+                      {noteBeingEdited
+                        ? `Update ${noteBeingEdited.meeting_date} without rewriting the thread`
+                        : "Capture the next supervision update"}
+                    </h2>
+                    <p class="mt-2 text-sm text-slate-300/75">
+                      {noteBeingEdited
+                        ? "Edit saved items in place and append new ones at the end. Deleting saved items stays out of scope for this slice."
+                        : "Add one dated note directly inside this thread. Item order is preserved exactly as entered."}
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              {saved ? (
-                <div class="mb-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-50">
-                  The note was saved to this thread.
-                </div>
-              ) : null}
+                {saved ? (
+                  <div class="mb-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-50">
+                    The note was saved to this thread.
+                  </div>
+                ) : null}
 
-              {updated ? (
-                <div class="mb-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-50">
-                  The note changes were saved to this thread.
-                </div>
-              ) : null}
+                {updated ? (
+                  <div class="mb-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-50">
+                    The note changes were saved to this thread.
+                  </div>
+                ) : null}
 
-              {taskUpdated === "complete" ? (
-                <div class="mb-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-50">
-                  The task was marked as completed in this thread.
-                </div>
-              ) : null}
+                {taskUpdated === "complete" ? (
+                  <div class="mb-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-50">
+                    The task was marked as completed in this thread.
+                  </div>
+                ) : null}
 
-              {taskUpdated === "incomplete" ? (
-                <div class="mb-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm text-amber-50">
-                  The task was reopened in this thread.
-                </div>
-              ) : null}
+                {taskUpdated === "incomplete" ? (
+                  <div class="mb-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm text-amber-50">
+                    The task was reopened in this thread.
+                  </div>
+                ) : null}
 
-              {error ? (
-                <div class="mb-4 rounded-2xl border border-rose-300/20 bg-rose-300/10 px-4 py-3 text-sm text-rose-50">
-                  {error}
-                </div>
-              ) : null}
+                {error ? (
+                  <div class="mb-4 rounded-2xl border border-rose-300/20 bg-rose-300/10 px-4 py-3 text-sm text-rose-50">
+                    {error}
+                  </div>
+                ) : null}
 
-              <StudentNoteForm
-                client:load
-                action={`/api/dashboard/students/${student.id}/notes`}
-                defaultMeetingDate={noteBeingEdited?.meeting_date ?? defaultMeetingDate}
-                defaultItems={
-                  noteBeingEdited?.items.map((item) => ({
-                    id: item.id,
-                    itemType: item.item_type,
-                    content: item.content,
-                  })) ?? undefined
-                }
-                meetingDateReadOnly={Boolean(noteBeingEdited)}
-                mode={noteBeingEdited ? "edit" : "create"}
-                noteId={noteBeingEdited?.id}
-              />
-            </section>
+                <StudentNoteForm
+                  client:load
+                  action={`/api/dashboard/students/${student.id}/notes`}
+                  defaultMeetingDate={noteBeingEdited?.meeting_date ?? defaultMeetingDate}
+                  defaultItems={
+                    noteBeingEdited?.items.map((item) => ({
+                      id: item.id,
+                      itemType: item.item_type,
+                      content: item.content,
+                    })) ?? undefined
+                  }
+                  meetingDateReadOnly={Boolean(noteBeingEdited)}
+                  mode={noteBeingEdited ? "edit" : "create"}
+                  noteId={noteBeingEdited?.id}
+                />
+              </section>
+            )}
 
             {student.lifecycle === "active" ? (
               <section class="rounded-[2rem] border border-rose-300/20 bg-rose-300/[0.06] p-6 backdrop-blur-xl">

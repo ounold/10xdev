@@ -47,6 +47,12 @@ export const POST: APIRoute = async (context) => {
     return context.redirect(redirectToStudentThread(studentId, query));
   }
 
+  if (accessibleStudent.lifecycle === "archived") {
+    query.set("roster", "archived");
+    query.set("error", "Archived student threads are read-only.");
+    return context.redirect(redirectToStudentThread(studentId, query));
+  }
+
   const items = normalizeSubmittedNoteItems(formData.get("itemsPayload"));
   const adminClient = createAdminClient();
 

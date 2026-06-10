@@ -1,13 +1,18 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import StudentNoteForm from "@/components/supervision/StudentNoteForm";
-import { getLinkedStudentHistoryForUser, listProfessorStudents } from "@/lib/supervision";
+import {
+  getLinkedStudentHistoryForUser,
+  listArchivedProfessorStudents,
+  listProfessorStudents,
+} from "@/lib/supervision";
 import { createClient } from "@/lib/supabase";
 
 const { user, role, isLinkedStudent } = Astro.locals;
 const supabase = createClient(Astro.request.headers, Astro.cookies);
 const isStudentDashboard = role === "student" && isLinkedStudent;
 const students = supabase && role === "professor" ? await listProfessorStudents(supabase) : [];
+const archivedStudents = supabase && role === "professor" ? await listArchivedProfessorStudents(supabase) : [];
 const linkedStudentHistory =
   supabase && user && isStudentDashboard ? await getLinkedStudentHistoryForUser(supabase, user.id) : null;
 const searchParams = Astro.url.searchParams;
@@ -21,6 +26,7 @@ const taskUpdated = searchParams.get("taskUpdated");
 const passwordUpdated = searchParams.get("passwordUpdated") === "1";
 const archived = searchParams.get("archived") === "1";
 const archivedStudent = searchParams.get("archivedStudent");
+const rosterView = searchParams.get("roster") === "archived" ? "archived" : "active";
 const error = searchParams.get("error");
 const editNoteId = searchParams.get("edit");
 const noteBeingEdited = linkedStudentHistory?.notes.find((note) => note.id === editNoteId) ?? null;
@@ -96,6 +102,14 @@ function getProfessorLinkStatusBadge(student: (typeof students)[number]) {
     label: "Missing email",
     tone: "border-slate-300/20 bg-slate-300/10 text-slate-100",
     detail: "Professor still needs an email anchor",
+  };
+}
+
+function getProfessorArchiveStatusBadge() {
+  return {
+    label: "Archived",
+    tone: "border-rose-300/20 bg-rose-300/10 text-rose-100",
+    detail: "Professor-only history",
   };
 }
 ---
@@ -488,31 +502,77 @@ function getProfessorLinkStatusBadge(student: (typeof students)[number]) {
 
                 <div class="mb-5 flex items-center justify-between gap-4">
                   <div>
-                    <p class="text-sm font-medium text-white">Available student threads</p>
+                    <p class="text-sm font-medium text-white">
+                      {rosterView === "archived" ? "Archived student threads" : "Available student threads"}
+                    </p>
                     <p class="mt-1 text-sm text-slate-300/70">
-                      Pick a student to enter their note history. New students appear here immediately after creation.
+                      {rosterView === "archived"
+                        ? "Switch into archived supervision history without mixing those records back into the active roster."
+                        : "Pick a student to enter their note history. New students appear here immediately after creation."}
                     </p>
                   </div>
-                  <span class="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs text-cyan-100/80">
-                    {students.length} thread{students.length === 1 ? "" : "s"}
-                  </span>
+                  <div class="flex items-center gap-3">
+                    <div class="inline-flex rounded-full border border-white/10 bg-white/5 p-1 text-xs">
+                      <a
+                        href="/dashboard"
+                        class:list={[
+                          "rounded-full px-3 py-1 transition",
+                          rosterView === "active"
+                            ? "bg-cyan-300/15 text-cyan-50"
+                            : "text-slate-300/80 hover:text-white",
+                        ]}
+                      >
+                        Active
+                      </a>
+                      <a
+                        href="/dashboard?roster=archived"
+                        class:list={[
+                          "rounded-full px-3 py-1 transition",
+                          rosterView === "archived"
+                            ? "bg-rose-300/15 text-rose-50"
+                            : "text-slate-300/80 hover:text-white",
+                        ]}
+                      >
+                        Archived
+                      </a>
+                    </div>
+                    <span
+                      class:list={[
+                        "rounded-full px-3 py-1 text-xs",
+                        rosterView === "archived"
+                          ? "border border-rose-300/20 bg-rose-300/10 text-rose-100/80"
+                          : "border border-cyan-300/20 bg-cyan-300/10 text-cyan-100/80",
+                      ]}
+                    >
+                      {rosterView === "archived" ? archivedStudents.length : students.length} thread
+                      {(rosterView === "archived" ? archivedStudents.length : students.length) === 1 ? "" : "s"}
+                    </span>
+                  </div>
                 </div>
 
-                {students.length === 0 ? (
+                {(rosterView === "archived" ? archivedStudents : students).length === 0 ? (
                   <div class="rounded-2xl border border-dashed border-white/15 bg-white/5 p-6 text-sm text-slate-300/75">
-                    No supervised students are available yet. Add the first student from the form above, then return
-                    here to open their thread.
+                    {rosterView === "archived"
+                      ? "No archived student threads are available yet. Archive an active linked student first, then return here to review the historical thread."
+                      : "No supervised students are available yet. Add the first student from the form above, then return here to open their thread."}
                   </div>
                 ) : (
                   <ul class="grid gap-3">
-                    {students.map((student) => (
+                    {(rosterView === "archived" ? archivedStudents : students).map((student) => (
                       <li>
                         {(() => {
-                          const linkStatus = getProfessorLinkStatusBadge(student);
+                          const linkStatus =
+                            rosterView === "archived"
+                              ? getProfessorArchiveStatusBadge()
+                              : getProfessorLinkStatusBadge(student);
 
                           return (
                             <a
-                              href={`/dashboard/students/${student.id}`}
+                              href={
+                                rosterView === "archived"
+                                  ? `/dashboard/students/${student.id}?roster=archived`
+                                  : `/dashboard/students/${student.id}`
+                              }
                               class="group flex items-center justify-between gap-4 rounded-2xl border border-white/8 bg-white/[0.04] px-4 py-4 transition hover:border-cyan-300/30 hover:bg-cyan-300/[0.08]"
                             >
                               <div>
@@ -539,7 +599,9 @@ function getProfessorLinkStatusBadge(student: (typeof students)[number]) {
                                 <p class="mt-1">
                                   {student.last_meeting_date
                                     ? `Last meeting ${student.last_meeting_date}`
-                                    : "No meetings yet"}
+                                    : rosterView === "archived"
+                                      ? "No meetings preserved"
+                                      : "No meetings yet"}
                                 </p>
                               </div>
                             </a>

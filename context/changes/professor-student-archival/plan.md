@@ -202,31 +202,31 @@ Make the slice handoff-ready with the repo-required gates and concise manual ver
 
 #### Manual Verification:
 
-- [ ] 1.4 Confirm an archived row preserves previous link metadata when starting from a linked active student
-- [ ] 1.5 Confirm newly archived rows disappear from active roster reads
+- [x] 1.4 Confirm an archived row preserves previous link metadata when starting from a linked active student
+- [x] 1.5 Confirm newly archived rows disappear from active roster reads
 
 ### Phase 2: Expose archive on the professor student thread page
 
 #### Automated Verification:
 
-- [x] 2.1 Add the professor-only archive API route and redirect contract
-- [x] 2.2 Add the confirmed archive action to the professor thread page
-- [x] 2.3 Add dashboard success feedback for post-archive redirect
+- [x] 2.1 Add the professor-only archive API route and redirect contract — e539d5c
+- [x] 2.2 Add the confirmed archive action to the professor thread page — e539d5c
+- [x] 2.3 Add dashboard success feedback for post-archive redirect — e539d5c
 
 #### Manual Verification:
 
-- [ ] 2.4 Confirm a professor can archive from the thread page and return to the dashboard
-- [ ] 2.5 Confirm non-archived students remain visible and usable after archiving another student
+- [x] 2.4 Confirm a professor can archive from the thread page and return to the dashboard
+- [x] 2.5 Confirm non-archived students remain visible and usable after archiving another student
 
 ### Phase 3: Close verification and rollout guidance for the slice
 
 #### Automated Verification:
 
-- [ ] 3.1 Run `npm run lint`
-- [ ] 3.2 Run `npm run build`
-- [ ] 3.3 Run targeted integration checks for professor student archival
+- [x] 3.1 Run `npm run lint`
+- [x] 3.2 Run `npm run build`
+- [x] 3.3 Run targeted integration checks for professor student archival
 
 #### Manual Verification:
 
-- [ ] 3.4 Record the local professor archive smoke path
-- [ ] 3.5 Leave hosted release verification explicitly deferred until a deploy-worthy batch
+- [x] 3.4 Record the local professor archive smoke path
+- [x] 3.5 Leave hosted release verification explicitly deferred until a deploy-worthy batch

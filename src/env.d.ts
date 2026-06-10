@@ -6,5 +6,6 @@ declare namespace App {
     isBootstrapProfessorEmail: boolean;
     hasProfessor: boolean;
     isLinkedStudent: boolean;
+    hasArchivedStudentAccess: boolean;
   }
 }

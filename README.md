@@ -369,14 +369,36 @@ Users can then sign in immediately after sign-up without clicking a confirmation
 
 ### Auth routes
 
-| Route                 | Description                                                             |
-| --------------------- | ----------------------------------------------------------------------- |
-| `/auth/signin`        | Email/password sign-in form                                             |
-| `/auth/signup`        | Email/password sign-up form                                             |
-| `/auth/confirm-email` | Post-signup "check your inbox" page                                     |
-| `/dashboard`          | Example protected page (redirects to `/auth/signin` if unauthenticated) |
+| Route                   | Description                                                             |
+| ----------------------- | ----------------------------------------------------------------------- |
+| `/auth/signin`          | Email/password sign-in form                                             |
+| `/auth/signup`          | Email/password sign-up form                                             |
+| `/auth/confirm`         | Server-side recovery/email confirmation handoff for token-hash links    |
+| `/auth/confirm-email`   | Post-signup "check your inbox" page                                     |
+| `/auth/update-password` | Change-password page reached from the reset email                       |
+| `/dashboard`            | Example protected page (redirects to `/auth/signin` if unauthenticated) |
 
 Route protection is handled in `src/middleware.ts`. Add paths to the `PROTECTED_ROUTES` array there to require authentication.
+
+### Password recovery verification
+
+For the current password-recovery flow, use the token-hash email template pattern from Supabase Auth:
+
+```html
+<a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery&next={{ .RedirectTo }}">
+  Reset password
+</a>
+```
+
+Recommended local verification:
+
+1. Set `Site URL` to `http://localhost:4325` in Supabase Auth URL configuration.
+2. Add `http://localhost:4325/auth/update-password` to Redirect URLs.
+3. Request a reset from `/auth/reset-password`.
+4. Open the newest reset email and confirm it lands on `/auth/update-password?recovery=ready`.
+5. Submit a new password and confirm the app continues into `/dashboard?passwordUpdated=1`.
+
+Hosted verification follows the same route contract, but with the hosted domain in `Site URL` and Redirect URLs.
 
 ### Local professor bootstrap verification
 
@@ -456,13 +478,19 @@ Use this when local `npm run test:e2e` is green and you still need to confirm th
    - open `/pending-access`
    - confirm the account stays blocked with no claim action
 
-4. Duplicate-email blocked check
+4. Archived former student check
+   - archive or manually convert the previously linked `students` row so it is no longer active and keeps only archived historical linkage
+   - sign in with that same student account
+   - confirm `/dashboard` redirects to `/pending-access`
+   - confirm the page explains that the previous student access ended and that a new active student record is required
+
+5. Duplicate-email blocked check
    - prepare two unlinked `public.students` rows with the same email as the student account
    - sign in with that student account
    - open `/pending-access`
    - confirm the account stays blocked and the page explains that the app will not choose automatically
 
-5. Professor sentinel check
+6. Professor sentinel check
    - sign in as the hosted professor
    - open `/dashboard`
    - confirm the roster is visible
@@ -473,6 +501,22 @@ Use this when local `npm run test:e2e` is green and you still need to confirm th
 For local browser-level verification, the repo also carries a saved professor Playwright state in `.auth/user.json`. Prefer checking that fixture before asking for fresh professor credentials.
 
 Treat these hosted checks as required smoke, not optional confidence polish. The local e2e spec protects the route contract, but it cannot prove remote Supabase link state by itself.
+
+### Professor student-archival verification
+
+Recommended local verification for the current `professor-student-archival` slice:
+
+1. Sign in as the professor and open `/dashboard`.
+2. Open one active student thread whose row is already linked to a real student account.
+3. In the thread danger zone, confirm the archive action and submit it.
+4. Confirm the app redirects back to `/dashboard` with an archive success banner.
+5. Confirm that student no longer appears in the active roster.
+6. Sign in with the archived student's account and confirm `/dashboard` now falls back to `/pending-access`.
+7. Confirm the page explains that the previous student access ended and that a new active student record is required.
+
+Hosted release note:
+
+- The same smoke should be repeated on the deployed environment only after the hosted Supabase project has the required archive lifecycle migration already applied.
 
 ## Supervision Domain Schema
 

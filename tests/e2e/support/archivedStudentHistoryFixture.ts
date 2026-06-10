@@ -1,3 +1,5 @@
+import fs from "node:fs";
+
 interface ArchivedStudentHistoryHeaders {
   apikey: string;
   Authorization: string;
@@ -36,10 +38,39 @@ function getHeaders(serviceRoleKey: string): ArchivedStudentHistoryHeaders {
   };
 }
 
+function readProfessorProfileIdFromStorageState() {
+  const storageStatePath = process.env.E2E_PROFESSOR_STORAGE_STATE ?? ".auth/user.json";
+  if (!fs.existsSync(storageStatePath)) {
+    return null;
+  }
+
+  const storageState = JSON.parse(fs.readFileSync(storageStatePath, "utf8")) as {
+    cookies?: { name?: string; value?: string }[];
+  };
+  const authCookie = storageState.cookies?.find((cookie) => cookie.name?.includes("auth-token"));
+  const encodedValue = authCookie?.value;
+
+  if (!encodedValue?.startsWith("base64-")) {
+    return null;
+  }
+
+  const decodedValue = Buffer.from(encodedValue.slice("base64-".length), "base64").toString("utf8");
+  const parsedValue = JSON.parse(decodedValue) as {
+    user?: { id?: string };
+  };
+
+  return parsedValue.user?.id?.trim() ?? null;
+}
+
 function resolveProfessorProfileId() {
   const explicitProfessorProfileId = process.env.E2E_PROFESSOR_PROFILE_ID?.trim();
   if (explicitProfessorProfileId) {
     return explicitProfessorProfileId;
+  }
+
+  const storageStateProfessorProfileId = readProfessorProfileIdFromStorageState();
+  if (storageStateProfessorProfileId) {
+    return storageStateProfessorProfileId;
   }
 
   throw new Error("E2E_PROFESSOR_PROFILE_ID is required for archived-history fixture prep.");
@@ -149,6 +180,8 @@ export async function prepareArchivedStudentHistoryFixture(options: ArchivedStud
         position: 1,
         item_type: "info",
         content: "Archived continuity note for professor-only history review.",
+        completed_at: null,
+        completed_by: null,
       },
       {
         note_id: note.id,

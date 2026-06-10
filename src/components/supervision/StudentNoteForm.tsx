@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 
 import type { NoteItemType } from "@/lib/database";
 import { cn } from "@/lib/utils";

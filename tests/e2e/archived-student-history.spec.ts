@@ -18,6 +18,9 @@ loadE2EEnv();
 test("professor can open archived history from the archive roster in read-only mode", async ({ baseURL, browser }) => {
   const professorStorageStatePath = process.env.E2E_PROFESSOR_STORAGE_STATE ?? defaultProfessorStorageStatePath;
   const professorAccount = getProfessorAccount();
+  const hasExplicitProfessorCredentials = Boolean(
+    process.env.E2E_PROFESSOR_EMAIL?.trim() && process.env.E2E_PROFESSOR_PASSWORD?.trim(),
+  );
   const hasProfessorStorageState = fs.existsSync(professorStorageStatePath);
   const linkedStudentMeta = readLinkedStudentFixtureMeta();
   const archivedStudentProfileId = linkedStudentMeta.studentProfileId?.trim();
@@ -48,10 +51,10 @@ test("professor can open archived history from the archive roster in read-only m
 
     if ((await page.getByRole("heading", { name: "Sign in" }).count()) > 0) {
       test.skip(
-        !professorAccount,
-        "Professor storageState is no longer valid and E2E_PROFESSOR_* credentials are not configured.",
+        !hasExplicitProfessorCredentials,
+        "Professor storageState is no longer valid and explicit E2E_PROFESSOR_* credentials are not configured.",
       );
-      if (!professorAccount) {
+      if (!hasExplicitProfessorCredentials || !professorAccount) {
         return;
       }
 
@@ -61,8 +64,9 @@ test("professor can open archived history from the archive roster in read-only m
 
     await expect(page.getByRole("heading", { name: "Student threads" })).toBeVisible();
     await expect(page.getByText("Archived student threads")).toBeVisible();
-    await expect(page.getByRole("link", { name: "Active" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Archived" })).toBeVisible();
+    const rosterSwitch = page.locator("div.inline-flex.rounded-full").first();
+    await expect(rosterSwitch.getByRole("link", { name: "Active" })).toBeVisible();
+    await expect(rosterSwitch.getByRole("link", { name: "Archived", exact: true })).toBeVisible();
 
     const archivedThreadLink = page.getByRole("link", { name: /Archived E2E Student/ }).first();
 

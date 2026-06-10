@@ -1,7 +1,9 @@
 import fs from "node:fs";
 
 export interface LinkedStudentFixtureMeta {
+  email?: string;
   ownStudentId?: string;
+  studentProfileId?: string;
   foreignStudentId?: string;
 }
 

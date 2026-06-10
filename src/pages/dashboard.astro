@@ -18,6 +18,9 @@ const draftFullName = searchParams.get("draftFullName") ?? "";
 const draftEmail = searchParams.get("draftEmail") ?? "";
 const updated = searchParams.get("updated") === "1";
 const taskUpdated = searchParams.get("taskUpdated");
+const passwordUpdated = searchParams.get("passwordUpdated") === "1";
+const archived = searchParams.get("archived") === "1";
+const archivedStudent = searchParams.get("archivedStudent");
 const error = searchParams.get("error");
 const editNoteId = searchParams.get("edit");
 const noteBeingEdited = linkedStudentHistory?.notes.find((note) => note.id === editNoteId) ?? null;
@@ -154,6 +157,12 @@ function getProfessorLinkStatusBadge(student: (typeof students)[number]) {
                 {taskUpdated === "incomplete" ? (
                   <div class="mt-5 rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm text-amber-50">
                     The task was reopened in the shared thread.
+                  </div>
+                ) : null}
+
+                {passwordUpdated ? (
+                  <div class="mt-5 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-50">
+                    Your password was updated and this session is ready to continue.
                   </div>
                 ) : null}
 
@@ -460,6 +469,20 @@ function getProfessorLinkStatusBadge(student: (typeof students)[number]) {
                 {creationError ? (
                   <div class="mb-5 rounded-2xl border border-rose-300/20 bg-rose-300/[0.08] p-4 text-sm text-rose-50/90">
                     {creationError}
+                  </div>
+                ) : null}
+
+                {archived ? (
+                  <div class="mb-5 rounded-2xl border border-emerald-300/20 bg-emerald-300/[0.08] p-4 text-sm text-emerald-50/90">
+                    {archivedStudent
+                      ? `${archivedStudent} was archived and removed from the active roster.`
+                      : "The student was archived and removed from the active roster."}
+                  </div>
+                ) : null}
+
+                {passwordUpdated ? (
+                  <div class="mb-5 rounded-2xl border border-emerald-300/20 bg-emerald-300/[0.08] p-4 text-sm text-emerald-50/90">
+                    Your password was updated and this session is ready to continue.
                   </div>
                 ) : null}
 

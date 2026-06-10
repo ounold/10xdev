@@ -196,9 +196,9 @@ Make the slice handoff-ready with the repo-required gates and concise manual ver
 
 #### Automated Verification:
 
-- [x] 1.1 Add archive mutation types plus the supervision helper for professor-owned student archival
-- [x] 1.2 Add archived-roster helper seam and keep active-roster behavior unchanged for non-archived rows
-- [x] 1.3 Add targeted integration coverage for linked, unlinked, and inaccessible archive cases
+- [x] 1.1 Add archive mutation types plus the supervision helper for professor-owned student archival — c9be3e0
+- [x] 1.2 Add archived-roster helper seam and keep active-roster behavior unchanged for non-archived rows — c9be3e0
+- [x] 1.3 Add targeted integration coverage for linked, unlinked, and inaccessible archive cases — c9be3e0
 
 #### Manual Verification:
 
@@ -209,9 +209,9 @@ Make the slice handoff-ready with the repo-required gates and concise manual ver
 
 #### Automated Verification:
 
-- [ ] 2.1 Add the professor-only archive API route and redirect contract
-- [ ] 2.2 Add the confirmed archive action to the professor thread page
-- [ ] 2.3 Add dashboard success feedback for post-archive redirect
+- [x] 2.1 Add the professor-only archive API route and redirect contract
+- [x] 2.2 Add the confirmed archive action to the professor thread page
+- [x] 2.3 Add dashboard success feedback for post-archive redirect
 
 #### Manual Verification:
 

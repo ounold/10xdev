@@ -1,5 +1,6 @@
 export type AppRole = "professor" | "student";
 export type NoteItemType = "info" | "task";
+export type StudentLifecycle = "active" | "archived";
 
 export interface ProfileRow {
   id: string;
@@ -13,6 +14,9 @@ export interface StudentRow {
   id: string;
   professor_profile_id: string;
   student_profile_id: string | null;
+  archived_student_profile_id: string | null;
+  lifecycle: StudentLifecycle;
+  archived_at: string | null;
   full_name: string;
   email: string | null;
   created_at: string;
@@ -53,6 +57,14 @@ export interface StudentThreadSummary extends StudentRow {
   note_count: number;
   last_meeting_date: string | null;
   linking_status: "linked" | "claim-ready" | "missing-email";
+}
+
+export interface ArchiveStudentInput {
+  student_id: string;
+}
+
+export interface ArchiveStudentResult extends StudentRow {
+  archived_from_student_profile_id: string;
 }
 
 export type StudentLinkClaimStatus =

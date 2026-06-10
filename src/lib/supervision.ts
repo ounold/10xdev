@@ -2,6 +2,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type {
   AppendNoteItemInput,
+  ArchiveStudentInput,
+  ArchiveStudentResult,
   ClaimStudentLinkInput,
   ClaimStudentLinkResult,
   CreateNoteInput,
@@ -50,10 +52,17 @@ function groupItemsByNoteId(items: NoteItemRow[]) {
   }, new Map());
 }
 
-export async function listProfessorStudents(supabase: SupabaseClient): Promise<StudentThreadSummary[]> {
+const studentRowSelect =
+  "id, professor_profile_id, student_profile_id, archived_student_profile_id, lifecycle, archived_at, full_name, email, created_at, updated_at";
+
+async function listProfessorStudentsByLifecycle(
+  supabase: SupabaseClient,
+  lifecycle: StudentRow["lifecycle"],
+): Promise<StudentThreadSummary[]> {
   const { data: studentsData, error: studentsError } = await supabase
     .from("students")
-    .select("id, professor_profile_id, student_profile_id, full_name, email, created_at, updated_at")
+    .select(studentRowSelect)
+    .eq("lifecycle", lifecycle)
     .order("full_name", { ascending: true })
     .overrideTypes<StudentRow[], { merge: false }>();
 
@@ -97,15 +106,19 @@ export async function listProfessorStudents(supabase: SupabaseClient): Promise<S
   }));
 }
 
+export async function listProfessorStudents(supabase: SupabaseClient): Promise<StudentThreadSummary[]> {
+  return listProfessorStudentsByLifecycle(supabase, "active");
+}
+
+export async function listArchivedProfessorStudents(supabase: SupabaseClient): Promise<StudentThreadSummary[]> {
+  return listProfessorStudentsByLifecycle(supabase, "archived");
+}
+
 export async function getStudentHistory(
   supabase: SupabaseClient,
   studentId: string,
 ): Promise<StudentWithHistory | null> {
-  const studentResult = await supabase
-    .from("students")
-    .select("id, professor_profile_id, student_profile_id, full_name, email, created_at, updated_at")
-    .eq("id", studentId)
-    .maybeSingle();
+  const studentResult = await supabase.from("students").select(studentRowSelect).eq("id", studentId).maybeSingle();
   const studentData = studentResult.data;
   const studentError = studentResult.error;
 
@@ -152,8 +165,9 @@ export async function getLinkedStudentHistoryForUser(
 ): Promise<StudentWithHistory | null> {
   const studentResult = await supabase
     .from("students")
-    .select("id, professor_profile_id, student_profile_id, full_name, email, created_at, updated_at")
+    .select(studentRowSelect)
     .eq("student_profile_id", userId)
+    .eq("lifecycle", "active")
     .maybeSingle<StudentRow>();
   const studentData = studentResult.data;
   const studentError = studentResult.error;
@@ -391,11 +405,7 @@ export async function setTaskCompletion(supabase: SupabaseClient, input: SetTask
 }
 
 export async function createProfessorStudent(supabase: SupabaseClient, input: CreateStudentInput): Promise<StudentRow> {
-  const studentResult = await supabase
-    .from("students")
-    .insert(input)
-    .select("id, professor_profile_id, student_profile_id, full_name, email, created_at, updated_at")
-    .single();
+  const studentResult = await supabase.from("students").insert(input).select(studentRowSelect).single();
   const studentData = studentResult.data;
   const studentError = studentResult.error;
 
@@ -408,6 +418,54 @@ export async function createProfessorStudent(supabase: SupabaseClient, input: Cr
   }
 
   return studentData satisfies StudentRow;
+}
+
+export async function archiveProfessorStudent(
+  supabase: SupabaseClient,
+  input: ArchiveStudentInput,
+): Promise<ArchiveStudentResult> {
+  const { data: existingStudent, error: studentLookupError } = await supabase
+    .from("students")
+    .select(studentRowSelect)
+    .eq("id", input.student_id)
+    .eq("lifecycle", "active")
+    .maybeSingle<StudentRow>();
+
+  if (studentLookupError) {
+    throw toError(studentLookupError, "Unable to load the selected student.");
+  }
+
+  if (!existingStudent) {
+    throw new Error("The selected student is not accessible.");
+  }
+
+  if (!existingStudent.student_profile_id) {
+    throw new Error("Only linked active students can be archived with the current archive contract.");
+  }
+
+  const archivedAt = new Date().toISOString();
+  const archivedFromStudentProfileId = existingStudent.student_profile_id;
+  const { data: archivedStudent, error: archiveError } = await supabase
+    .from("students")
+    .update({
+      lifecycle: "archived",
+      archived_at: archivedAt,
+      archived_student_profile_id: archivedFromStudentProfileId,
+      student_profile_id: null,
+    })
+    .eq("id", input.student_id)
+    .eq("lifecycle", "active")
+    .select(studentRowSelect)
+    .single<StudentRow>();
+
+  if (archiveError) {
+    throw toError(archiveError, "Unable to archive the selected student.");
+  }
+
+  return {
+    ...archivedStudent,
+    archived_from_student_profile_id: archivedFromStudentProfileId,
+  } satisfies ArchiveStudentResult;
 }
 
 export async function claimStudentLink(
@@ -426,6 +484,7 @@ export async function claimStudentLink(
     .from("students")
     .select("id")
     .eq("student_profile_id", input.user_id)
+    .eq("lifecycle", "active")
     .maybeSingle<{ id: string }>();
 
   if (existingLinkError) {
@@ -443,6 +502,7 @@ export async function claimStudentLink(
     .from("students")
     .select("id, student_profile_id")
     .eq("email", normalizedEmail)
+    .eq("lifecycle", "active")
     .is("student_profile_id", null)
     .overrideTypes<Pick<StudentRow, "id" | "student_profile_id">[], { merge: false }>();
 
@@ -469,6 +529,7 @@ export async function claimStudentLink(
     .from("students")
     .update({ student_profile_id: input.user_id })
     .eq("id", match.id)
+    .eq("lifecycle", "active")
     .is("student_profile_id", null)
     .select("id")
     .single<{ id: string }>();

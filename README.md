@@ -535,6 +535,29 @@ Hosted release note:
 
 - Hosted archive-history smoke stays intentionally deferred until the next deploy-worthy batch, and only after the remote Supabase project is confirmed to include the archive lifecycle migration.
 
+### Student re-registration reset verification
+
+Recommended local verification for the current `student-reregistration-reset` slice:
+
+1. Sign in as the professor and open `/dashboard`.
+2. Make sure one previously linked student has already been archived and still appears in the `Archived` roster.
+3. Return to the `Active` roster and create a fresh student row with the same email.
+4. Confirm the add-student form shows the archived-history warning for that email.
+5. Confirm the post-create success state keeps the new row active and explains that the older thread remains professor-only in `Archived`.
+6. Sign in as that returning student and confirm `/pending-access` offers the standard claim action.
+7. Complete the claim and confirm the student lands on `/dashboard?claimReady=1`.
+8. Confirm the student sees only the fresh active thread and does not regain access to the archived history.
+9. Prepare two fresh active rows with that same email and confirm the returning student stays blocked on `/pending-access` with the duplicate-match explanation.
+
+Local automated proof for this slice:
+
+- `vitest run tests/integration/student-account-linking-contract.test.ts`
+- `playwright test tests/e2e/student-claim-flow.spec.ts`
+
+Hosted release note:
+
+- Hosted smoke for this slice stays optional until the next deploy-worthy batch, but any eventual hosted release still depends on the remote Supabase project already having the archive lifecycle migration applied.
+
 ## Supervision Domain Schema
 
 The MVP now includes a first-pass supervision data model in Supabase:

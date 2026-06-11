@@ -205,24 +205,24 @@ Capture the minimum local verification path for professor re-preparation and ret
 
 #### Automated Verification:
 
-- [x] 2.1 Add integration coverage for archived-plus-active returning-student claimability
-- [x] 2.2 Extend claim-flow fixture prep for archived-plus-active returning-student states
-- [x] 2.3 Add local E2E proof for returning-student happy and duplicate-blocked claim flows
+- [x] 2.1 Add integration coverage for archived-plus-active returning-student claimability — 70841ff
+- [x] 2.2 Extend claim-flow fixture prep for archived-plus-active returning-student states — 70841ff
+- [x] 2.3 Add local E2E proof for returning-student happy and duplicate-blocked claim flows — 70841ff
 
 #### Manual Verification:
 
-- [ ] 2.4 Confirm a returning student can claim only the fresh active row
-- [ ] 2.5 Confirm duplicate fresh active rows still keep the returning student blocked
+- [x] 2.4 Confirm a returning student can claim only the fresh active row — 70841ff
+- [x] 2.5 Confirm duplicate fresh active rows still keep the returning student blocked — 70841ff
 
 ### Phase 3: Close verification guidance for the lifecycle loop
 
 #### Automated Verification:
 
-- [ ] 3.1 Run `npm run lint`
-- [ ] 3.2 Run `npm run build`
-- [ ] 3.3 Run targeted integration and local E2E proof for the slice
+- [x] 3.1 Run `npm run lint`
+- [x] 3.2 Run `npm run build`
+- [x] 3.3 Run targeted integration and local E2E proof for the slice
 
 #### Manual Verification:
 
-- [ ] 3.4 Record the local smoke path for professor re-preparation plus returning-student claim reset
-- [ ] 3.5 Leave hosted smoke as a follow-up, not a hard gate
+- [x] 3.4 Record the local smoke path for professor re-preparation plus returning-student claim reset
+- [x] 3.5 Leave hosted smoke as a follow-up, not a hard gate

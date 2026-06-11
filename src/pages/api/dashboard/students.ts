@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 
 import type { CreateStudentFormInput } from "@/lib/database";
-import { createProfessorStudent } from "@/lib/supervision";
+import { createProfessorStudent, hasArchivedStudentEmailReuse } from "@/lib/supervision";
 import { createAdminClient, createClient } from "@/lib/supabase";
 
 function redirectToDashboard(query: URLSearchParams) {
@@ -63,6 +63,16 @@ export const POST: APIRoute = async (context) => {
     return context.redirect(redirectToDashboard(query));
   }
 
+  let archivedEmailReused = false;
+
+  if (email.length > 0) {
+    try {
+      archivedEmailReused = await hasArchivedStudentEmailReuse(supabase, user.id, email);
+    } catch {
+      archivedEmailReused = false;
+    }
+  }
+
   try {
     await createProfessorStudent(supabase, {
       professor_profile_id: user.id,
@@ -101,5 +111,11 @@ export const POST: APIRoute = async (context) => {
   query.delete("draftEmail");
   query.set("creationReady", "1");
   query.set("createdStudent", fullName);
+
+  if (archivedEmailReused) {
+    query.set("creationArchivedReuse", "1");
+    query.set("creationArchivedEmail", email);
+  }
+
   return context.redirect(redirectToDashboard(query));
 };

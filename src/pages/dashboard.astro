@@ -19,6 +19,8 @@ const searchParams = Astro.url.searchParams;
 const creationError = searchParams.get("creationError");
 const creationReady = searchParams.get("creationReady");
 const createdStudent = searchParams.get("createdStudent");
+const creationArchivedReuse = searchParams.get("creationArchivedReuse") === "1";
+const creationArchivedEmail = searchParams.get("creationArchivedEmail");
 const draftFullName = searchParams.get("draftFullName") ?? "";
 const draftEmail = searchParams.get("draftEmail") ?? "";
 const updated = searchParams.get("updated") === "1";
@@ -30,6 +32,14 @@ const rosterView = searchParams.get("roster") === "archived" ? "archived" : "act
 const error = searchParams.get("error");
 const editNoteId = searchParams.get("edit");
 const noteBeingEdited = linkedStudentHistory?.notes.find((note) => note.id === editNoteId) ?? null;
+const archivedRosterEmails =
+  role === "professor"
+    ? [...new Set(archivedStudents.map((student) => student.email?.trim().toLowerCase()).filter(Boolean))]
+    : [];
+const draftEmailMatchesArchivedHistory =
+  role === "professor" && draftEmail.length > 0
+    ? archivedRosterEmails.includes(draftEmail.trim().toLowerCase())
+    : false;
 
 function formatMeetingDate(value: string) {
   return new Date(`${value}T00:00:00`).toLocaleDateString("en-CA", {
@@ -453,10 +463,25 @@ function getProfessorArchiveStatusBadge() {
                           name="email"
                           value={draftEmail}
                           placeholder="student@example.com"
+                          data-archived-emails={JSON.stringify(archivedRosterEmails)}
+                          data-archived-warning-target="student-archived-email-hint"
                           class="w-full rounded-xl border border-white/10 bg-slate-950/50 px-3 py-2 text-sm text-white transition outline-none focus:border-cyan-300/40"
                         />
                       </label>
                     </div>
+
+                    <p
+                      id="student-archived-email-hint"
+                      class:list={[
+                        "mt-3 rounded-xl border px-3 py-2 text-xs leading-5",
+                        draftEmailMatchesArchivedHistory
+                          ? "border-amber-300/20 bg-amber-300/10 text-amber-50/90"
+                          : "hidden border-amber-300/20 bg-amber-300/10 text-amber-50/90",
+                      ]}
+                    >
+                      This email already belongs to an archived student thread. Creating a new student will prepare a
+                      fresh active record and keep the archived history separate.
+                    </p>
 
                     <div class="mt-4 flex items-center justify-between gap-3 border-t border-white/10 pt-4">
                       <p class="text-xs leading-5 text-slate-300/70">
@@ -477,6 +502,14 @@ function getProfessorArchiveStatusBadge() {
                     {createdStudent
                       ? `${createdStudent} is now part of the roster.`
                       : "The student was added to the roster."}
+                  </div>
+                ) : null}
+
+                {creationArchivedReuse ? (
+                  <div class="mb-5 rounded-2xl border border-amber-300/20 bg-amber-300/[0.08] p-4 text-sm text-amber-50/90">
+                    {creationArchivedEmail
+                      ? `Archived history already exists for ${creationArchivedEmail}. The new roster record stays active, while the older thread remains professor-only in Archive.`
+                      : "Archived history already exists for this email. The new roster record stays active, while the older thread remains professor-only in Archive."}
                   </div>
                 ) : null}
 
@@ -642,4 +675,24 @@ function getProfessorArchiveStatusBadge() {
       }
     </div>
   </div>
+
+  <script is:inline>
+    const emailInput = document.querySelector('input[name="email"][data-archived-warning-target]');
+    if (emailInput instanceof HTMLInputElement) {
+      const targetId = emailInput.dataset.archivedWarningTarget;
+      const hint = targetId ? document.getElementById(targetId) : null;
+      const archivedEmails = JSON.parse(emailInput.dataset.archivedEmails ?? "[]");
+
+      if (hint) {
+        const updateArchivedEmailHint = () => {
+          const normalizedEmail = emailInput.value.trim().toLowerCase();
+          const showHint = normalizedEmail.length > 0 && archivedEmails.includes(normalizedEmail);
+          hint.classList.toggle("hidden", !showHint);
+        };
+
+        emailInput.addEventListener("input", updateArchivedEmailHint);
+        updateArchivedEmailHint();
+      }
+    }
+  </script>
 </Layout>

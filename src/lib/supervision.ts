@@ -420,6 +420,30 @@ export async function createProfessorStudent(supabase: SupabaseClient, input: Cr
   return studentData satisfies StudentRow;
 }
 
+export async function hasArchivedStudentEmailReuse(
+  supabase: SupabaseClient,
+  professorProfileId: string,
+  email: string,
+): Promise<boolean> {
+  const normalizedEmail = email.trim().toLowerCase();
+  if (!normalizedEmail) {
+    return false;
+  }
+
+  const { data: archivedStudents, error } = await supabase
+    .from("students")
+    .select("email")
+    .eq("professor_profile_id", professorProfileId)
+    .eq("lifecycle", "archived")
+    .overrideTypes<Pick<StudentRow, "email">[], { merge: false }>();
+
+  if (error) {
+    throw toError(error, "Unable to verify archived student email history.");
+  }
+
+  return archivedStudents.some((student) => student.email?.trim().toLowerCase() === normalizedEmail);
+}
+
 export async function archiveProfessorStudent(
   supabase: SupabaseClient,
   input: ArchiveStudentInput,

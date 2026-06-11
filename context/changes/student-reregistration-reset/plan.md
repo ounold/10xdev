@@ -218,11 +218,11 @@ Capture the minimum local verification path for professor re-preparation and ret
 
 #### Automated Verification:
 
-- [x] 3.1 Run `npm run lint`
-- [x] 3.2 Run `npm run build`
-- [x] 3.3 Run targeted integration and local E2E proof for the slice
+- [x] 3.1 Run `npm run lint` — a37a763
+- [x] 3.2 Run `npm run build` — a37a763
+- [x] 3.3 Run targeted integration and local E2E proof for the slice — a37a763
 
 #### Manual Verification:
 
-- [x] 3.4 Record the local smoke path for professor re-preparation plus returning-student claim reset
-- [x] 3.5 Leave hosted smoke as a follow-up, not a hard gate
+- [x] 3.4 Record the local smoke path for professor re-preparation plus returning-student claim reset — a37a763
+- [x] 3.5 Leave hosted smoke as a follow-up, not a hard gate — a37a763

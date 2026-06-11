@@ -1,7 +1,7 @@
 ---
 change_id: student-reregistration-reset
 title: Student re-registration reset
-status: implementing
+status: implemented
 created: 2026-06-11
 updated: 2026-06-11
 ---

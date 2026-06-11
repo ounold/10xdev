@@ -215,22 +215,40 @@ export default function StudentNoteForm({
           <div className="space-y-3">
             {items.map((item, index) => (
               <div key={item.id} className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
-                <div className="grid gap-3 md:grid-cols-[7rem_1fr_auto] md:items-start">
-                  <label className="space-y-2">
-                    <span className="text-[11px] font-medium tracking-[0.2em] text-slate-300/80 uppercase">Type</span>
-                    <select
-                      value={item.itemType}
-                      onChange={(event) => {
-                        updateItem(item.id, { itemType: event.target.value as NoteItemType });
-                      }}
-                      className="w-full rounded-xl border border-white/10 bg-slate-950/50 px-3 py-2 text-sm text-white transition outline-none focus:border-cyan-300/50"
-                    >
-                      <option value="info">info</option>
-                      <option value="task">task</option>
-                    </select>
-                  </label>
+                <div className="space-y-3">
+                  <div className="grid gap-3 md:grid-cols-[7rem_auto] md:items-end md:justify-between">
+                    <label className="space-y-2">
+                      <span className="text-[11px] font-medium tracking-[0.2em] text-slate-300/80 uppercase">Type</span>
+                      <select
+                        value={item.itemType}
+                        onChange={(event) => {
+                          updateItem(item.id, { itemType: event.target.value as NoteItemType });
+                        }}
+                        className="w-full rounded-xl border border-white/10 bg-slate-950/50 px-3 py-2 text-sm text-white transition outline-none focus:border-cyan-300/50"
+                      >
+                        <option value="info">info</option>
+                        <option value="task">task</option>
+                      </select>
+                    </label>
 
-                  <label className="space-y-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        removeItem(item.id);
+                      }}
+                      disabled={Boolean(item.persistedId) || items.length === 1}
+                      className={cn(
+                        "rounded-xl px-3 py-2 text-sm transition",
+                        item.persistedId || items.length === 1
+                          ? "cursor-not-allowed border border-white/5 bg-white/[0.03] text-slate-500"
+                          : "border border-white/10 bg-white/5 text-slate-100 hover:bg-white/10",
+                      )}
+                    >
+                      {item.persistedId ? "Saved item" : "Remove"}
+                    </button>
+                  </div>
+
+                  <label className="block space-y-2">
                     <span className="text-[11px] font-medium tracking-[0.2em] text-slate-300/80 uppercase">
                       Item {index + 1}
                     </span>
@@ -243,25 +261,9 @@ export default function StudentNoteForm({
                       placeholder={
                         item.itemType === "task" ? "Prepare the follow-up action" : "What happened in the meeting?"
                       }
-                      className="w-full rounded-xl border border-white/10 bg-slate-950/50 px-3 py-2 text-sm text-white transition outline-none focus:border-cyan-300/50"
+                      className="min-h-[5.5rem] w-full rounded-xl border border-white/10 bg-slate-950/50 px-3 py-2 text-sm text-white transition outline-none focus:border-cyan-300/50"
                     />
                   </label>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      removeItem(item.id);
-                    }}
-                    disabled={Boolean(item.persistedId) || items.length === 1}
-                    className={cn(
-                      "rounded-xl px-3 py-2 text-sm transition md:mt-7",
-                      item.persistedId || items.length === 1
-                        ? "cursor-not-allowed border border-white/5 bg-white/[0.03] text-slate-500"
-                        : "border border-white/10 bg-white/5 text-slate-100 hover:bg-white/10",
-                    )}
-                  >
-                    {item.persistedId ? "Saved item" : "Remove"}
-                  </button>
                 </div>
               </div>
             ))}

@@ -10,10 +10,30 @@ import {
   defaultClaimStudentStorageStatePath,
   prepareClaimReadyFixture,
   prepareDuplicateClaimFixture,
+  prepareReturningClaimFixture,
+  prepareReturningDuplicateClaimFixture,
   resetStudentClaimFixture,
 } from "./support/studentClaimFixture";
 
 loadE2EEnv();
+
+function normalizeBaseUrlForStorageState(baseURL: string | undefined, storageStatePath: string) {
+  if (!baseURL || !fs.existsSync(storageStatePath)) {
+    return baseURL;
+  }
+
+  const storageState = JSON.parse(fs.readFileSync(storageStatePath, "utf8")) as {
+    cookies?: { domain?: string }[];
+  };
+  const hasLocalhostCookie = storageState.cookies?.some((cookie) => cookie.domain === "localhost") ?? false;
+  if (!hasLocalhostCookie) {
+    return baseURL;
+  }
+
+  const normalizedBaseUrl = new URL(baseURL);
+  normalizedBaseUrl.hostname = "localhost";
+  return normalizedBaseUrl.toString();
+}
 
 async function createClaimStudentContext(
   browser: Browser,
@@ -21,8 +41,9 @@ async function createClaimStudentContext(
 ): Promise<{ context: BrowserContext; page: Page }> {
   const storageStatePath = process.env.E2E_CLAIM_STUDENT_STORAGE_STATE ?? defaultClaimStudentStorageStatePath;
   if (fs.existsSync(storageStatePath)) {
+    const normalizedBaseUrl = normalizeBaseUrlForStorageState(baseURL, storageStatePath);
     const context = await browser.newContext({
-      baseURL,
+      baseURL: normalizedBaseUrl,
       storageState: path.resolve(storageStatePath),
     });
 
@@ -103,6 +124,68 @@ test.describe("student claim flow", () => {
       await expect(
         page.getByRole("heading", { name: "Your account is ready, but product access is not." }),
       ).toBeVisible();
+      await expect(page.getByText(/more than one prepared student record/i)).toBeVisible();
+      await expect(page.getByText(/will not choose one automatically/i)).toBeVisible();
+      await expect(page.getByRole("button", { name: "Link my student access" })).toHaveCount(0);
+    } finally {
+      await resetStudentClaimFixture(claimStudentEmail);
+      await context.close();
+    }
+  });
+
+  test("returning student can claim the fresh active row when archived history also exists for that email", async ({
+    baseURL,
+    browser,
+  }) => {
+    const claimStudentEmail = getClaimStudentEmail();
+    test.skip(!claimStudentEmail, "Set E2E_CLAIM_STUDENT_EMAIL or E2E_UNLINKED_STUDENT_EMAIL for claim-flow E2E.");
+
+    await prepareReturningClaimFixture({
+      email: claimStudentEmail,
+      archivedFullName: "Archived Student History",
+      activeFullName: "Returning Student Active",
+    });
+
+    const { context, page } = await createClaimStudentContext(browser, baseURL);
+
+    try {
+      await page.goto("/dashboard");
+
+      await expect(page).toHaveURL(/\/pending-access$/);
+      await expect(page.getByText(/Returning Student Active/i)).toBeVisible();
+      await expect(page.getByRole("button", { name: "Link my student access" })).toBeVisible();
+
+      await page.getByRole("button", { name: "Link my student access" }).click();
+
+      await page.waitForURL((url) => url.pathname === "/dashboard" && url.searchParams.get("claimReady") === "1");
+      await expect(page.getByRole("heading", { name: "Your supervision history" })).toBeVisible();
+      await expect(page.getByText("Archived Student History")).toHaveCount(0);
+      await expect(page.getByText("Returning Student Active")).toBeVisible();
+    } finally {
+      await resetStudentClaimFixture(claimStudentEmail);
+      await context.close();
+    }
+  });
+
+  test("returning student stays blocked when archived history exists and duplicate fresh active rows share the email", async ({
+    baseURL,
+    browser,
+  }) => {
+    const claimStudentEmail = getClaimStudentEmail();
+    test.skip(!claimStudentEmail, "Set E2E_CLAIM_STUDENT_EMAIL or E2E_UNLINKED_STUDENT_EMAIL for claim-flow E2E.");
+
+    await prepareReturningDuplicateClaimFixture({
+      email: claimStudentEmail,
+      archivedFullName: "Archived Student History",
+      activeFullNames: ["Returning Duplicate A", "Returning Duplicate B"],
+    });
+
+    const { context, page } = await createClaimStudentContext(browser, baseURL);
+
+    try {
+      await page.goto("/dashboard");
+
+      await expect(page).toHaveURL(/\/pending-access$/);
       await expect(page.getByText(/more than one prepared student record/i)).toBeVisible();
       await expect(page.getByText(/will not choose one automatically/i)).toBeVisible();
       await expect(page.getByRole("button", { name: "Link my student access" })).toHaveCount(0);

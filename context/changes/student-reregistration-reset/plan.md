@@ -192,22 +192,22 @@ Capture the minimum local verification path for professor re-preparation and ret
 
 #### Automated Verification:
 
-- [x] 1.1 Permit professor creation of a fresh active row when the same email exists only in archived history
-- [x] 1.2 Emit professor-facing archived-history warning feedback for the reused email
-- [x] 1.3 Add targeted integration coverage for archived-email re-preparation behavior
+- [x] 1.1 Permit professor creation of a fresh active row when the same email exists only in archived history — 9b04692
+- [x] 1.2 Emit professor-facing archived-history warning feedback for the reused email — 9b04692
+- [x] 1.3 Add targeted integration coverage for archived-email re-preparation behavior — 9b04692
 
 #### Manual Verification:
 
-- [ ] 1.4 Confirm a professor can add a new active student with an archived email
-- [ ] 1.5 Confirm the professor sees the non-blocking archived-history warning
+- [x] 1.4 Confirm a professor can add a new active student with an archived email — 9b04692
+- [x] 1.5 Confirm the professor sees the non-blocking archived-history warning — 9b04692
 
 ### Phase 2: Prove returning-student claim flow against archived-plus-active data
 
 #### Automated Verification:
 
-- [ ] 2.1 Add integration coverage for archived-plus-active returning-student claimability
-- [ ] 2.2 Extend claim-flow fixture prep for archived-plus-active returning-student states
-- [ ] 2.3 Add local E2E proof for returning-student happy and duplicate-blocked claim flows
+- [x] 2.1 Add integration coverage for archived-plus-active returning-student claimability
+- [x] 2.2 Extend claim-flow fixture prep for archived-plus-active returning-student states
+- [x] 2.3 Add local E2E proof for returning-student happy and duplicate-blocked claim flows
 
 #### Manual Verification:
 

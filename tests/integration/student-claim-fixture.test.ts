@@ -58,6 +58,9 @@ describe("student claim fixture prep", () => {
           {
             professor_profile_id: "prof-1",
             student_profile_id: null,
+            archived_student_profile_id: null,
+            lifecycle: "active",
+            archived_at: null,
             full_name: "Claim Ready Student",
             email: "student@example.com",
           },
@@ -93,12 +96,18 @@ describe("student claim fixture prep", () => {
           {
             professor_profile_id: "prof-1",
             student_profile_id: null,
+            archived_student_profile_id: null,
+            lifecycle: "active",
+            archived_at: null,
             full_name: "Duplicate One",
             email: "student@example.com",
           },
           {
             professor_profile_id: "prof-1",
             student_profile_id: null,
+            archived_student_profile_id: null,
+            lifecycle: "active",
+            archived_at: null,
             full_name: "Duplicate Two",
             email: "student@example.com",
           },

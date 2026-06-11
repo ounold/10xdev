@@ -21,6 +21,7 @@ interface Props {
   noteId?: string;
   meetingDateReadOnly?: boolean;
   mode?: "create" | "edit";
+  cancelHref?: string;
 }
 
 interface FormErrors {
@@ -52,13 +53,18 @@ export default function StudentNoteForm({
   noteId,
   meetingDateReadOnly = false,
   mode = "create",
+  cancelHref,
 }: Props) {
-  const [meetingDate, setMeetingDate] = useState(defaultMeetingDate);
-  const [items, setItems] = useState<NoteItemDraft[]>(
-    defaultItems && defaultItems.length > 0
-      ? defaultItems.map((item) => createDraftFromDefault(item))
-      : [createDraft("info"), createDraft("task")],
+  const initialItems = useMemo(
+    () =>
+      defaultItems && defaultItems.length > 0
+        ? defaultItems.map((item) => createDraftFromDefault(item))
+        : [createDraft("info"), createDraft("task")],
+    [defaultItems],
   );
+
+  const [meetingDate, setMeetingDate] = useState(defaultMeetingDate);
+  const [items, setItems] = useState<NoteItemDraft[]>(initialItems);
   const [errors, setErrors] = useState<FormErrors>({});
 
   const serializedItems = useMemo(
@@ -132,6 +138,12 @@ export default function StudentNoteForm({
 
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
+  }
+
+  function resetDraft() {
+    setMeetingDate(defaultMeetingDate);
+    setItems(initialItems.map((item) => ({ ...item, id: crypto.randomUUID() })));
+    setErrors({});
   }
 
   return (
@@ -285,12 +297,31 @@ export default function StudentNoteForm({
             ? "This updates one existing note, keeps saved item order stable, and only appends new items at the tail."
             : "This adds one dated note and keeps the current item order as saved."}
         </p>
-        <button
-          type="submit"
-          className="rounded-xl border border-cyan-300/20 bg-cyan-300/15 px-4 py-2 text-sm font-medium text-cyan-50 transition hover:bg-cyan-300/25"
-        >
-          {mode === "edit" ? "Save note changes" : "Save note to this thread"}
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          {mode === "edit" && cancelHref ? (
+            <a
+              href={cancelHref}
+              className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-slate-100 transition hover:bg-white/10"
+            >
+              Discard note changes
+            </a>
+          ) : (
+            <button
+              type="button"
+              onClick={resetDraft}
+              className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-slate-100 transition hover:bg-white/10"
+            >
+              Discard note draft
+            </button>
+          )}
+
+          <button
+            type="submit"
+            className="rounded-xl border border-cyan-300/20 bg-cyan-300/15 px-4 py-2 text-sm font-medium text-cyan-50 transition hover:bg-cyan-300/25"
+          >
+            {mode === "edit" ? "Save note changes" : "Save note to this thread"}
+          </button>
+        </div>
       </div>
     </form>
   );

@@ -251,31 +251,20 @@ function formatCompletionTimestamp(value: string) {
               )}
             </section>
 
-            {isArchivedThread ? null : (
+            {isArchivedThread ? null : noteBeingEdited ? (
               <section class="rounded-[2rem] border border-white/10 bg-white/[0.06] p-6 backdrop-blur-xl">
                 <div class="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
                   <div>
-                    <p class="text-xs tracking-[0.3em] text-emerald-200/70 uppercase">
-                      {noteBeingEdited ? "Edit note" : "New note"}
-                    </p>
+                    <p class="text-xs tracking-[0.3em] text-emerald-200/70 uppercase">Edit note</p>
                     <h2 class="mt-2 text-xl font-semibold text-white">
-                      {noteBeingEdited
-                        ? `Update ${noteBeingEdited.meeting_date} without rewriting the thread`
-                        : "Capture the next supervision update"}
+                      Update {noteBeingEdited.meeting_date} inside this thread
                     </h2>
-                    <p class="mt-2 text-sm text-slate-300/75">
-                      {noteBeingEdited
-                        ? "Edit saved items in place and append new ones at the end. Deleting saved items stays out of scope for this slice."
-                        : "Add one dated note directly inside this thread. Item order is preserved exactly as entered."}
+                    <p class="mt-2 text-sm leading-6 text-slate-300/75">
+                      Edit saved items in place and append new ones at the end. Task completion stays in the thread
+                      itself, while deleting saved items remains out of scope here.
                     </p>
                   </div>
                 </div>
-
-                {saved ? (
-                  <div class="mb-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-50">
-                    The note was saved to this thread.
-                  </div>
-                ) : null}
 
                 {updated ? (
                   <div class="mb-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-50">
@@ -301,20 +290,53 @@ function formatCompletionTimestamp(value: string) {
                   </div>
                 ) : null}
 
-                <StudentNoteForm
-                  client:load
-                  action={`/api/dashboard/students/${student.id}/notes`}
-                  defaultMeetingDate={noteBeingEdited?.meeting_date ?? defaultMeetingDate}
-                  defaultItems={
-                    noteBeingEdited?.items.map((item) => ({
+                <div class="mt-4">
+                  <StudentNoteForm
+                    client:load
+                    action={`/api/dashboard/students/${student.id}/notes`}
+                    cancelHref={`/dashboard/students/${student.id}`}
+                    defaultMeetingDate={noteBeingEdited.meeting_date}
+                    defaultItems={noteBeingEdited.items.map((item) => ({
                       id: item.id,
                       itemType: item.item_type,
                       content: item.content,
-                    })) ?? undefined
-                  }
-                  meetingDateReadOnly={Boolean(noteBeingEdited)}
-                  mode={noteBeingEdited ? "edit" : "create"}
-                  noteId={noteBeingEdited?.id}
+                    }))}
+                    meetingDateReadOnly={true}
+                    mode="edit"
+                    noteId={noteBeingEdited.id}
+                  />
+                </div>
+              </section>
+            ) : (
+              <section class="rounded-[2rem] border border-white/10 bg-white/[0.06] p-6 backdrop-blur-xl">
+                <div class="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+                  <div>
+                    <p class="text-xs tracking-[0.3em] text-emerald-200/70 uppercase">New note</p>
+                    <h2 class="mt-2 text-xl font-semibold text-white">Capture the next supervision update</h2>
+                    <p class="mt-2 text-sm text-slate-300/75">
+                      Add one dated note directly inside this thread. Item order is preserved exactly as entered.
+                    </p>
+                  </div>
+                </div>
+
+                {saved ? (
+                  <div class="mb-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-50">
+                    The note was saved to this thread.
+                  </div>
+                ) : null}
+
+                {error ? (
+                  <div class="mb-4 rounded-2xl border border-rose-300/20 bg-rose-300/10 px-4 py-3 text-sm text-rose-50">
+                    {error}
+                  </div>
+                ) : null}
+
+                <StudentNoteForm
+                  client:load
+                  action={`/api/dashboard/students/${student.id}/notes`}
+                  defaultMeetingDate={defaultMeetingDate}
+                  meetingDateReadOnly={false}
+                  mode="create"
                 />
               </section>
             )}

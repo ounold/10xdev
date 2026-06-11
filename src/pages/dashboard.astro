@@ -348,6 +348,7 @@ function getProfessorArchiveStatusBadge() {
                       <StudentNoteForm
                         client:load
                         action={`/api/dashboard/notes/${noteBeingEdited.id}`}
+                        cancelHref="/dashboard"
                         defaultMeetingDate={noteBeingEdited.meeting_date}
                         defaultItems={noteBeingEdited.items.map((item) => ({
                           id: item.id,

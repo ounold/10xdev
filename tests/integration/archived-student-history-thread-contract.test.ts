@@ -29,7 +29,7 @@ describe("archived student history thread contract", () => {
     );
     expect(threadPageSource).toContain("Read-only note");
     expect(threadPageSource).toContain('item.item_type === "task" && !isArchivedThread');
-    expect(threadPageSource).toContain("{isArchivedThread ? null : (");
+    expect(threadPageSource).toContain("{isArchivedThread ? null : noteBeingEdited ? (");
   });
 
   it("guards professor note writes and task completion writes when the selected thread is archived", () => {

@@ -3,6 +3,21 @@ import { buildRecoveryErrorRedirect } from "@/lib/auth-recovery";
 import { createClient } from "@/lib/supabase";
 
 const MIN_PASSWORD_LENGTH = 8;
+const PASSWORD_REUSE_MESSAGE = "Choose a password different from the current one.";
+
+function normalizeRecoveryUpdateError(message: string) {
+  const normalizedMessage = message.trim().toLowerCase();
+  if (
+    normalizedMessage.includes("different from the old password") ||
+    normalizedMessage.includes("different from your old password") ||
+    normalizedMessage.includes("must be different from the previous password") ||
+    normalizedMessage.includes("same password")
+  ) {
+    return PASSWORD_REUSE_MESSAGE;
+  }
+
+  return message;
+}
 
 export const POST: APIRoute = async (context) => {
   const form = await context.request.formData();
@@ -31,8 +46,8 @@ export const POST: APIRoute = async (context) => {
   });
 
   if (error) {
-    return context.redirect(buildRecoveryErrorRedirect(error.message));
+    return context.redirect(buildRecoveryErrorRedirect(normalizeRecoveryUpdateError(error.message)));
   }
 
-  return context.redirect("/dashboard");
+  return context.redirect("/dashboard?passwordUpdated=1");
 };

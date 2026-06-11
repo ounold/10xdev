@@ -155,6 +155,62 @@ describe("password recovery contract", () => {
     expect(updateUser).toHaveBeenCalledWith({
       password: "new-password",
     });
-    expect(response.headers.get("Location")).toBe("/dashboard");
+    expect(response.headers.get("Location")).toBe("/dashboard?passwordUpdated=1");
+  });
+
+  it("maps password-reuse provider failures to app-owned recovery guidance", async () => {
+    const { createClient } = await import("@/lib/supabase");
+    const updateUser = vi.fn().mockResolvedValue({
+      error: {
+        message: "New password should be different from the old password.",
+      },
+    });
+
+    vi.mocked(createClient).mockReturnValue({
+      auth: {
+        updateUser,
+      },
+    } as never);
+
+    const response = await updatePasswordPost(
+      createRouteContext("http://localhost:4325/api/auth/update-password", {
+        method: "POST",
+        body: new URLSearchParams({
+          password: "old-password",
+          confirmation: "old-password",
+        }),
+      }),
+    );
+
+    expect(response.headers.get("Location")).toBe(
+      "/auth/update-password?error=Choose%20a%20password%20different%20from%20the%20current%20one.",
+    );
+  });
+
+  it("keeps unknown provider failures on the generic recovery error path", async () => {
+    const { createClient } = await import("@/lib/supabase");
+    const updateUser = vi.fn().mockResolvedValue({
+      error: {
+        message: "unexpected auth failure",
+      },
+    });
+
+    vi.mocked(createClient).mockReturnValue({
+      auth: {
+        updateUser,
+      },
+    } as never);
+
+    const response = await updatePasswordPost(
+      createRouteContext("http://localhost:4325/api/auth/update-password", {
+        method: "POST",
+        body: new URLSearchParams({
+          password: "new-password",
+          confirmation: "new-password",
+        }),
+      }),
+    );
+
+    expect(response.headers.get("Location")).toBe("/auth/update-password?error=unexpected%20auth%20failure");
   });
 });

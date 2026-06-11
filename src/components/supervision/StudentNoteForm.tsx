@@ -219,16 +219,22 @@ export default function StudentNoteForm({
                   <div className="grid gap-3 md:grid-cols-[7rem_auto] md:items-end md:justify-between">
                     <label className="space-y-2">
                       <span className="text-[11px] font-medium tracking-[0.2em] text-slate-300/80 uppercase">Type</span>
-                      <select
-                        value={item.itemType}
-                        onChange={(event) => {
-                          updateItem(item.id, { itemType: event.target.value as NoteItemType });
-                        }}
-                        className="w-full rounded-xl border border-white/10 bg-slate-950/50 px-3 py-2 text-sm text-white transition outline-none focus:border-cyan-300/50"
-                      >
-                        <option value="info">info</option>
-                        <option value="task">task</option>
-                      </select>
+                      {item.persistedId ? (
+                        <select
+                          value={item.itemType}
+                          onChange={(event) => {
+                            updateItem(item.id, { itemType: event.target.value as NoteItemType });
+                          }}
+                          className="w-full rounded-xl border border-white/10 bg-slate-950/50 px-3 py-2 text-sm text-white transition outline-none focus:border-cyan-300/50"
+                        >
+                          <option value="info">info</option>
+                          <option value="task">task</option>
+                        </select>
+                      ) : (
+                        <div className="rounded-xl border border-white/10 bg-slate-950/50 px-3 py-2 text-sm text-white">
+                          {item.itemType}
+                        </div>
+                      )}
                     </label>
 
                     <button

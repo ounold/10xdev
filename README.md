@@ -397,8 +397,15 @@ Recommended local verification:
 3. Request a reset from `/auth/reset-password`.
 4. Open the newest reset email and confirm it lands on `/auth/update-password?recovery=ready`.
 5. Submit a new password and confirm the app continues into `/dashboard?passwordUpdated=1`.
+6. Repeat the flow with the current password and confirm the recovery page stays on `/auth/update-password` with the app-owned message `Choose a password different from the current one.` instead of raw provider text.
 
 Hosted verification follows the same route contract, but with the hosted domain in `Site URL` and Redirect URLs.
+
+Important hosted recovery note:
+
+- Supabase may reject reusing the current password during recovery even when the reset link itself is valid
+- the expected app behavior is to stay on `/auth/update-password` and show `Choose a password different from the current one.`
+- treat the older provider text `New password should be different from the old password.` as a sign that the hosted runtime is still serving an outdated build
 
 ### Local professor bootstrap verification
 

@@ -1,9 +1,9 @@
 ---
 change_id: password-recovery-password-reuse-feedback
 title: Password recovery password reuse feedback
-status: implementing
+status: complete
 created: 2026-06-11
-updated: 2026-06-11
+updated: 2026-06-12
 ---
 
 ## Notes

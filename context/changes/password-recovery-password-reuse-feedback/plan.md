@@ -76,14 +76,14 @@ Turn the hosted “same password” rejection into clear recovery-specific guida
 
 #### Automated verification:
 
-- [ ] Password-reuse rejection is translated into clear app-owned recovery guidance
-- [ ] Integration coverage proves the mapped error contract
-- [ ] Unknown provider failures still use the fallback recovery error path
+- [x] Password-reuse rejection is translated into clear app-owned recovery guidance
+- [x] Integration coverage proves the mapped error contract
+- [x] Unknown provider failures still use the fallback recovery error path
 
 #### Manual verification:
 
-- [ ] During hosted reset flow, reusing the current password shows the intended product message
-- [ ] Retrying with a different password still succeeds through the same flow
+- [x] During hosted reset flow, reusing the current password shows the intended product message
+- [x] Retrying with a different password still succeeds through the same flow
 
 ### Phase 2: Align hosted smoke guidance with the discovered contract
 
@@ -104,11 +104,11 @@ Record the real-world hosted recovery behavior so future smoke runs do not treat
 
 #### Automated verification:
 
-- [ ] Documentation reflects the discovered password-reuse constraint
+- [x] Documentation reflects the discovered password-reuse constraint
 
 #### Manual verification:
 
-- [ ] Hosted smoke notes now match the actual observed recovery behavior
+- [x] Hosted smoke notes now match the actual observed recovery behavior
 
 ## Risks and Mitigations
 
@@ -140,8 +140,8 @@ Record the real-world hosted recovery behavior so future smoke runs do not treat
 
 #### Automated Verification:
 
-- [ ] 2.1 Update README hosted recovery guidance with the password-reuse constraint
+- [x] 2.1 Update README hosted recovery guidance with the password-reuse constraint
 
 #### Manual Verification:
 
-- [ ] 2.2 Confirm the hosted smoke notes now match the observed provider behavior
+- [x] 2.2 Confirm the hosted smoke notes now match the observed provider behavior

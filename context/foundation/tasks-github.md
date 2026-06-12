@@ -89,7 +89,7 @@ Current open issue counts:
 - `M1 Foundation`: `0` documented open issues pending reconciliation
 - `M2 Professor Core Flow`: `0` documented issues pending reconciliation
 - `M3 Student Access`: `0` documented issues pending reconciliation
-- `M4 Shared Collaboration`: `2`
+- `M4 Shared Collaboration`: `0`
 
 ## Current Issue Backlog
 
@@ -111,10 +111,10 @@ Current GitHub issue state:
   State: `closed on GitHub; done in Linear`
   Labels: `type:slice`, `status:blocked`, `stream:student-visibility`
 - `#6` `[S-04] Professor and student can update a shared note without losing continuity`
-  State: `closed on GitHub; Linear mirror pending`
+  State: `closed on GitHub; done in Linear`
   Labels: `type:slice`, `status:blocked`, `stream:shared-follow-up`
 - `#7` `[S-05] Professor and student can mark task-like note items complete`
-  State: `closed on GitHub; Linear mirror pending`
+  State: `closed on GitHub; done in Linear`
   Labels: `type:slice`, `status:blocked`, `stream:shared-follow-up`
 
 ## Roadmap to GitHub Mapping

@@ -2,8 +2,8 @@
   "package": "@przeprogramowani/10x-cli",
   "version": "1.8.0",
   "manifestVersion": 3,
-  "lastApplied": "2026-06-04T20:46:20.785Z",
-  "lessonId": "m3l4",
+  "lastApplied": "2026-06-09T19:00:54.091Z",
+  "lessonId": "m3l5",
   "course": "10xdevs3",
   "tool": "codex",
   "files": {
@@ -11,20 +11,20 @@
       "10x-init": {
         "files": ["SKILL.md"],
         "contentHashes": {
-          "SKILL.md": "5e34551cdce85a3f171d42d758ba8079cc8a011a3b667886588c79ffcfb5fc61"
+          "SKILL.md": "00f9c5d504bfec1f5c9192d967b56d0d45eb41b694423c5965a1acf85a0d5585"
         }
       },
       "10x-shape": {
         "files": ["references/prd-schema.md", "SKILL.md"],
         "contentHashes": {
           "references/prd-schema.md": "69e487a419e06fedd9d7761a6be1f375b5290839bdc58eaca1c1f64fe5f3516e",
-          "SKILL.md": "e84b0fa74025623f42e8185a16014b87b5d2c91355c46b19bcf55fb2aaef4fc0"
+          "SKILL.md": "26720a009c59083a6186312b6e734da7b57ddb29e3eef1cbf1599184a1ee688f"
         }
       },
       "10x-prd": {
         "files": ["SKILL.md"],
         "contentHashes": {
-          "SKILL.md": "7d1c7249f9a27b5d18022ff98ff520c2c34406a0269daed05a2ca5fb8c2979ab"
+          "SKILL.md": "2f88f3db34e48b7df6b1554ba5387a6f8a4d7f35e17a7d92057a9a68deac9d49"
         }
       },
       "10x-tech-stack-selector": {
@@ -44,14 +44,14 @@
           "references/handoff-schema.md": "157c5b8546b32c115b4e4ad05e29546bc6adda2a3739e30148bf391c9de167b2",
           "references/residual-interview.md": "6b2b3f2b5975745e7c68e26748e7c2aaf4300de00e415f7c712fb8fac0272d95",
           "references/starter-registry.yaml": "b31c10153c403b4c34b18a06c4665cfcde062ec148114630ccb17d2bd8afe6dc",
-          "SKILL.md": "015fd468d6b86511d2634c9c24d2290efb23d8874df0697326b726c9bde22299"
+          "SKILL.md": "ae450fe35731e86496e2d52849e2dd9f86ee806dd75b167d7dcd3e7d4d27cfef"
         }
       },
       "10x-stack-assess": {
         "files": ["references/agent-friendly-criteria.md", "SKILL.md"],
         "contentHashes": {
           "references/agent-friendly-criteria.md": "04e0cd99f1e64dd6dffe37a68844ddd8efb593057584afbe0fed308724eb0cad",
-          "SKILL.md": "939ef7ddfab00f24247ca9f14f37591efb034c36009565125d32ff8c83b44258"
+          "SKILL.md": "3e2053bf74a0dc300971bddf467ea8f598d3b7de141ff4e4df4dc2d59a540a76"
         }
       },
       "10x-bootstrapper": {
@@ -73,64 +73,64 @@
           "references/refusal-protocol.md": "a4a5cb111659ab24dc88d9587d158f37896bbac618ec645c622ce680a685a8f1",
           "references/scaffold-merge.md": "33454bd846edf024d62bae30c8604ca26caafb391b08eaf4163d61e566d9f252",
           "references/verification-log-schema.md": "eaa89efa5fc4eaf3aa242f0b172757778dea44a42e3ac53e44057a828b40a458",
-          "SKILL.md": "a7d9c80d905e3e3db42e64af40d0eba7ee41416d441e402eaf8ccce829d9f9ef"
+          "SKILL.md": "07122238f18dbb717bb62c7fef739a73fc24a55c2f6d6fd978b590208834b9da"
         }
       },
       "10x-health-check": {
         "files": ["references/health-check-schema.md", "SKILL.md"],
         "contentHashes": {
           "references/health-check-schema.md": "6c7115da83ef2a4a396a9b703d94395a0904748bb586a6e182f2018fcbfedfe6",
-          "SKILL.md": "fde4755e451701f6b70ef436adc9947131884e2444bf5179b26612f29f9afce9"
+          "SKILL.md": "8e1232f2498e327dddebd3fc648343daea20e25c41cc0ba06cd8a1ec3fdca4dd"
         }
       },
       "10x-agents-md": {
         "files": ["SKILL.md"],
         "contentHashes": {
-          "SKILL.md": "b5b60f6636bbcaa8fe0de8df749c079b3168d402514b28b342b26f70df437076"
+          "SKILL.md": "0046f44af8d273695fb70d2f26f0b103c0fd039847e3cdd95f362a560328f401"
         }
       },
       "10x-rule-review": {
         "files": ["SKILL.md"],
         "contentHashes": {
-          "SKILL.md": "f7c7e92072b927f928693413c4b310a785a196f14e193a51b1dc0007c1517865"
+          "SKILL.md": "e4b1c1d42a54f39ca9ef3c7fd4adf3b32fa5e253ef51a18e4592b68f7b268982"
         }
       },
       "10x-lesson": {
         "files": ["SKILL.md"],
         "contentHashes": {
-          "SKILL.md": "cbc519b6401f53b36100cdda9d8a0e23efcc24cbb9188a46f3706c3184673d22"
+          "SKILL.md": "8ca43b38d35f474a2933f2ba3a06a698fc0dfb330caee65f8d0ad3b62160f79b"
         }
       },
       "10x-infra-research": {
         "files": ["references/agent-friendly-criteria.md", "SKILL.md"],
         "contentHashes": {
           "references/agent-friendly-criteria.md": "888b4b712107bf8d8600061e1d907bb1bc14081cb2c3a74be8c7da641a35ab72",
-          "SKILL.md": "4de122dfbd129c0f5786d8faff16cb9791e9adee584ace97aad49feeee48162b"
+          "SKILL.md": "c6319bb0f32c5058e43796f3cd76e0f649babfdb01ab20764d91e087ddf32532"
         }
       },
       "10x-roadmap": {
         "files": ["SKILL.md"],
         "contentHashes": {
-          "SKILL.md": "214fa48be04ca9d9d9a764295e4a9f37e58351685fdba1e1c6c45059f8acb839"
+          "SKILL.md": "bdb958e8c377033c1612874ca88b36c5830a306996cb1d4f927ce6362f316ff3"
         }
       },
       "10x-new": {
         "files": ["SKILL.md"],
         "contentHashes": {
-          "SKILL.md": "589e9de82beb6c7a1995e158219e70e6a4eb3f5c96c6b4e895369840a13780ef"
+          "SKILL.md": "0457adba8ce85db21be25e9d907ad20b11cbc3c4ee9fe65b73bd6543e975b481"
         }
       },
       "10x-plan": {
         "files": ["references/progress-format.md", "SKILL.md"],
         "contentHashes": {
           "references/progress-format.md": "ef1121e46a0bca60c132fa6ebd9e66ef644553fc8e9c552beeceeff2c9a0befc",
-          "SKILL.md": "e2c58027ad75d4e08efd43a3863144187fd8b083bc4b390005f83c0512c3133f"
+          "SKILL.md": "faf83b619b1256b6cf83eb7f4776b1bb652ba1e40d5babc47d2f4e8ac7384ae5"
         }
       },
       "10x-plan-review": {
         "files": ["SKILL.md"],
         "contentHashes": {
-          "SKILL.md": "e8bdaa5e14de95830e0afe12a2bd034d7d1d8bed3a787f8cf70312b22db7092f"
+          "SKILL.md": "f6fc38ba40c51e4e1afb8f889383ffc39fad180c67dc1aeb642b1aecbe95a688"
         }
       },
       "10x-implement": {
@@ -148,19 +148,19 @@
       "10x-impl-review": {
         "files": ["SKILL.md"],
         "contentHashes": {
-          "SKILL.md": "7c6781344bd01c58f94ff1b54cfd12abba04e8ce773195dc95e8abed2580b72b"
+          "SKILL.md": "1a4ccb0f8dd4c7449369081da93237bd97a778f1863509b0176bf7bd9857dcf8"
         }
       },
       "10x-frame": {
         "files": ["SKILL.md"],
         "contentHashes": {
-          "SKILL.md": "d7a776cad6325bd6eece2ef03dd59a23fedfcc6d25388c6c01e55ae91b4aa52d"
+          "SKILL.md": "8ac63174ae15c4a5e434e3fac94a96be16247a621a40de3903939b05531e2bb2"
         }
       },
       "10x-research": {
         "files": ["SKILL.md"],
         "contentHashes": {
-          "SKILL.md": "d4aa817c2f7ddbc902ed48e70f56ada0111a75226e2eef679261ee8a9c0b7608"
+          "SKILL.md": "9a2bf02331a4040d04df5f9901e10fc104c72a1e95c8cb8cf38072ff74025f15"
         }
       },
       "10x-test-plan": {
@@ -201,21 +201,31 @@
       "m1l5-2-constrain-approach.md",
       "m1l5-3-extend-prerequisites.md",
       "m1l5-4-store-plan.md",
-      "m3l2-ad-hoc-testing.md"
+      "m3l2-ad-hoc-testing.md",
+      "m4l2-1-territory-git-history.md",
+      "m4l2-2-structure-dependency-cruiser.md",
+      "m4l2-3-contributors-git.md",
+      "m4l2-repo-map-synthesis.md",
+      "m0l1-prework.md"
     ],
     "configs": [],
     "promptHashes": {
-      "skill-explainer.md": "302d120d7601b6531dc1747f582a0875cfe334bd30b4dc42c8fb07b0dfd1d920",
+      "skill-explainer.md": "d803f3a2cc1edeffa80925a1d39117e5428b6e8a8e7f5af2341ddeae30b341c3",
       "m1l5-1-plan-integration.md": "524a26dea6fcb223bb442f1e751a8c367a70862354fc9da67c2f79d0f77a1d4f",
       "m1l5-2-constrain-approach.md": "9f50a38a30b89228348822f9c7d826cee1a6d1ddaaacf335f85ac05859d08fa6",
       "m1l5-3-extend-prerequisites.md": "4d1630d9e4931b311559be8fe1547991194c5aa7b23d97a74eb0b3f023451ffe",
       "m1l5-4-store-plan.md": "1f5db15fadaa9a5c3acd9a47f3a97db060f5093005ad696e182be7d4bedd8d7d",
-      "m3l2-ad-hoc-testing.md": "4e20b18bfe2dbcf55aa0ae432a489395e10441e98d1eec0445115a8d69ba6141"
+      "m3l2-ad-hoc-testing.md": "4e20b18bfe2dbcf55aa0ae432a489395e10441e98d1eec0445115a8d69ba6141",
+      "m4l2-1-territory-git-history.md": "b091036f132cd84d7183f45b4c605b03a38689020f22ad4cbdc188e0b8b705f6",
+      "m4l2-2-structure-dependency-cruiser.md": "18ec397b245306675cdce57bfdcdc6c9d210106c16fc29505937a181529c8eee",
+      "m4l2-3-contributors-git.md": "ec99c47d302f25160d5ecf0edaddbd0b8d1b4349decda131290dbf7401a2137f",
+      "m4l2-repo-map-synthesis.md": "8b51b75e69a5b3f28164343731e0adc3b3e48c7b86beb64e12d07433d9baaf20",
+      "m0l1-prework.md": "d24fac9ac02d961d9b21f8fc399061d7fe61bcd2c7806be8870f175135a17ae3"
     }
   },
   "lessons": {
     "m2l5": {
-      "appliedAt": "2026-05-29T18:29:54.706Z",
+      "appliedAt": "2026-06-09T19:00:51.723Z",
       "skills": {
         "10x-init": {
           "files": ["SKILL.md"]
@@ -305,7 +315,7 @@
       "configs": []
     },
     "m3l1": {
-      "appliedAt": "2026-06-01T18:57:56.454Z",
+      "appliedAt": "2026-06-09T19:00:52.234Z",
       "skills": {
         "10x-init": {
           "files": ["SKILL.md"]
@@ -398,7 +408,7 @@
       "configs": []
     },
     "m3l3": {
-      "appliedAt": "2026-06-03T19:49:00.724Z",
+      "appliedAt": "2026-06-09T19:00:53.075Z",
       "skills": {
         "10x-init": {
           "files": ["SKILL.md"]
@@ -495,7 +505,597 @@
       "configs": []
     },
     "m3l4": {
-      "appliedAt": "2026-06-04T20:46:20.785Z",
+      "appliedAt": "2026-06-09T19:00:53.559Z",
+      "skills": {
+        "10x-init": {
+          "files": ["SKILL.md"]
+        },
+        "10x-shape": {
+          "files": ["references/prd-schema.md", "SKILL.md"]
+        },
+        "10x-prd": {
+          "files": ["SKILL.md"]
+        },
+        "10x-tech-stack-selector": {
+          "files": [
+            "references/agent-friendly-criteria.md",
+            "references/decision-flow.md",
+            "references/eval-cases.md",
+            "references/handoff-schema.md",
+            "references/residual-interview.md",
+            "references/starter-registry.yaml",
+            "SKILL.md"
+          ]
+        },
+        "10x-stack-assess": {
+          "files": ["references/agent-friendly-criteria.md", "SKILL.md"]
+        },
+        "10x-bootstrapper": {
+          "files": [
+            "references/bootstrapper-config.yaml",
+            "references/handoff-consumer.md",
+            "references/post-scaffold-verification.md",
+            "references/pre-scaffold-verification.md",
+            "references/refusal-protocol.md",
+            "references/scaffold-merge.md",
+            "references/verification-log-schema.md",
+            "SKILL.md"
+          ]
+        },
+        "10x-health-check": {
+          "files": ["references/health-check-schema.md", "SKILL.md"]
+        },
+        "10x-agents-md": {
+          "files": ["SKILL.md"]
+        },
+        "10x-rule-review": {
+          "files": ["SKILL.md"]
+        },
+        "10x-lesson": {
+          "files": ["SKILL.md"]
+        },
+        "10x-infra-research": {
+          "files": ["references/agent-friendly-criteria.md", "SKILL.md"]
+        },
+        "10x-roadmap": {
+          "files": ["SKILL.md"]
+        },
+        "10x-new": {
+          "files": ["SKILL.md"]
+        },
+        "10x-plan": {
+          "files": ["references/progress-format.md", "SKILL.md"]
+        },
+        "10x-plan-review": {
+          "files": ["SKILL.md"]
+        },
+        "10x-implement": {
+          "files": ["SKILL.md"]
+        },
+        "10x-archive": {
+          "files": ["SKILL.md"]
+        },
+        "10x-impl-review": {
+          "files": ["SKILL.md"]
+        },
+        "10x-frame": {
+          "files": ["SKILL.md"]
+        },
+        "10x-research": {
+          "files": ["SKILL.md"]
+        },
+        "10x-test-plan": {
+          "files": ["references/test-plan-schema.md", "SKILL.md"]
+        },
+        "10x-tdd": {
+          "files": ["SKILL.md"]
+        },
+        "10x-e2e": {
+          "files": [
+            "references/browser-driven-generation.md",
+            "references/e2e-anti-patterns.md",
+            "references/e2e-prompt-template.md",
+            "references/e2e-quality-rules.md",
+            "references/seed-test-pattern.md",
+            "SKILL.md"
+          ]
+        }
+      },
+      "prompts": [
+        "skill-explainer.md",
+        "m1l5-1-plan-integration.md",
+        "m1l5-2-constrain-approach.md",
+        "m1l5-3-extend-prerequisites.md",
+        "m1l5-4-store-plan.md",
+        "m3l2-ad-hoc-testing.md"
+      ],
+      "configs": []
+    },
+    "m4l2": {
+      "appliedAt": "2026-06-09T18:54:10.507Z",
+      "skills": {},
+      "prompts": [
+        "m4l2-1-territory-git-history.md",
+        "m4l2-2-structure-dependency-cruiser.md",
+        "m4l2-3-contributors-git.md",
+        "m4l2-repo-map-synthesis.md"
+      ],
+      "configs": []
+    },
+    "m0l1": {
+      "appliedAt": "2026-06-09T19:00:47.161Z",
+      "skills": {},
+      "prompts": ["m0l1-prework.md"],
+      "configs": []
+    },
+    "m1l1": {
+      "appliedAt": "2026-06-09T19:00:47.657Z",
+      "skills": {
+        "10x-init": {
+          "files": ["SKILL.md"]
+        },
+        "10x-shape": {
+          "files": ["references/prd-schema.md", "SKILL.md"]
+        },
+        "10x-prd": {
+          "files": ["SKILL.md"]
+        }
+      },
+      "prompts": [],
+      "configs": []
+    },
+    "m1l2": {
+      "appliedAt": "2026-06-09T19:00:48.151Z",
+      "skills": {
+        "10x-init": {
+          "files": ["SKILL.md"]
+        },
+        "10x-shape": {
+          "files": ["references/prd-schema.md", "SKILL.md"]
+        },
+        "10x-prd": {
+          "files": ["SKILL.md"]
+        },
+        "10x-tech-stack-selector": {
+          "files": [
+            "references/agent-friendly-criteria.md",
+            "references/decision-flow.md",
+            "references/eval-cases.md",
+            "references/handoff-schema.md",
+            "references/residual-interview.md",
+            "references/starter-registry.yaml",
+            "SKILL.md"
+          ]
+        },
+        "10x-stack-assess": {
+          "files": ["references/agent-friendly-criteria.md", "SKILL.md"]
+        }
+      },
+      "prompts": ["skill-explainer.md"],
+      "configs": []
+    },
+    "m1l3": {
+      "appliedAt": "2026-06-09T19:00:48.577Z",
+      "skills": {
+        "10x-init": {
+          "files": ["SKILL.md"]
+        },
+        "10x-shape": {
+          "files": ["references/prd-schema.md", "SKILL.md"]
+        },
+        "10x-prd": {
+          "files": ["SKILL.md"]
+        },
+        "10x-tech-stack-selector": {
+          "files": [
+            "references/agent-friendly-criteria.md",
+            "references/decision-flow.md",
+            "references/eval-cases.md",
+            "references/handoff-schema.md",
+            "references/residual-interview.md",
+            "references/starter-registry.yaml",
+            "SKILL.md"
+          ]
+        },
+        "10x-stack-assess": {
+          "files": ["references/agent-friendly-criteria.md", "SKILL.md"]
+        },
+        "10x-bootstrapper": {
+          "files": [
+            "references/bootstrapper-config.yaml",
+            "references/handoff-consumer.md",
+            "references/post-scaffold-verification.md",
+            "references/pre-scaffold-verification.md",
+            "references/refusal-protocol.md",
+            "references/scaffold-merge.md",
+            "references/verification-log-schema.md",
+            "SKILL.md"
+          ]
+        },
+        "10x-health-check": {
+          "files": ["references/health-check-schema.md", "SKILL.md"]
+        }
+      },
+      "prompts": ["skill-explainer.md"],
+      "configs": []
+    },
+    "m1l4": {
+      "appliedAt": "2026-06-09T19:00:49.046Z",
+      "skills": {
+        "10x-init": {
+          "files": ["SKILL.md"]
+        },
+        "10x-shape": {
+          "files": ["references/prd-schema.md", "SKILL.md"]
+        },
+        "10x-prd": {
+          "files": ["SKILL.md"]
+        },
+        "10x-tech-stack-selector": {
+          "files": [
+            "references/agent-friendly-criteria.md",
+            "references/decision-flow.md",
+            "references/eval-cases.md",
+            "references/handoff-schema.md",
+            "references/residual-interview.md",
+            "references/starter-registry.yaml",
+            "SKILL.md"
+          ]
+        },
+        "10x-stack-assess": {
+          "files": ["references/agent-friendly-criteria.md", "SKILL.md"]
+        },
+        "10x-bootstrapper": {
+          "files": [
+            "references/bootstrapper-config.yaml",
+            "references/handoff-consumer.md",
+            "references/post-scaffold-verification.md",
+            "references/pre-scaffold-verification.md",
+            "references/refusal-protocol.md",
+            "references/scaffold-merge.md",
+            "references/verification-log-schema.md",
+            "SKILL.md"
+          ]
+        },
+        "10x-health-check": {
+          "files": ["references/health-check-schema.md", "SKILL.md"]
+        },
+        "10x-agents-md": {
+          "files": ["SKILL.md"]
+        },
+        "10x-rule-review": {
+          "files": ["SKILL.md"]
+        },
+        "10x-lesson": {
+          "files": ["SKILL.md"]
+        }
+      },
+      "prompts": ["skill-explainer.md"],
+      "configs": []
+    },
+    "m2l1": {
+      "appliedAt": "2026-06-09T19:00:49.669Z",
+      "skills": {
+        "10x-init": {
+          "files": ["SKILL.md"]
+        },
+        "10x-shape": {
+          "files": ["references/prd-schema.md", "SKILL.md"]
+        },
+        "10x-prd": {
+          "files": ["SKILL.md"]
+        },
+        "10x-tech-stack-selector": {
+          "files": [
+            "references/agent-friendly-criteria.md",
+            "references/decision-flow.md",
+            "references/eval-cases.md",
+            "references/handoff-schema.md",
+            "references/residual-interview.md",
+            "references/starter-registry.yaml",
+            "SKILL.md"
+          ]
+        },
+        "10x-stack-assess": {
+          "files": ["references/agent-friendly-criteria.md", "SKILL.md"]
+        },
+        "10x-bootstrapper": {
+          "files": [
+            "references/bootstrapper-config.yaml",
+            "references/handoff-consumer.md",
+            "references/post-scaffold-verification.md",
+            "references/pre-scaffold-verification.md",
+            "references/refusal-protocol.md",
+            "references/scaffold-merge.md",
+            "references/verification-log-schema.md",
+            "SKILL.md"
+          ]
+        },
+        "10x-health-check": {
+          "files": ["references/health-check-schema.md", "SKILL.md"]
+        },
+        "10x-agents-md": {
+          "files": ["SKILL.md"]
+        },
+        "10x-rule-review": {
+          "files": ["SKILL.md"]
+        },
+        "10x-lesson": {
+          "files": ["SKILL.md"]
+        },
+        "10x-infra-research": {
+          "files": ["references/agent-friendly-criteria.md", "SKILL.md"]
+        },
+        "10x-roadmap": {
+          "files": ["SKILL.md"]
+        }
+      },
+      "prompts": [
+        "skill-explainer.md",
+        "m1l5-1-plan-integration.md",
+        "m1l5-2-constrain-approach.md",
+        "m1l5-3-extend-prerequisites.md",
+        "m1l5-4-store-plan.md"
+      ],
+      "configs": []
+    },
+    "m2l2": {
+      "appliedAt": "2026-06-09T19:00:50.119Z",
+      "skills": {
+        "10x-init": {
+          "files": ["SKILL.md"]
+        },
+        "10x-shape": {
+          "files": ["references/prd-schema.md", "SKILL.md"]
+        },
+        "10x-prd": {
+          "files": ["SKILL.md"]
+        },
+        "10x-tech-stack-selector": {
+          "files": [
+            "references/agent-friendly-criteria.md",
+            "references/decision-flow.md",
+            "references/eval-cases.md",
+            "references/handoff-schema.md",
+            "references/residual-interview.md",
+            "references/starter-registry.yaml",
+            "SKILL.md"
+          ]
+        },
+        "10x-stack-assess": {
+          "files": ["references/agent-friendly-criteria.md", "SKILL.md"]
+        },
+        "10x-bootstrapper": {
+          "files": [
+            "references/bootstrapper-config.yaml",
+            "references/handoff-consumer.md",
+            "references/post-scaffold-verification.md",
+            "references/pre-scaffold-verification.md",
+            "references/refusal-protocol.md",
+            "references/scaffold-merge.md",
+            "references/verification-log-schema.md",
+            "SKILL.md"
+          ]
+        },
+        "10x-health-check": {
+          "files": ["references/health-check-schema.md", "SKILL.md"]
+        },
+        "10x-agents-md": {
+          "files": ["SKILL.md"]
+        },
+        "10x-rule-review": {
+          "files": ["SKILL.md"]
+        },
+        "10x-lesson": {
+          "files": ["SKILL.md"]
+        },
+        "10x-infra-research": {
+          "files": ["references/agent-friendly-criteria.md", "SKILL.md"]
+        },
+        "10x-roadmap": {
+          "files": ["SKILL.md"]
+        },
+        "10x-new": {
+          "files": ["SKILL.md"]
+        },
+        "10x-plan": {
+          "files": ["references/progress-format.md", "SKILL.md"]
+        },
+        "10x-plan-review": {
+          "files": ["SKILL.md"]
+        },
+        "10x-implement": {
+          "files": ["SKILL.md"]
+        },
+        "10x-archive": {
+          "files": ["SKILL.md"]
+        }
+      },
+      "prompts": [
+        "skill-explainer.md",
+        "m1l5-1-plan-integration.md",
+        "m1l5-2-constrain-approach.md",
+        "m1l5-3-extend-prerequisites.md",
+        "m1l5-4-store-plan.md"
+      ],
+      "configs": []
+    },
+    "m2l3": {
+      "appliedAt": "2026-06-09T19:00:50.562Z",
+      "skills": {
+        "10x-init": {
+          "files": ["SKILL.md"]
+        },
+        "10x-shape": {
+          "files": ["references/prd-schema.md", "SKILL.md"]
+        },
+        "10x-prd": {
+          "files": ["SKILL.md"]
+        },
+        "10x-tech-stack-selector": {
+          "files": [
+            "references/agent-friendly-criteria.md",
+            "references/decision-flow.md",
+            "references/eval-cases.md",
+            "references/handoff-schema.md",
+            "references/residual-interview.md",
+            "references/starter-registry.yaml",
+            "SKILL.md"
+          ]
+        },
+        "10x-stack-assess": {
+          "files": ["references/agent-friendly-criteria.md", "SKILL.md"]
+        },
+        "10x-bootstrapper": {
+          "files": [
+            "references/bootstrapper-config.yaml",
+            "references/handoff-consumer.md",
+            "references/post-scaffold-verification.md",
+            "references/pre-scaffold-verification.md",
+            "references/refusal-protocol.md",
+            "references/scaffold-merge.md",
+            "references/verification-log-schema.md",
+            "SKILL.md"
+          ]
+        },
+        "10x-health-check": {
+          "files": ["references/health-check-schema.md", "SKILL.md"]
+        },
+        "10x-agents-md": {
+          "files": ["SKILL.md"]
+        },
+        "10x-rule-review": {
+          "files": ["SKILL.md"]
+        },
+        "10x-lesson": {
+          "files": ["SKILL.md"]
+        },
+        "10x-infra-research": {
+          "files": ["references/agent-friendly-criteria.md", "SKILL.md"]
+        },
+        "10x-roadmap": {
+          "files": ["SKILL.md"]
+        },
+        "10x-new": {
+          "files": ["SKILL.md"]
+        },
+        "10x-plan": {
+          "files": ["references/progress-format.md", "SKILL.md"]
+        },
+        "10x-plan-review": {
+          "files": ["SKILL.md"]
+        },
+        "10x-implement": {
+          "files": ["SKILL.md"]
+        },
+        "10x-archive": {
+          "files": ["SKILL.md"]
+        },
+        "10x-impl-review": {
+          "files": ["SKILL.md"]
+        }
+      },
+      "prompts": [
+        "skill-explainer.md",
+        "m1l5-1-plan-integration.md",
+        "m1l5-2-constrain-approach.md",
+        "m1l5-3-extend-prerequisites.md",
+        "m1l5-4-store-plan.md"
+      ],
+      "configs": []
+    },
+    "m2l4": {
+      "appliedAt": "2026-06-09T19:00:51.160Z",
+      "skills": {
+        "10x-init": {
+          "files": ["SKILL.md"]
+        },
+        "10x-shape": {
+          "files": ["references/prd-schema.md", "SKILL.md"]
+        },
+        "10x-prd": {
+          "files": ["SKILL.md"]
+        },
+        "10x-tech-stack-selector": {
+          "files": [
+            "references/agent-friendly-criteria.md",
+            "references/decision-flow.md",
+            "references/eval-cases.md",
+            "references/handoff-schema.md",
+            "references/residual-interview.md",
+            "references/starter-registry.yaml",
+            "SKILL.md"
+          ]
+        },
+        "10x-stack-assess": {
+          "files": ["references/agent-friendly-criteria.md", "SKILL.md"]
+        },
+        "10x-bootstrapper": {
+          "files": [
+            "references/bootstrapper-config.yaml",
+            "references/handoff-consumer.md",
+            "references/post-scaffold-verification.md",
+            "references/pre-scaffold-verification.md",
+            "references/refusal-protocol.md",
+            "references/scaffold-merge.md",
+            "references/verification-log-schema.md",
+            "SKILL.md"
+          ]
+        },
+        "10x-health-check": {
+          "files": ["references/health-check-schema.md", "SKILL.md"]
+        },
+        "10x-agents-md": {
+          "files": ["SKILL.md"]
+        },
+        "10x-rule-review": {
+          "files": ["SKILL.md"]
+        },
+        "10x-lesson": {
+          "files": ["SKILL.md"]
+        },
+        "10x-infra-research": {
+          "files": ["references/agent-friendly-criteria.md", "SKILL.md"]
+        },
+        "10x-roadmap": {
+          "files": ["SKILL.md"]
+        },
+        "10x-new": {
+          "files": ["SKILL.md"]
+        },
+        "10x-plan": {
+          "files": ["references/progress-format.md", "SKILL.md"]
+        },
+        "10x-plan-review": {
+          "files": ["SKILL.md"]
+        },
+        "10x-implement": {
+          "files": ["SKILL.md"]
+        },
+        "10x-archive": {
+          "files": ["SKILL.md"]
+        },
+        "10x-impl-review": {
+          "files": ["SKILL.md"]
+        },
+        "10x-frame": {
+          "files": ["SKILL.md"]
+        },
+        "10x-research": {
+          "files": ["SKILL.md"]
+        }
+      },
+      "prompts": [
+        "skill-explainer.md",
+        "m1l5-1-plan-integration.md",
+        "m1l5-2-constrain-approach.md",
+        "m1l5-3-extend-prerequisites.md",
+        "m1l5-4-store-plan.md"
+      ],
+      "configs": []
+    },
+    "m3l5": {
+      "appliedAt": "2026-06-09T19:00:54.090Z",
       "skills": {
         "10x-init": {
           "files": ["SKILL.md"]

@@ -29,11 +29,13 @@ export function buildPendingAccessViewModel({
   claimabilityError,
   claimError,
   isLinkedStudent,
+  hasArchivedStudentAccess,
 }: {
   claimability: StudentLinkClaimability | null;
   claimabilityError: string | null;
   claimError: string | null;
   isLinkedStudent: boolean;
+  hasArchivedStudentAccess: boolean;
 }): PendingAccessViewModel {
   const feedback = getClaimErrorMessage(claimError) ?? claimabilityError;
 
@@ -66,6 +68,16 @@ export function buildPendingAccessViewModel({
   }
 
   if (claimability?.status === "missing-match") {
+    if (hasArchivedStudentAccess) {
+      return {
+        body: "Your previous student access has ended, and this account no longer has an active student assignment.",
+        detail:
+          "If your professor wants to work with you again, they need to prepare a new active student record for this email before you can continue into the dashboard.",
+        feedback,
+        can_claim: false,
+      };
+    }
+
     return {
       body: "This account exists, but there is no prepared student record for this email yet.",
       detail: "Ask the professor workspace owner to add your email to the correct student thread, then return here.",

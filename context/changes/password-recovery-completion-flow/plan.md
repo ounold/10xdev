@@ -223,11 +223,11 @@ Align the surrounding auth UX and verification guidance so recovery, sign-in, an
 
 #### Automated Verification:
 
-- [ ] 3.1 Align auth entry points and messages with the completed recovery flow
-- [ ] 3.2 Add regression coverage for recovery-specific failures versus generic sign-in failures
-- [ ] 3.3 Update manual smoke guidance for local and hosted recovery verification
+- [x] 3.1 Align auth entry points and messages with the completed recovery flow
+- [x] 3.2 Add regression coverage for recovery-specific failures versus generic sign-in failures
+- [x] 3.3 Update manual smoke guidance for local and hosted recovery verification
 
 #### Manual Verification:
 
-- [ ] 3.4 Confirm local reset-password smoke works end to end without a dead-end return to sign-in
+- [x] 3.4 Confirm local reset-password smoke works end to end without a dead-end return to sign-in
 - [ ] 3.5 Confirm hosted reset-password smoke follows the same route expectations

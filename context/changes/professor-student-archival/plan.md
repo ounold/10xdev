@@ -222,11 +222,11 @@ Make the slice handoff-ready with the repo-required gates and concise manual ver
 
 #### Automated Verification:
 
-- [x] 3.1 Run `npm run lint`
-- [x] 3.2 Run `npm run build`
-- [x] 3.3 Run targeted integration checks for professor student archival
+- [x] 3.1 Run `npm run lint` — 5920223
+- [x] 3.2 Run `npm run build` — 5920223
+- [x] 3.3 Run targeted integration checks for professor student archival — 5920223
 
 #### Manual Verification:
 
-- [x] 3.4 Record the local professor archive smoke path
-- [x] 3.5 Leave hosted release verification explicitly deferred until a deploy-worthy batch
+- [x] 3.4 Record the local professor archive smoke path — 5920223
+- [x] 3.5 Leave hosted release verification explicitly deferred until a deploy-worthy batch — 5920223

@@ -3,7 +3,7 @@ change_id: password-recovery-completion-flow
 title: Password recovery completion flow
 status: implementing
 created: 2026-06-09
-updated: 2026-06-09
+updated: 2026-06-10
 ---
 
 ## Notes

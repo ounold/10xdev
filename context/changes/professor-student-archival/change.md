@@ -1,7 +1,7 @@
 ---
 change_id: professor-student-archival
 title: Professor student archival
-status: implementing
+status: implemented
 created: 2026-06-10
 updated: 2026-06-10
 ---

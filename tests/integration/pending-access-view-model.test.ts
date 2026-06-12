@@ -18,6 +18,7 @@ describe("pending-access view model", () => {
       claimabilityError: null,
       claimError: null,
       isLinkedStudent: false,
+      hasArchivedStudentAccess: false,
     });
 
     expect(viewModel.can_claim).toBe(true);
@@ -35,6 +36,7 @@ describe("pending-access view model", () => {
       claimabilityError: null,
       claimError: "ambiguous-match",
       isLinkedStudent: false,
+      hasArchivedStudentAccess: false,
     });
 
     expect(viewModel.can_claim).toBe(false);
@@ -53,11 +55,31 @@ describe("pending-access view model", () => {
       claimabilityError: null,
       claimError: null,
       isLinkedStudent: false,
+      hasArchivedStudentAccess: false,
     });
 
     expect(viewModel.can_claim).toBe(false);
     expect(viewModel.body).toContain("no prepared student record");
     expect(viewModel.detail).toContain("add your email");
+  });
+
+  it("uses archival-aware blocked copy when the signed-in account previously had archived student access", () => {
+    const viewModel = buildPendingAccessViewModel({
+      claimability: {
+        status: "missing-match",
+        normalized_email: "student@example.com",
+        target: null,
+        conflict_count: 0,
+      },
+      claimabilityError: null,
+      claimError: null,
+      isLinkedStudent: false,
+      hasArchivedStudentAccess: true,
+    });
+
+    expect(viewModel.can_claim).toBe(false);
+    expect(viewModel.body).toContain("previous student access has ended");
+    expect(viewModel.detail).toContain("prepare a new active student record");
   });
 
   it("maps known claim errors to user-facing feedback", () => {

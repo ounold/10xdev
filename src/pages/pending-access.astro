@@ -3,7 +3,7 @@ import { buildPendingAccessViewModel } from "@/lib/pending-access";
 import { getStudentLinkClaimabilityForUser } from "@/lib/profile";
 import Layout from "@/layouts/Layout.astro";
 
-const { user, isLinkedStudent } = Astro.locals;
+const { user, isLinkedStudent, hasArchivedStudentAccess } = Astro.locals;
 const claimError = Astro.url.searchParams.get("claimError");
 
 let claimability: Awaited<ReturnType<typeof getStudentLinkClaimabilityForUser>> | null = null;
@@ -22,6 +22,7 @@ const viewModel = buildPendingAccessViewModel({
   claimabilityError,
   claimError,
   isLinkedStudent,
+  hasArchivedStudentAccess,
 });
 ---
 

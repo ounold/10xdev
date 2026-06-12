@@ -10,6 +10,7 @@ export interface CurrentProfileState {
   isBootstrapProfessorEmail: boolean;
   hasProfessor: boolean;
   isLinkedStudent: boolean;
+  hasArchivedStudentAccess: boolean;
 }
 
 export function normalizeEmail(email: string) {
@@ -70,10 +71,22 @@ export async function loadCurrentProfileState(user: User): Promise<CurrentProfil
     .from("students")
     .select("id")
     .eq("student_profile_id", user.id)
+    .eq("lifecycle", "active")
     .limit(1);
 
   if (studentLinkError) {
     throw studentLinkError;
+  }
+
+  const { data: archivedStudentLink, error: archivedStudentLinkError } = await adminClient
+    .from("students")
+    .select("id")
+    .eq("archived_student_profile_id", user.id)
+    .eq("lifecycle", "archived")
+    .limit(1);
+
+  if (archivedStudentLinkError) {
+    throw archivedStudentLinkError;
   }
 
   return {
@@ -82,6 +95,7 @@ export async function loadCurrentProfileState(user: User): Promise<CurrentProfil
     isBootstrapProfessorEmail: isBootstrapProfessorEmail(user.email),
     hasProfessor,
     isLinkedStudent: studentLink.length > 0,
+    hasArchivedStudentAccess: archivedStudentLink.length > 0,
   };
 }
 
@@ -118,8 +132,11 @@ export async function getStudentLinkClaimabilityForUser(user: User): Promise<Stu
 
   const { data: existingLink, error: existingLinkError } = await adminClient
     .from("students")
-    .select("id, professor_profile_id, student_profile_id, full_name, email, created_at, updated_at")
+    .select(
+      "id, professor_profile_id, student_profile_id, archived_student_profile_id, lifecycle, archived_at, full_name, email, created_at, updated_at",
+    )
     .eq("student_profile_id", user.id)
+    .eq("lifecycle", "active")
     .maybeSingle<StudentRow>();
 
   if (existingLinkError) {
@@ -137,8 +154,11 @@ export async function getStudentLinkClaimabilityForUser(user: User): Promise<Stu
 
   const { data: matchingStudents, error: matchingStudentsError } = await adminClient
     .from("students")
-    .select("id, professor_profile_id, student_profile_id, full_name, email, created_at, updated_at")
+    .select(
+      "id, professor_profile_id, student_profile_id, archived_student_profile_id, lifecycle, archived_at, full_name, email, created_at, updated_at",
+    )
     .eq("email", normalizedEmail)
+    .eq("lifecycle", "active")
     .is("student_profile_id", null)
     .overrideTypes<StudentRow[], { merge: false }>();
 

@@ -16,6 +16,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.isBootstrapProfessorEmail = false;
   context.locals.hasProfessor = false;
   context.locals.isLinkedStudent = false;
+  context.locals.hasArchivedStudentAccess = false;
 
   if (supabase) {
     const {
@@ -30,6 +31,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
       context.locals.isBootstrapProfessorEmail = profileState.isBootstrapProfessorEmail;
       context.locals.hasProfessor = profileState.hasProfessor;
       context.locals.isLinkedStudent = profileState.isLinkedStudent;
+      context.locals.hasArchivedStudentAccess = profileState.hasArchivedStudentAccess;
     }
   }
 

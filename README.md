@@ -74,6 +74,14 @@ The current product supports one professor workspace with:
 - professor-only student archival and archived history review,
 - fresh re-registration for a returning student without restoring archived access.
 
+Current hosted app:
+
+- [post-meeting-notes.olgierd-unold.workers.dev](https://post-meeting-notes.olgierd-unold.workers.dev/)
+
+Questions or feedback:
+
+- `olgierd.unold@pwr.edu.pl`
+
 For an end-user guide in Polish, see [InstrukcjaObslugi.md](./InstrukcjaObslugi.md).
 
 ## Testing Policy

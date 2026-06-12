@@ -62,6 +62,20 @@ If `npm run dev` fails inside Codex on Windows with `Access is denied` or `Canno
 - `npm run lint:fix` - Auto-fix ESLint issues
 - `npm run format` - Run Prettier
 
+## Product Overview
+
+The current product supports one professor workspace with:
+
+- an active student roster,
+- per-student supervision threads,
+- shared professor/student note editing,
+- task completion and reopen flow for professor and linked student,
+- student account linking by matching email,
+- professor-only student archival and archived history review,
+- fresh re-registration for a returning student without restoring archived access.
+
+For an end-user guide in Polish, see [InstrukcjaObslugi.md](./InstrukcjaObslugi.md).
+
 ## Testing Policy
 
 Use the layers below for different kinds of evidence. They are not interchangeable.
@@ -127,7 +141,7 @@ Without any extra credentials, the spec always proves:
 If you also provide role-specific test credentials in `.env` or `.dev.vars`, the same spec can additionally verify:
 
 - unlinked student -> `/pending-access`
-- linked student -> read-only `/dashboard`
+- linked student -> own `/dashboard` access with no professor roster surfaces
 - professor -> roster visibility plus thread-entry sentinel
 
 Supported variables:
@@ -477,8 +491,9 @@ Use this when local `npm run test:e2e` is green and you still need to confirm th
 
 2. Linked student check
    - after claim, reopen `/dashboard`
-   - confirm the account sees only its own read-only supervision history
-   - confirm no professor roster or note-creation controls are visible
+   - confirm the account sees only its own student thread surfaces
+   - confirm no professor roster or foreign-student controls are visible
+   - confirm shared note and task controls remain limited to the linked student's own accessible thread
 
 3. Unlinked student check
    - sign in with a hosted student account that has no matching `public.students.student_profile_id`
@@ -579,6 +594,18 @@ Row-level security for these tables is planned as a follow-up foundation step; t
 ## App-Level Database Contract
 
 The app-facing TypeScript contract for the supervision domain lives in [src/lib/database.ts](C:\Users\olguno5421\Documents\GitHub\10xdev\src\lib\database.ts). Follow-up slices should import these types through the `@/*` alias instead of recreating the row shapes ad hoc.
+
+## Current Product Constraints
+
+- The product currently assumes one professor workspace; there is no full UI for multi-professor administration.
+- Professor role bootstrap depends on `BOOTSTRAP_PROFESSOR_EMAIL` and is not a self-service role picker.
+- Student product access depends on a prepared active `students` row with an exact email match.
+- A student may create an auth account before professor preparation, but will remain on `/pending-access` until a matching active student record exists.
+- Duplicate active student rows with the same email intentionally block automatic claim.
+- Archiving is a soft-delete lifecycle transition, not hard deletion.
+- There is no in-product unarchive or restore flow.
+- Archived history remains professor-only and read-only.
+- Returning students get a new active record and do not regain access to archived history.
 
 ## Deployment
 
